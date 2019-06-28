@@ -10,8 +10,8 @@ public class User {
 	private String username;
 	private String password;
 
-	List<User> followed;
-	List<Game> games;
+	private List<User> followedUsers;
+	private List<Game> games;
 
 	public User() {
 
@@ -26,7 +26,7 @@ public class User {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.followed = followed;
+		this.followedUsers = followed;
 	}
 
 	public Long getId() {
@@ -42,7 +42,7 @@ public class User {
 	}
 
 	public List<User> getFollowed() {
-		return followed;
+		return followedUsers;
 	}
 
 	public List<Game> getGames() {
@@ -58,11 +58,11 @@ public class User {
 	}
 
 	public void setFollowed(List<User> followed) {
-		this.followed = followed;
+		this.followedUsers = followed;
 	}
 
 	public void addFollowed(User user) {
-		followed.add(user);
+		followedUsers.add(user);
 	}
 
 	public void setGames(List<Game> games) {
