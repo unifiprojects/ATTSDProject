@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Game {
 
-	private long id;
+	private Long id;
 
 	private String name;
 	private String description;
@@ -53,14 +53,14 @@ public class Game {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Game object = (Game) obj;
-		return Objects.equals(id, object.id) && Objects.equals(name, object.name)
-				&& Objects.equals(description, object.description) && Objects.equals(releaseDate, object.releaseDate);
+		Game other = (Game) obj;
+		return Objects.equals(description, other.description) && Objects.equals(id, other.id)
+				&& Objects.equals(name, other.name) && Objects.equals(releaseDate, other.releaseDate);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, description, releaseDate);
+		return Objects.hash(description, id, name, releaseDate);
 	}
 
 	@Override
