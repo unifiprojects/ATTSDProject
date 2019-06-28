@@ -11,6 +11,7 @@ public class User {
 	private String password;
 
 	List<User> followed;
+	List<Game> games;
 
 	public User() {
 
@@ -44,6 +45,10 @@ public class User {
 		return followed;
 	}
 
+	public List<Game> getGames() {
+		return games;
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -54,6 +59,18 @@ public class User {
 
 	public void setFollowed(List<User> followed) {
 		this.followed = followed;
+	}
+
+	public void addFollowed(User user) {
+		followed.add(user);
+	}
+
+	public void setGames(List<Game> games) {
+		this.games = games;
+	}
+
+	public void addGame(Game game) {
+		games.add(game);
 	}
 
 	@Override
