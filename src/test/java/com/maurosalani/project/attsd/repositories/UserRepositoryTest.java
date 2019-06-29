@@ -12,10 +12,10 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Test
 	public void test() {
-		
+
 	}
 
 }

@@ -3,7 +3,6 @@ package com.maurosalani.project.attsd.model;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -20,13 +19,13 @@ public class User {
 
 	private String username;
 	private String password;
-	
+
 	@OneToMany
-	@JoinTable(name="followers")
-	@JoinColumn(name="person_id", referencedColumnName="id")
-	@JoinColumn(name="followed_id", referencedColumnName="id")
+	@JoinTable(name = "followers")
+	@JoinColumn(name = "person_id", referencedColumnName = "id")
+	@JoinColumn(name = "followed_id", referencedColumnName = "id")
 	List<User> followedUsers;
-	
+
 	@OneToMany
 	List<Game> games;
 
