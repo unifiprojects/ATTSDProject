@@ -24,10 +24,10 @@ public class User {
 	@JoinTable(name = "followers")
 	@JoinColumn(name = "person_id", referencedColumnName = "id")
 	@JoinColumn(name = "followed_id", referencedColumnName = "id")
-	List<User> followedUsers;
+	private List<User> followedUsers;
 
 	@OneToMany
-	List<Game> games;
+	private List<Game> games;
 
 	public User() {
 
