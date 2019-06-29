@@ -3,15 +3,32 @@ package com.maurosalani.project.attsd.model;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+
+@Entity
 public class User {
 
+	@Id
+	@GeneratedValue
 	private Long id;
 
 	private String username;
 	private String password;
-
-	private List<User> followedUsers;
-	private List<Game> games;
+	
+	@OneToMany
+	@JoinTable(name="followers")
+	@JoinColumn(name="person_id", referencedColumnName="id")
+	@JoinColumn(name="followed_id", referencedColumnName="id")
+	List<User> followedUsers;
+	
+	@OneToMany
+	List<Game> games;
 
 	public User() {
 
@@ -22,11 +39,11 @@ public class User {
 		this.password = password;
 	}
 
-	public User(Long id, String username, String password, List<User> followed) {
+	public User(Long id, String username, String password, List<User> followedUsers) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.followedUsers = followed;
+		this.followedUsers = followedUsers;
 	}
 
 	public Long getId() {

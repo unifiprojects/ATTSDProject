@@ -3,8 +3,16 @@ package com.maurosalani.project.attsd.model;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Game {
 
+	@Id
+	@GeneratedValue
 	private Long id;
 
 	private String name;
