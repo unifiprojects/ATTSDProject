@@ -17,11 +17,6 @@ public class User {
 
 	}
 
-	public User(Long id, String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
-
 	public User(Long id, String username, String password, List<User> followed) {
 		this.id = id;
 		this.username = username;
