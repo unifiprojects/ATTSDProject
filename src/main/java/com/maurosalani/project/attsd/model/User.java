@@ -33,16 +33,12 @@ public class User {
 
 	}
 
-	public User(Long id, String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
-
-	public User(Long id, String username, String password, List<User> followedUsers) {
+	public User(Long id, String username, String password, List<User> followedUsers, List<Game> games) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.followedUsers = followedUsers;
+		this.games = games;
 	}
 
 	public Long getId() {
