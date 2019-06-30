@@ -40,7 +40,8 @@ public class User {
 
 	}
 
-	public User(Long id, String username, String password, List<User> followedUsers, List<User> followerUsers, List<Game> games) {
+	public User(Long id, String username, String password, List<User> followedUsers, List<User> followerUsers,
+			List<Game> games) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -136,8 +137,8 @@ public class User {
 		} else {
 			gamesString = "None";
 		}
-		return "User [id=" + id + ", username=" + username + ", followed=" + followedUserString + ", follower=" + followerUserString + ", games="
-				+ gamesString + "]";
+		return "User [id=" + id + ", username=" + username + ", followed=" + followedUserString + ", follower="
+				+ followerUserString + ", games=" + gamesString + "]";
 	}
 
 }
