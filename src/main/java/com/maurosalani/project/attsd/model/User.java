@@ -95,17 +95,31 @@ public class User {
 			return false;
 		User object = (User) obj;
 		return Objects.equals(id, object.id) && Objects.equals(username, object.username)
-				&& Objects.equals(password, object.password);
+				&& Objects.equals(password, object.password) && Objects.equals(followedUsers, object.followedUsers)
+				&& Objects.equals(games, object.games);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, username, password);
+		return Objects.hash(id, username, password, followedUsers, games);
 	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + "]";
+		String followedUserString;
+		String gamesString;
+		if (followedUsers != null) {
+			followedUserString = followedUsers.toString();
+		} else {
+			followedUserString = "None";
+		}
+		if (games != null) {
+			gamesString = games.toString();
+		} else {
+			gamesString = "None";
+		}
+		return "User [id=" + id + ", username=" + username + ", followed=" + followedUserString + ", games="
+				+ gamesString + "]";
 	}
 
 }
