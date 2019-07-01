@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,6 +37,7 @@ public class UserRepositoryTest {
 		User user = new User(null, "test", "pwd", null, null, null);
 		User saved = entitymanager.persistFlushFind(user);
 		Collection<User> users = repository.findAll();
+
 		assertThat(users).containsExactly(saved);
 	}
 
@@ -43,6 +46,7 @@ public class UserRepositoryTest {
 		User user = new User(null, "test", "pwd", null, null, null);
 		User saved = entitymanager.persistFlushFind(user);
 		User userFound = repository.findByUsername("test");
+
 		assertThat(userFound).isEqualTo(saved);
 	}
 
@@ -58,7 +62,17 @@ public class UserRepositoryTest {
 				.isThrownBy(() -> repository.saveAndFlush(userNoPassword));
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 				.isThrownBy(() -> repository.saveAndFlush(userNoUsernameAndPassword));
+	}
 
+	@Test
+	public void testPersistenceOfFollowedList() {
+		List<User> followed = new LinkedList<User>();
+		followed.add(new User(null, "one", "pwd", null, null, null));
+		followed.add(new User(null, "two", "pwd", null, null, null));
+		User user = new User(null, "test", "pwd", followed, null, null);
+		User saved = entitymanager.persistFlushFind(user);
+		
+		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
 
 }
