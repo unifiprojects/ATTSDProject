@@ -74,5 +74,16 @@ public class UserRepositoryTest {
 		
 		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
+	
+	 @Test
+	  public void testPersistenceOfFollowerList() {
+	    List<User> followed = new LinkedList<User>();
+	    followed.add(new User(null, "one", "pwd", null, null, null));
+	    followed.add(new User(null, "two", "pwd", null, null, null));
+	    User user = new User(null, "test", "pwd", followed, null, null);
+	    User saved = entitymanager.persistFlushFind(user);
+	    
+	    assertThat(saved.getFollowedUsers().get(0).getFollowerUsers()).containsExactly(saved);
+	  }
 
 }
