@@ -102,6 +102,7 @@ public class User {
 		this.games = games;
 	}
 
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -110,16 +111,35 @@ public class User {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User object = (User) obj;
-		return Objects.equals(id, object.id) && Objects.equals(username, object.username)
-				&& Objects.equals(password, object.password) && Objects.equals(followedUsers, object.followedUsers)
-				&& Objects.equals(followerUsers, object.followerUsers) && Objects.equals(games, object.games);
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, username, password, followedUsers, followerUsers, games);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
 	}
+	
 
 	@Override
 	public String toString() {
