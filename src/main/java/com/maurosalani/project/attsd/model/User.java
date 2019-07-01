@@ -122,13 +122,14 @@ public class User {
 		String followedUserString;
 		String followerUserString;
 		String gamesString;
+		StringBuilder stringBuilder = new StringBuilder();
 		if (followedUsers != null) {
-			followedUserString = followedUsers.toString();
+			followedUserString = followedUsers.stream().map(user -> user.toStringReducedInfo()).reduce("", String::concat);
 		} else {
 			followedUserString = "None";
 		}
 		if (followerUsers != null) {
-			followerUserString = followerUsers.toString();
+			followerUserString = followerUsers.stream().map(user -> user.toStringReducedInfo()).reduce("", String::concat);
 		} else {
 			followerUserString = "None";
 		}
@@ -137,8 +138,12 @@ public class User {
 		} else {
 			gamesString = "None";
 		}
-		return "User [id=" + id + ", username=" + username + ", followed=" + followedUserString + ", follower="
-				+ followerUserString + ", games=" + gamesString + "]";
+		return "User [id=" + id + ", username=" + username + ", \n\tfollowed=" + followedUserString + ", \n\tfollower="
+				+ followerUserString + ", \n\tgames=" + gamesString + "]";
+	}
+
+	private String toStringReducedInfo() {
+		return "User [id=" + id + ", username=" + username + "]";
 	}
 
 }
