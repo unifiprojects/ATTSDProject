@@ -102,7 +102,6 @@ public class User {
 		this.games = games;
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -139,32 +138,31 @@ public class User {
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
-	
 
 	@Override
 	public String toString() {
 		String followedUserString;
 		String followerUserString;
 		String gamesString;
-		if (followedUsers != null) {
+		if (followedUsers == null || followedUsers.isEmpty()) {
+			followedUserString = "None";
+		} else {
 			followedUserString = followedUsers.stream().map(user -> user.toStringReducedInfo()).reduce("",
 					String::concat);
-		} else {
-			followedUserString = "None";
 		}
-		if (followerUsers != null) {
+		if (followerUsers == null || followerUsers.isEmpty()) {
+			followerUserString = "None";
+		} else {
 			followerUserString = followerUsers.stream().map(user -> user.toStringReducedInfo()).reduce("",
 					String::concat);
-		} else {
-			followerUserString = "None";
 		}
-		if (games != null) {
-			gamesString = games.toString();
-		} else {
+		if (games == null || games.isEmpty()) {
 			gamesString = "None";
+		} else {
+			gamesString = games.toString();
 		}
-		return "User [id=" + id + ", username=" + username + ", \n\tfollowed=" + followedUserString + ", \n\tfollower="
-				+ followerUserString + ", \n\tgames=" + gamesString + "]";
+		return "\nUser [id=" + id + ", username=" + username + ", password=" + password + ", \n\tfollowed="
+				+ followedUserString + ", \n\tfollower=" + followerUserString + ", \n\tgames=" + gamesString + "]";
 	}
 
 	private String toStringReducedInfo() {
