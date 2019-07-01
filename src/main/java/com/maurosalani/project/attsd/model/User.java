@@ -3,6 +3,7 @@ package com.maurosalani.project.attsd.model;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,10 @@ public class User {
 	private Long id;
 
 	@Column(unique = true)
+	@Basic(optional = false)
 	private String username;
+
+	@Basic(optional = false)
 	private String password;
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -122,14 +126,15 @@ public class User {
 		String followedUserString;
 		String followerUserString;
 		String gamesString;
-		StringBuilder stringBuilder = new StringBuilder();
 		if (followedUsers != null) {
-			followedUserString = followedUsers.stream().map(user -> user.toStringReducedInfo()).reduce("", String::concat);
+			followedUserString = followedUsers.stream().map(user -> user.toStringReducedInfo()).reduce("",
+					String::concat);
 		} else {
 			followedUserString = "None";
 		}
 		if (followerUsers != null) {
-			followerUserString = followerUsers.stream().map(user -> user.toStringReducedInfo()).reduce("", String::concat);
+			followerUserString = followerUsers.stream().map(user -> user.toStringReducedInfo()).reduce("",
+					String::concat);
 		} else {
 			followerUserString = "None";
 		}
