@@ -29,7 +29,7 @@ public class UserRepositoryTest {
 	private UserRepository repository;
 
 	@Autowired
-	private TestEntityManager entitymanager;
+	private TestEntityManager entityManager;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -37,7 +37,7 @@ public class UserRepositoryTest {
 	@Test
 	public void testFindAllWithExistingUser() {
 		User user = new User(null, "test", "pwd", null, null, null);
-		User saved = entitymanager.persistFlushFind(user);
+		User saved = entityManager.persistFlushFind(user);
 		Collection<User> users = repository.findAll();
 
 		assertThat(users).containsExactly(saved);
@@ -46,7 +46,7 @@ public class UserRepositoryTest {
 	@Test
 	public void testFindByUsername() {
 		User user = new User(null, "test", "pwd", null, null, null);
-		User saved = entitymanager.persistFlushFind(user);
+		User saved = entityManager.persistFlushFind(user);
 		User userFound = repository.findByUsername("test");
 
 		assertThat(userFound).isEqualTo(saved);
@@ -72,7 +72,7 @@ public class UserRepositoryTest {
 		followed.add(new User(null, "one", "pwd", null, null, null));
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
-		User saved = entitymanager.persistFlushFind(user);
+		User saved = entityManager.persistFlushFind(user);
 
 		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
@@ -83,7 +83,7 @@ public class UserRepositoryTest {
 		followed.add(new User(null, "one", "pwd", null, null, null));
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
-		User saved = entitymanager.persistFlushFind(user);
+		User saved = entityManager.persistFlushFind(user);
 
 		assertThat(saved.getFollowedUsers().get(0).getFollowerUsers()).containsExactly(saved);
 	}
@@ -94,7 +94,7 @@ public class UserRepositoryTest {
 		games.add(new Game("game1", "description1", new Date(1000)));
 		games.add(new Game("game2", "description2", new Date(10000)));
 		User user = new User(null, "test", "pwd", null, null, games);
-		User saved = entitymanager.persistFlushFind(user);
+		User saved = entityManager.persistFlushFind(user);
 
 		assertThat(games).isEqualTo(saved.getGames());
 	}
