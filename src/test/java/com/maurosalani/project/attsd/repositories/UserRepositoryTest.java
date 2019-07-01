@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 
 @DataJpaTest
@@ -71,19 +73,29 @@ public class UserRepositoryTest {
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
 		User saved = entitymanager.persistFlushFind(user);
-		
+
 		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
-	
-	 @Test
-	  public void testPersistenceOfFollowerList() {
-	    List<User> followed = new LinkedList<User>();
-	    followed.add(new User(null, "one", "pwd", null, null, null));
-	    followed.add(new User(null, "two", "pwd", null, null, null));
-	    User user = new User(null, "test", "pwd", followed, null, null);
-	    User saved = entitymanager.persistFlushFind(user);
-	    
-	    assertThat(saved.getFollowedUsers().get(0).getFollowerUsers()).containsExactly(saved);
-	  }
 
+	@Test
+	public void testPersistenceOfFollowerList() {
+		List<User> followed = new LinkedList<User>();
+		followed.add(new User(null, "one", "pwd", null, null, null));
+		followed.add(new User(null, "two", "pwd", null, null, null));
+		User user = new User(null, "test", "pwd", followed, null, null);
+		User saved = entitymanager.persistFlushFind(user);
+
+		assertThat(saved.getFollowedUsers().get(0).getFollowerUsers()).containsExactly(saved);
+	}
+
+	@Test
+	public void testPersistenceOfGamesList() {
+		List<Game> games = new LinkedList<Game>();
+		games.add(new Game("game1", "description1", new Date(1000)));
+		games.add(new Game("game2", "description2", new Date(10000)));
+		User user = new User(null, "test", "pwd", null, null, games);
+		User saved = entitymanager.persistFlushFind(user);
+
+		assertThat(games).isEqualTo(saved.getGames());
+	}
 }
