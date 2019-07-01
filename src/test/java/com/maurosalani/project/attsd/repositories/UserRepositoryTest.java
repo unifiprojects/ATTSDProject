@@ -1,14 +1,18 @@
 package com.maurosalani.project.attsd.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Collection;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.User;
@@ -22,6 +26,9 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private TestEntityManager entitymanager;
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testFindAllWithExistingUser() {
@@ -37,6 +44,21 @@ public class UserRepositoryTest {
 		User saved = entitymanager.persistFlushFind(user);
 		User userFound = repository.findByUsername("test");
 		assertThat(userFound).isEqualTo(saved);
+	}
+
+	@Test
+	public void testUsernameAndPasswordAreMandatoryWhenUserIsSaved() {
+		User userNoUsername = new User(null, null, "pwd", null, null, null);
+		User userNoPassword = new User(null, "username", null, null, null, null);
+		User userNoUsernameAndPassword = new User(null, null, "pwd", null, null, null);
+
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> repository.saveAndFlush(userNoUsername));
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> repository.saveAndFlush(userNoPassword));
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> repository.saveAndFlush(userNoUsernameAndPassword));
+
 	}
 
 }
