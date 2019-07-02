@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -7,17 +8,17 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 
 @Entity
 public class User {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(unique = true)
@@ -28,15 +29,14 @@ public class User {
 	private String password;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "followers_relation")
-	@JoinColumn(name = "follower_id", referencedColumnName = "id")
-	@JoinColumn(name = "followed_id", referencedColumnName = "id")
+	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
 	private List<User> followedUsers;
 
-	@ManyToMany(mappedBy = "followedUsers")
+	@ManyToMany(mappedBy = "followedUsers", cascade = CascadeType.ALL)
 	private List<User> followerUsers;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
 	private List<Game> games;
 
 	public User() {
@@ -101,6 +101,46 @@ public class User {
 		this.games = games;
 	}
 
+	public void addFollowedUser(User followedUser) {
+		if (followedUser != null) {
+			if (this.followedUsers == null)
+				this.setFollowedUsers(Arrays.asList(followedUser));
+			else
+				this.followedUsers.add(followedUser);
+		}
+	}
+
+	public void addFollowerUser(User followerUser) {
+		if (followerUser != null) {
+			if (this.followerUsers == null)
+				this.setFollowerUsers(Arrays.asList(followerUser));
+			else
+				this.followerUsers.add(followerUser);
+		}
+	}
+
+	public void addGame(Game game) {
+		if (game != null) {
+			if (this.games == null)
+				this.setGames(Arrays.asList(game));
+			else
+				this.games.add(game);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((followedUsers == null) ? 0 : followedUsers.hashCode());
+		result = prime * result + ((followerUsers == null) ? 0 : followerUsers.hashCode());
+		result = prime * result + ((games == null) ? 0 : games.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -110,35 +150,37 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
+		if (followedUsers == null) {
+			if (other.followedUsers != null)
+				return false;
+		} else if (!followedUsers.equals(other.followedUsers))
+			return false;
+		if (followerUsers == null) {
+			if (other.followerUsers != null)
+				return false;
+		} else if (!followerUsers.equals(other.followerUsers))
+			return false;
+		if (games == null) {
+			if (other.games != null)
+				return false;
+		} else if (!games.equals(other.games))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} 
-		else if (!id.equals(other.id))
+		} else if (!id.equals(other.id))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} 
-		else if (!password.equals(other.password))
+		} else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		} 
-		else if (!username.equals(other.username))
+		} else if (!username.equals(other.username))
 			return false;
 		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		return result;
 	}
 
 	@Override

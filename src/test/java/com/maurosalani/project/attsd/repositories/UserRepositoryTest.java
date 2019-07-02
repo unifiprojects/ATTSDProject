@@ -91,8 +91,8 @@ public class UserRepositoryTest {
 	@Test
 	public void testGamesListIsPersistedWhenUserIsSaved() {
 		List<Game> games = new LinkedList<Game>();
-		games.add(new Game("game1", "description1", new Date(1000)));
-		games.add(new Game("game2", "description2", new Date(10000)));
+		games.add(new Game(null, "game1", "description1", new Date(), null));
+		games.add(new Game(null, "game2", "description2", new Date(), null));
 		User user = new User(null, "test", "pwd", null, null, games);
 
 		User saved = repository.save(user);
