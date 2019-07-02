@@ -68,7 +68,7 @@ public class UserRepositoryTest {
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
 
-		User saved = entityManager.persistFlushFind(user);
+		User saved = repository.save(user);
 
 		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
@@ -95,8 +95,9 @@ public class UserRepositoryTest {
 		games.add(new Game("game2", "description2", new Date(10000)));
 		User user = new User(null, "test", "pwd", null, null, games);
 
-		User saved = entityManager.persistFlushFind(user);
+		User saved = repository.save(user);
 
 		assertThat(games).isEqualTo(saved.getGames());
 	}
+
 }
