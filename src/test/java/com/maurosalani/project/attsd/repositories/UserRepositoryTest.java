@@ -8,9 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -30,9 +28,6 @@ public class UserRepositoryTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testFindAllWithExistingUser() {
@@ -67,33 +62,39 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void testPersistenceOfFollowedList() {
+	public void testFollowedListIsPersistedWhenUserIsSaved() {
 		List<User> followed = new LinkedList<User>();
 		followed.add(new User(null, "one", "pwd", null, null, null));
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
+
 		User saved = entityManager.persistFlushFind(user);
 
 		assertThat(followed).isEqualTo(saved.getFollowedUsers());
 	}
 
 	@Test
-	public void testPersistenceOfFollowerList() {
+	public void testFollowerListIsSetWhenUserIsSaved() {
 		List<User> followed = new LinkedList<User>();
 		followed.add(new User(null, "one", "pwd", null, null, null));
 		followed.add(new User(null, "two", "pwd", null, null, null));
 		User user = new User(null, "test", "pwd", followed, null, null);
+
 		User saved = entityManager.persistFlushFind(user);
 
-		assertThat(saved.getFollowedUsers().get(0).getFollowerUsers()).containsExactly(saved);
+		List<User> follower1 = saved.getFollowedUsers().get(0).getFollowerUsers();
+		List<User> follower2 = saved.getFollowedUsers().get(1).getFollowerUsers();
+		assertThat(follower1).containsExactly(saved);
+		assertThat(follower2).containsExactly(saved);
 	}
 
 	@Test
-	public void testPersistenceOfGamesList() {
+	public void testGamesListIsPersistedWhenUserIsSaved() {
 		List<Game> games = new LinkedList<Game>();
 		games.add(new Game("game1", "description1", new Date(1000)));
 		games.add(new Game("game2", "description2", new Date(10000)));
 		User user = new User(null, "test", "pwd", null, null, games);
+
 		User saved = entityManager.persistFlushFind(user);
 
 		assertThat(games).isEqualTo(saved.getGames());
