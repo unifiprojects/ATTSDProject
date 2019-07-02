@@ -100,4 +100,24 @@ public class UserRepositoryTest {
 		assertThat(games).isEqualTo(saved.getGames());
 	}
 
+	@Test
+	public void testFollowedUsersAreUpdatedWhitExistingUser() {
+		List<User> followed = new LinkedList<User>();
+		followed.add(new User(null, "followed_one", "pwd_one", null, null, null));
+		followed.add(new User(null, "followed_two", "pwd_two", null, null, null));
+		User user = new User(null, "user", "pwd", followed, null, null);
+
+		User savedAndToBeUpdated = entityManager.persistFlushFind(user);
+
+		List<User> replacementFollowedUsers = new LinkedList<User>();
+		replacementFollowedUsers
+				.add(new User(null, "followed_one_replacement", "pwd_one_replacement", null, null, null));
+		replacementFollowedUsers
+				.add(new User(null, "followed_two_replacement", "pwd_two_replacement", null, null, null));
+		savedAndToBeUpdated.setFollowedUsers(replacementFollowedUsers);
+
+		User updated = repository.save(savedAndToBeUpdated);
+
+		assertThat(replacementFollowedUsers).isEqualTo(updated.getFollowedUsers());
+	}
 }
