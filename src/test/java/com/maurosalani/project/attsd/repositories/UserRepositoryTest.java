@@ -101,7 +101,7 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void testFollowedUsersAreUpdatedWhitExistingUser() {
+	public void testFollowedUsersAreUpdatedWithExistingUser() {
 		List<User> followed = new LinkedList<User>();
 		followed.add(new User(null, "followed_one", "pwd_one", null, null, null));
 		followed.add(new User(null, "followed_two", "pwd_two", null, null, null));
@@ -119,5 +119,15 @@ public class UserRepositoryTest {
 		User updated = repository.save(savedAndToBeUpdated);
 
 		assertThat(replacementFollowedUsers).isEqualTo(updated.getFollowedUsers());
+	}
+
+	@Test
+	public void testDeleteSavedUser() {
+		User user = new User(null, "test", "pwd", null, null, null);
+		User saved = entityManager.persistFlushFind(user);
+		repository.delete(saved);
+		User found = entityManager.find(User.class, saved.getId());
+
+		assertThat(found).isEqualTo(null);
 	}
 }
