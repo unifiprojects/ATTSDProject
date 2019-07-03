@@ -75,7 +75,7 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void testFollowerListIsSetWhenUserIsSaved() {
+	public void testFollowerListIsPersistedWhenUserIsSaved() {
 		List<User> followed = new LinkedList<User>();
 		followed.add(new User(null, "one", "pwd"));
 		followed.add(new User(null, "two", "pwd"));
