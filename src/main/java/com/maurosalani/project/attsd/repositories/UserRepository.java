@@ -15,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select u.games from User u where u.username = ?1")
 	List<Game> findGamesOfUserByUsername(String username);
 
+	@Query("select u.followedUsers from User u where u.username = ?1")
 	List<User> findFollowedOfUserByUsername(String string);
 }
