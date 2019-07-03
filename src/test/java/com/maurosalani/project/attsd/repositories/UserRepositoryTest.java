@@ -3,7 +3,6 @@ package com.maurosalani.project.attsd.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class UserRepositoryTest {
 	public void testFindAllWithExistingUser() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
-		Collection<User> users = repository.findAll();
+		List<User> users = repository.findAll();
 
 		assertThat(users).containsExactly(saved);
 	}
