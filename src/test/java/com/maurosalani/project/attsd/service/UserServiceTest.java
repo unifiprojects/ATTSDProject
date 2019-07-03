@@ -1,8 +1,9 @@
 package com.maurosalani.project.attsd.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
@@ -36,6 +37,12 @@ public class UserServiceTest {
 		User user2 = new User(2l, "username2", "pwd2");
 		when(userRepository.findAllUsers()).thenReturn(asList(user1, user2));
 		assertThat(userService.getAllUsers()).containsExactly(user1, user2);
+	}
+
+	@Test
+	public void testGetUserByIdWhenUserDoesNotExist() {
+		when(userRepository.findById(anyLong())).thenReturn(null);
+		assertThat(userService.getUserById(1L)).isNull();
 	}
 
 }

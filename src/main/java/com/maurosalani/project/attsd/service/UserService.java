@@ -22,4 +22,9 @@ public class UserService {
 		return userRepository.findAllUsers();
 	}
 
+	public User getUserById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
