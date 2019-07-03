@@ -160,4 +160,18 @@ public class UserRepositoryTest {
 
 		assertThat(found).isEqualTo(saved.getFollowedUsers());
 	}
+
+	@Test
+	public void testFindFollowerOfUserByUsername() {
+		List<User> follower = new LinkedList<User>();
+		follower.add(new User(null, "one", "pwd"));
+		follower.add(new User(null, "two", "pwd"));
+		User user = new User(null, "test", "pwd");
+		user.setFollowerUsers(follower);
+
+		User saved = entityManager.persistFlushFind(user);
+		List<User> found = repository.findFollowerOfUserByUsername("test");
+
+		assertThat(found).isEqualTo(saved.getFollowerUsers());
+	}
 }
