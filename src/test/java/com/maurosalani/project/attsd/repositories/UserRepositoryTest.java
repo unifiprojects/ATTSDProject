@@ -50,7 +50,7 @@ public class UserRepositoryTest {
 	@Test
 	public void testUsernameAndPasswordAreMandatoryWhenUserIsSaved() {
 		User userNoUsername = new User(null, null, "pwd");
-		User userNoPassword = new User(null, "username", null );
+		User userNoPassword = new User(null, "username", null);
 		User userNoUsernameAndPassword = new User(null, null, "pwd");
 
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
@@ -114,10 +114,8 @@ public class UserRepositoryTest {
 		User savedAndToBeUpdated = entityManager.persistFlushFind(user);
 
 		List<User> replacementFollowedUsers = new LinkedList<User>();
-		replacementFollowedUsers
-				.add(new User(null, "followed_one_replacement", "pwd_one_replacement"));
-		replacementFollowedUsers
-				.add(new User(null, "followed_two_replacement", "pwd_two_replacement"));
+		replacementFollowedUsers.add(new User(null, "followed_one_replacement", "pwd_one_replacement"));
+		replacementFollowedUsers.add(new User(null, "followed_two_replacement", "pwd_two_replacement"));
 		savedAndToBeUpdated.setFollowedUsers(replacementFollowedUsers);
 
 		User updated = repository.save(savedAndToBeUpdated);
@@ -134,4 +132,19 @@ public class UserRepositoryTest {
 
 		assertThat(found).isEqualTo(null);
 	}
+
+	@Test
+	public void testFindGamesOfUserByUsername() {
+		List<Game> games = new LinkedList<Game>();
+		games.add(new Game(null, "game1", "description1", new Date()));
+		games.add(new Game(null, "game2", "description2", new Date()));
+
+		User user = new User(null, "username_test", "pwd");
+		user.setGames(games);
+		User saved = entityManager.persistFlushFind(user);
+
+		List<Game> retrievedGames = repository.findGamesOfUserByUsername("username_test");
+		assertThat(retrievedGames).isEqualTo(saved.getGames());
+	}
+
 }
