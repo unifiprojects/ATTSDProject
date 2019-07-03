@@ -29,13 +29,12 @@ public class Game {
 	public Game() {
 	}
 
-	public Game(Long id, String name, String description, Date releaseDate, List<User> users) {
+	public Game(Long id, String name, String description, Date releaseDate) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.releaseDate = releaseDate;
-		this.users = users;
 	}
 
 	public Long getId() {

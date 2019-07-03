@@ -43,14 +43,10 @@ public class User {
 
 	}
 
-	public User(Long id, String username, String password, List<User> followedUsers, List<User> followerUsers,
-			List<Game> games) {
+	public User(Long id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.followedUsers = followedUsers;
-		this.followerUsers = followerUsers;
-		this.games = games;
 	}
 
 	public Long getId() {

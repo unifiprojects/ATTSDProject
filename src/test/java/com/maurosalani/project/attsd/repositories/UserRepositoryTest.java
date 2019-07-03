@@ -31,7 +31,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testFindAllWithExistingUser() {
-		User user = new User(null, "test", "pwd", null, null, null);
+		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
 		Collection<User> users = repository.findAll();
 
@@ -40,7 +40,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testFindByUsername() {
-		User user = new User(null, "test", "pwd", null, null, null);
+		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
 		User userFound = repository.findByUsername("test");
 
@@ -49,9 +49,9 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testUsernameAndPasswordAreMandatoryWhenUserIsSaved() {
-		User userNoUsername = new User(null, null, "pwd", null, null, null);
-		User userNoPassword = new User(null, "username", null, null, null, null);
-		User userNoUsernameAndPassword = new User(null, null, "pwd", null, null, null);
+		User userNoUsername = new User(null, null, "pwd");
+		User userNoPassword = new User(null, "username", null );
+		User userNoUsernameAndPassword = new User(null, null, "pwd");
 
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 				.isThrownBy(() -> repository.saveAndFlush(userNoUsername));
@@ -64,9 +64,10 @@ public class UserRepositoryTest {
 	@Test
 	public void testFollowedListIsPersistedWhenUserIsSaved() {
 		List<User> followed = new LinkedList<User>();
-		followed.add(new User(null, "one", "pwd", null, null, null));
-		followed.add(new User(null, "two", "pwd", null, null, null));
-		User user = new User(null, "test", "pwd", followed, null, null);
+		followed.add(new User(null, "one", "pwd"));
+		followed.add(new User(null, "two", "pwd"));
+		User user = new User(null, "test", "pwd");
+		user.setFollowedUsers(followed);
 
 		User saved = repository.save(user);
 
@@ -76,9 +77,10 @@ public class UserRepositoryTest {
 	@Test
 	public void testFollowerListIsSetWhenUserIsSaved() {
 		List<User> followed = new LinkedList<User>();
-		followed.add(new User(null, "one", "pwd", null, null, null));
-		followed.add(new User(null, "two", "pwd", null, null, null));
-		User user = new User(null, "test", "pwd", followed, null, null);
+		followed.add(new User(null, "one", "pwd"));
+		followed.add(new User(null, "two", "pwd"));
+		User user = new User(null, "test", "pwd");
+		user.setFollowedUsers(followed);
 
 		User saved = entityManager.persistFlushFind(user);
 
@@ -91,9 +93,10 @@ public class UserRepositoryTest {
 	@Test
 	public void testGamesListIsPersistedWhenUserIsSaved() {
 		List<Game> games = new LinkedList<Game>();
-		games.add(new Game(null, "game1", "description1", new Date(), null));
-		games.add(new Game(null, "game2", "description2", new Date(), null));
-		User user = new User(null, "test", "pwd", null, null, games);
+		games.add(new Game(null, "game1", "description1", new Date()));
+		games.add(new Game(null, "game2", "description2", new Date()));
+		User user = new User(null, "test", "pwd");
+		user.setGames(games);
 
 		User saved = repository.save(user);
 
@@ -103,17 +106,18 @@ public class UserRepositoryTest {
 	@Test
 	public void testFollowedUsersAreUpdatedWithExistingUser() {
 		List<User> followed = new LinkedList<User>();
-		followed.add(new User(null, "followed_one", "pwd_one", null, null, null));
-		followed.add(new User(null, "followed_two", "pwd_two", null, null, null));
-		User user = new User(null, "user", "pwd", followed, null, null);
+		followed.add(new User(null, "followed_one", "pwd_one"));
+		followed.add(new User(null, "followed_two", "pwd_two"));
+		User user = new User(null, "user", "pwd");
+		user.setFollowedUsers(followed);
 
 		User savedAndToBeUpdated = entityManager.persistFlushFind(user);
 
 		List<User> replacementFollowedUsers = new LinkedList<User>();
 		replacementFollowedUsers
-				.add(new User(null, "followed_one_replacement", "pwd_one_replacement", null, null, null));
+				.add(new User(null, "followed_one_replacement", "pwd_one_replacement"));
 		replacementFollowedUsers
-				.add(new User(null, "followed_two_replacement", "pwd_two_replacement", null, null, null));
+				.add(new User(null, "followed_two_replacement", "pwd_two_replacement"));
 		savedAndToBeUpdated.setFollowedUsers(replacementFollowedUsers);
 
 		User updated = repository.save(savedAndToBeUpdated);
@@ -123,7 +127,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testDeleteSavedUser() {
-		User user = new User(null, "test", "pwd", null, null, null);
+		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
 		repository.delete(saved);
 		User found = entityManager.find(User.class, saved.getId());
