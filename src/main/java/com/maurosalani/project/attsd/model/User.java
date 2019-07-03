@@ -1,8 +1,5 @@
 package com.maurosalani.project.attsd.model;
 
-import java.util.List;
-import java.util.Objects;
-
 public class User {
 
 	private Long id;
@@ -10,63 +7,48 @@ public class User {
 	private String username;
 	private String password;
 
-	private List<User> followedUsers;
-	private List<Game> games;
-
 	public User() {
 
 	}
 
-	public User(Long id, String username, String password, List<User> followedUsers, List<Game> games) {
+	public User(Long id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.followedUsers = followedUsers;
-		this.games = games;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getUsername() {
 		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public List<User> getFollowed() {
-		return followedUsers;
-	}
-
-	public List<Game> getGames() {
-		return games;
 	}
 
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public void setFollowed(List<User> followed) {
-		this.followedUsers = followed;
-	}
-
-	public void addFollowed(User user) {
-		followedUsers.add(user);
-	}
-
-	public void setGames(List<Game> games) {
-		this.games = games;
-	}
-
-	public void addGame(Game game) {
-		games.add(game);
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
 	}
 
 	@Override
@@ -77,33 +59,23 @@ public class User {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User object = (User) obj;
-		return Objects.equals(id, object.id) && Objects.equals(username, object.username)
-				&& Objects.equals(password, object.password) && Objects.equals(followedUsers, object.followedUsers)
-				&& Objects.equals(games, object.games);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, username, password, followedUsers, games);
-	}
-
-	@Override
-	public String toString() {
-		String followedUserString;
-		String gamesString;
-		if (followedUsers != null) {
-			followedUserString = followedUsers.toString();
-		} else {
-			followedUserString = "None";
-		}
-		if (games != null) {
-			gamesString = games.toString();
-		} else {
-			gamesString = "None";
-		}
-		return "User [id=" + id + ", username=" + username + ", followed=" + followedUserString + ", games="
-				+ gamesString + "]";
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
 	}
 
 }
