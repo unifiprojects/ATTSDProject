@@ -30,6 +30,12 @@ public class UserRepositoryTest {
 	private TestEntityManager entityManager;
 
 	@Test
+	public void testFindAllWithEmptyDatabase() {
+		List<User> users = repository.findAll();
+		assertThat(users).isEmpty();
+	}
+
+	@Test
 	public void testFindAllWithExistingUser() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
