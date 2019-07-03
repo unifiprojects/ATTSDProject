@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testGetUserByIdWhenUserDoesNotExist() {
-		when(userRepository.findById(anyLong())).thenReturn(null);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 		assertThat(userService.getUserById(1L)).isNull();
 	}
 
