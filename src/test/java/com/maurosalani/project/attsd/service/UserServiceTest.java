@@ -87,4 +87,11 @@ public class UserServiceTest {
 		inOrder.verify(replacement).setId(1L);
 		inOrder.verify(userRepository).save(replacement);
 	}
+	
+	@Test
+	public void testUpdateUserById_UserIsNull_ShouldReturnNull_ShouldUpdateNothing() {
+		User result = userService.updateUserById(1L, null);
+		assertThat(result).isEqualTo(null);
+		verifyNoMoreInteractions(userRepository);
+	}
 }
