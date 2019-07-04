@@ -3,10 +3,13 @@ package com.maurosalani.project.attsd.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hibernate.action.internal.CollectionAction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,7 +176,9 @@ public class UserRepositoryTest {
 		follower.add(new User(null, "two", "pwd"));
 		User user = new User(null, "test", "pwd");
 		user.setFollowerUsers(follower);
-
+		
+		follower.stream().forEach(u -> u.addFollowedUser(user));
+		
 		User saved = entityManager.persistFlushFind(user);
 		List<User> found = repository.findFollowerOfUserByUsername("test");
 
