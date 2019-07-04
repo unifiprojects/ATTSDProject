@@ -29,7 +29,7 @@ public class UserService {
 
 	public User insertNewUser(User user) {
 		if (user == null)
-			return null;
+			throw new IllegalArgumentException();
 
 		user.setId(null);
 		return userRepository.save(user);

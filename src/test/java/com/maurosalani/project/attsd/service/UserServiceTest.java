@@ -74,9 +74,8 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testInsertNewUser_UserIsNull_ShouldReturnNull() {
-		User result = userService.insertNewUser(null);
-		assertThat(result).isNull();
+	public void testInsertNewUser_UserIsNull_ShouldThrowException() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.insertNewUser(null));
 		verifyNoMoreInteractions(userRepository);
 	}
 
