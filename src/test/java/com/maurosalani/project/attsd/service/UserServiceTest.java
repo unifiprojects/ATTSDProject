@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -15,6 +16,8 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -101,4 +104,11 @@ public class UserServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.deleteById(null));
 		verifyNoMoreInteractions(userRepository);
 	}
+
+	@Test
+	public void testDeleteById_IdNotFound_ShouldThrowException() {
+		when(userRepository.findById(1L)).thenReturn(null);
+		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.deleteById(1L));
+	}
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -42,9 +43,11 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public void deleteById(Long id) {
+	public void deleteById(Long id) throws UserNotFoundException {
 		if (id == null)
 			throw new IllegalArgumentException();
+		if (userRepository.findById(id) == null)
+			throw new UserNotFoundException();
 	}
 
 }
