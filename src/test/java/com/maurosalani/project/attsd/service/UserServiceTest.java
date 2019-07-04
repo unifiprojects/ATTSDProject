@@ -33,7 +33,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testFindAllUsersWhitExistingUsers() {
+	public void testFindAllUsersWithExistingUsers() {
 		User user1 = new User(1l, "username1", "pwd1");
 		User user2 = new User(2l, "username2", "pwd2");
 		when(userRepository.findAllUsers()).thenReturn(asList(user1, user2));
@@ -47,7 +47,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUserByIdWhitExistingUser() {
+	public void testGetUserByIdWithExistingUser() {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		assertThat(userService.getUserById(1L)).isEqualTo(user);
