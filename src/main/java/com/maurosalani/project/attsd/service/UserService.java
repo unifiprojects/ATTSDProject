@@ -36,9 +36,7 @@ public class UserService {
 	}
 
 	public User updateUserById(Long id, User user) throws UserNotFoundException {
-		if (user == null)
-			return null;
-		if (id == null)
+		if (id == null || user == null)
 			throw new IllegalArgumentException();
 		if (userRepository.findById(id) == null)
 			throw new UserNotFoundException();

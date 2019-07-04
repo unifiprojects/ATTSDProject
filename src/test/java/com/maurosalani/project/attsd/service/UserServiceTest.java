@@ -99,14 +99,9 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserById_UserIsNull_ShouldReturnNull_ShouldUpdateNothing() {
-		User result = null;
-		try {
-			result = userService.updateUserById(1L, null);
-		} catch (UserNotFoundException e) {
-			fail();
-		}
-		assertThat(result).isEqualTo(null);
+	public void testUpdateUserById_UserIsNull_ShouldThrowException() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.updateUserById(1L, null));
 		verifyNoMoreInteractions(userRepository);
 	}
 
