@@ -27,6 +27,9 @@ public class UserService {
 	}
 
 	public User insertNewUser(User user) {
+		if (user == null)
+			return null;
+		
 		user.setId(null);
 		return userRepository.save(user);
 	}
