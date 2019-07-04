@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -27,6 +28,16 @@ public class GameRepositoryTest {
 	public void testFindAllWithEmptyDatabase() {
 		List<Game> users = repository.findAll();
 		assertThat(users).isEmpty();
+	}
+	
+	@Test
+	public void testFindAllWithExistingGame() {
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+		Game saved = entityManager.persistFlushFind(game);
+
+		List<Game> games = repository.findAll();
+
+		assertThat(games).containsExactly(saved);
 	}
 
 }
