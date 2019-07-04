@@ -29,14 +29,14 @@ public class UserService {
 	public User insertNewUser(User user) {
 		if (user == null)
 			return null;
-		
+
 		user.setId(null);
 		return userRepository.save(user);
 	}
 
 	public User updateUserById(Long id, User user) {
-		// TODO Auto-generated method stub
-		return null;
+		user.setId(id);
+		return userRepository.save(user);
 	}
 
 }
