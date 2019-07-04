@@ -6,4 +6,6 @@ import com.maurosalani.project.attsd.model.Game;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
 
+	Game findByName(String string);
+
 }
