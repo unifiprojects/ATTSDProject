@@ -77,7 +77,7 @@ public class Game {
 		this.users = users;
 	}
 
-	public void addUser(User user) {
+	public void addUsers(User user) {
 		if (user != null) {
 			if (this.users == null)
 				this.setUsers(Arrays.asList(user));

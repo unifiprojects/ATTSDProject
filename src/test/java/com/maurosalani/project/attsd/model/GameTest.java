@@ -12,14 +12,14 @@ public class GameTest {
 	public void testAddUser() {
 		Game game = new Game(null, "game_name", "game_description", new Date());
 		User user = new User(null, "user", "pwd_user");
-		game.addUser(user);
+		game.addUsers(user);
 		assertThat(game.getUsers()).containsExactly(user);
 	}
 	
 	@Test
 	public void testAddUserWithArgumentNull() {
 		Game game = new Game(null, "game_name", "game_description", new Date());
-		game.addUser(null);
+		game.addUsers(null);
 		assertThat(game.getUsers()).isNull();
 	}
 
