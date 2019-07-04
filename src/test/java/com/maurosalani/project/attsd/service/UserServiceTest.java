@@ -57,11 +57,11 @@ public class UserServiceTest {
 	public void testInsertNewUser_setsIdToNull_returnsSavedUser() {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
-		
+
 		when(userRepository.save(any(User.class))).thenReturn(saved);
-		
+
 		User result = userService.insertNewUser(toSave);
-		
+
 		assertThat(result).isEqualTo(saved);
 		InOrder inOrder = inOrder(toSave, userRepository);
 		inOrder.verify(toSave).setId(null);
@@ -69,9 +69,22 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testInsertNewUser_UserIsNull_ShouldReturnNull() {		
+	public void testInsertNewUser_UserIsNull_ShouldReturnNull() {
 		User result = userService.insertNewUser(null);
 		assertThat(result).isNull();
 		verifyNoMoreInteractions(userRepository);
+	}
+
+	@Test
+	public void testUpdateUserById_setsIdToArgument_ShouldReturnSavedUser() {
+		User replacement = spy(new User(null, "replacement_user", "replacement_pwd"));
+		User replaced = new User(1L, "replaced_user", "replaced_user");
+		when(userRepository.save(any(User.class))).thenReturn(replaced);
+		
+		User result = userService.updateUserById(1L, replacement);
+		assertThat(result).isEqualTo(replaced);
+		InOrder inOrder = inOrder(replacement, userRepository);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userRepository).save(replacement);
 	}
 }

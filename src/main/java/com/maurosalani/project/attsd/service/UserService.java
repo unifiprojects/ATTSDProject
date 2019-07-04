@@ -34,4 +34,9 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
+	public User updateUserById(Long id, User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
