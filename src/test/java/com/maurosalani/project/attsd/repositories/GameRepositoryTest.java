@@ -95,4 +95,15 @@ public class GameRepositoryTest {
 		assertThat(usersReplacement).isEqualTo(updated.getUsers());
 	}
 
+	@Test
+	public void testDeleteSavedGame() {
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+		Game saved = entityManager.persistFlushFind(game);
+
+		repository.delete(saved);
+		Game gameFound = entityManager.find(Game.class, saved.getId());
+
+		assertThat(gameFound).isEqualTo(null);
+	}
+
 }
