@@ -12,6 +12,8 @@ matrix:
     - jdk: openjdk8
       if: type IN (push)
       env: MAVEN_ARGS="-Pjacoco coveralls:report sonar:sonar"
+      if: branch = services
+      env: MAVEN_ARGS="-Pjacoco-services coveralls:report sonar:sonar"
     # perform also mutation testing, but only on Pull Request
     - jdk: openjdk8
       if: type IN (pull_request)
