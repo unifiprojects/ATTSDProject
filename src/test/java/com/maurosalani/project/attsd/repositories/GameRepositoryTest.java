@@ -96,6 +96,17 @@ public class GameRepositoryTest {
 	}
 
 	@Test
+	public void testNameIsUpdated() {
+		Game game = new Game(null, "game_name", "game_description", new Date());
+		Game savedAndToUpdate = entityManager.persistFlushFind(game);
+		savedAndToUpdate.setName("new_name");
+
+		Game updated = repository.save(savedAndToUpdate);
+
+		assertThat(updated.getName()).isEqualTo("new_name");
+	}
+
+	@Test
 	public void testDeleteSavedGame() {
 		Game game = new Game(null, "game name", "game description", new Date(1000));
 		Game saved = entityManager.persistFlushFind(game);
