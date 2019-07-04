@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -12,9 +11,6 @@ import static org.mockito.Mockito.*;
 import java.util.Collections;
 import java.util.Optional;
 
-import javax.validation.constraints.AssertFalse;
-
-import org.assertj.core.api.Fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -93,7 +89,7 @@ public class UserServiceTest {
 		User result = null;
 		try {
 			result = userService.updateUserById(1L, replacement);
-		} catch (Exception e) {
+		} catch (UserNotFoundException e) {
 			fail();
 		}
 		assertThat(result).isEqualTo(replaced);
@@ -107,7 +103,7 @@ public class UserServiceTest {
 		User result = null;
 		try {
 			result = userService.updateUserById(1L, null);
-		} catch (Exception e) {
+		} catch (UserNotFoundException e) {
 			fail();
 		}
 		assertThat(result).isEqualTo(null);
@@ -119,6 +115,14 @@ public class UserServiceTest {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findById(1L)).thenReturn(null);
 		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.updateUserById(1L, user));
+	}
+
+	@Test
+	public void testUpdateUserById_IdIsNull_ShouldThrowException() {
+		User user = new User(1L, "username", "pwd");
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.updateUserById(null, user));
+		verifyNoMoreInteractions(userRepository);
 	}
 
 	@Test
