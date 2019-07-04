@@ -50,4 +50,14 @@ public class GameRepositoryTest {
 		assertThat(gameFound).isEqualTo(saved);
 	}
 
+	@Test
+	public void testFindByNameLike() {
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+		Game saved = entityManager.persistFlushFind(game);
+
+		Game gameFound = repository.findByNameLike("%game%");
+
+		assertThat(gameFound).isEqualTo(saved);
+	}
+
 }

@@ -8,4 +8,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
 	Game findByName(String string);
 
+	Game findByNameLike(String string);
+
 }
