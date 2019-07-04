@@ -3,13 +3,14 @@ package com.maurosalani.project.attsd.service;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -46,4 +47,25 @@ public class UserServiceTest {
 		assertThat(userService.getUserById(1L)).isNull();
 	}
 
+	@Test
+	public void testGetUserByIdWhitExistingUser() {
+		User user = new User(1L, "username", "pwd");
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		assertThat(userService.getUserById(1L)).isEqualTo(user);
+	}
+
+	@Test
+	public void testInsertNewUser_setsIdToNull_returnsSavedUser() {
+		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
+		User saved = new User(1L, "savedUsername", "savedPwd");
+		
+		when(userRepository.save(any(User.class))).thenReturn(saved);
+		
+		User result = userService.insertNewUser(toSave);
+		
+		assertThat(result).isEqualTo(saved);
+		InOrder inOrder = inOrder(toSave, userRepository);
+		inOrder.verify(toSave).setId(null);
+		inOrder.verify(userRepository).save(toSave);
+	}
 }

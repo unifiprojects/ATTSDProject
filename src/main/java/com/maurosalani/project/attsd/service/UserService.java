@@ -26,4 +26,9 @@ public class UserService {
 		return userRepository.findById(id).orElse(null);
 	}
 
+	public User insertNewUser(User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

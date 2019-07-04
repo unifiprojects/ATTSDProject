@@ -19,4 +19,8 @@ public class UserRepository {
 	public Optional<User> findById(Long id) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
+
+	public User save(User user) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
 }
