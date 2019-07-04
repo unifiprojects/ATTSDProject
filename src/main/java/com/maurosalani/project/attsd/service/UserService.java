@@ -48,6 +48,7 @@ public class UserService {
 			throw new IllegalArgumentException();
 		if (userRepository.findById(id) == null)
 			throw new UserNotFoundException();
+		userRepository.deleteById(id);
 	}
 
 }

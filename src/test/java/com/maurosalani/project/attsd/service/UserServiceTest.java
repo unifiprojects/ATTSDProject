@@ -111,4 +111,12 @@ public class UserServiceTest {
 		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.deleteById(1L));
 	}
 
+	@Test
+	public void testDeleteById_IdFound() {
+		User user = new User(1L, "username", "pwd");
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		assertThatCode(() -> userService.deleteById(1L)).doesNotThrowAnyException();
+		verify(userRepository, times(1)).deleteById(1L);
+	}
+
 }
