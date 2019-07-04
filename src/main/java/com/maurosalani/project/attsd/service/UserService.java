@@ -35,6 +35,9 @@ public class UserService {
 	}
 
 	public User updateUserById(Long id, User user) {
+		if (user == null)
+			return null;
+
 		user.setId(id);
 		return userRepository.save(user);
 	}
