@@ -27,8 +27,8 @@ public class UserService {
 	}
 
 	public User insertNewUser(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		user.setId(null);
+		return userRepository.save(user);
 	}
 
 }
