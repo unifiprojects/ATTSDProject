@@ -106,4 +106,20 @@ public class GameRepositoryTest {
 		assertThat(gameFound).isEqualTo(null);
 	}
 
+	@Test
+	public void testFindUsersListOfGameByUsername() {
+		List<User> users = new LinkedList<User>();
+		users.add(new User(null, "one", "pwd"));
+		users.add(new User(null, "two", "pwd"));
+
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+		game.setUsers(users);
+		users.stream().forEach(user -> user.addGame(game));
+
+		Game saved = entityManager.persistFlushFind(game);
+
+		List<User> retrievedUsers = repository.findUsersOfGameByName("game name");
+		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
+	}
+
 }
