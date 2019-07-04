@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -80,18 +81,24 @@ public class UserServiceTest {
 		User replacement = spy(new User(null, "replacement_user", "replacement_pwd"));
 		User replaced = new User(1L, "replaced_user", "replaced_user");
 		when(userRepository.save(any(User.class))).thenReturn(replaced);
-		
+
 		User result = userService.updateUserById(1L, replacement);
 		assertThat(result).isEqualTo(replaced);
 		InOrder inOrder = inOrder(replacement, userRepository);
 		inOrder.verify(replacement).setId(1L);
 		inOrder.verify(userRepository).save(replacement);
 	}
-	
+
 	@Test
 	public void testUpdateUserById_UserIsNull_ShouldReturnNull_ShouldUpdateNothing() {
 		User result = userService.updateUserById(1L, null);
 		assertThat(result).isEqualTo(null);
+		verifyNoMoreInteractions(userRepository);
+	}
+
+	@Test
+	public void testDeleteById_IdIsNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.deleteById(null));
 		verifyNoMoreInteractions(userRepository);
 	}
 }

@@ -42,4 +42,9 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
+	public void deleteById(Long id) {
+		if (id == null)
+			throw new IllegalArgumentException();
+	}
+
 }
