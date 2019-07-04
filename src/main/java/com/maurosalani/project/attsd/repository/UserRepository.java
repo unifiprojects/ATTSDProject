@@ -12,7 +12,7 @@ public class UserRepository {
 
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
 
-	public List<User> findAllUsers() {
+	public List<User> findAll() {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

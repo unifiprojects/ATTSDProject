@@ -32,16 +32,16 @@ public class UserServiceTest {
 	private UserService userService;
 
 	@Test
-	public void testFindAllUsersWhenDatabaseIsEmpty() {
-		when(userRepository.findAllUsers()).thenReturn(Collections.emptyList());
+	public void testFindAllWhenDatabaseIsEmpty() {
+		when(userRepository.findAll()).thenReturn(Collections.emptyList());
 		assertThat(userService.getAllUsers()).isEmpty();
 	}
 
 	@Test
-	public void testFindAllUsersWithExistingUsers() {
+	public void testFindAllWithExistingUsers() {
 		User user1 = new User(1l, "username1", "pwd1");
 		User user2 = new User(2l, "username2", "pwd2");
-		when(userRepository.findAllUsers()).thenReturn(asList(user1, user2));
+		when(userRepository.findAll()).thenReturn(asList(user1, user2));
 		assertThat(userService.getAllUsers()).containsExactly(user1, user2);
 	}
 
