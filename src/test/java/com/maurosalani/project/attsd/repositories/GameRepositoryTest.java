@@ -107,11 +107,11 @@ public class GameRepositoryTest {
 	}
 
 	@Test
-	public void testDeleteSavedGame() {
-		Game game = new Game(null, "game name", "game description", new Date(1000));
+	public void testDeleteByIdOfSaveGame() {
+		Game game = new Game(null, "game name", "game description", new Date());
 		Game saved = entityManager.persistFlushFind(game);
 
-		repository.delete(saved);
+		repository.deleteById(saved.getId());
 		Game gameFound = entityManager.find(Game.class, saved.getId());
 
 		assertThat(gameFound).isEqualTo(null);

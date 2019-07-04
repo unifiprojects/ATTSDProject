@@ -155,10 +155,10 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void testDeleteSavedUser() {
+	public void testDeleteByIdOfSavedUser() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
-		repository.delete(saved);
+		repository.deleteById(saved.getId());
 		User found = entityManager.find(User.class, saved.getId());
 
 		assertThat(found).isEqualTo(null);
