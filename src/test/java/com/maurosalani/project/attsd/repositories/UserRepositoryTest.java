@@ -132,6 +132,19 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void testUsernameIsUpdated() {
+		User user = new User(null, "username", "pwd");
+		User savedAndToUpdate = entityManager.persistFlushFind(user);
+		savedAndToUpdate.setUsername("new_username");
+		
+		User updated = repository.save(savedAndToUpdate);
+
+		assertThat(updated.getUsername()).isEqualTo("new_username");
+	}
+
+
+
+	@Test
 	public void testDeleteSavedUser() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
