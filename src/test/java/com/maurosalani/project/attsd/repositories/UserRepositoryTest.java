@@ -136,13 +136,23 @@ public class UserRepositoryTest {
 		User user = new User(null, "username", "pwd");
 		User savedAndToUpdate = entityManager.persistFlushFind(user);
 		savedAndToUpdate.setUsername("new_username");
-		
+
 		User updated = repository.save(savedAndToUpdate);
 
 		assertThat(updated.getUsername()).isEqualTo("new_username");
 	}
 
+	@Test
+	public void testUsernameIsNotUpdatedIfAlreadyExists_ShouldThrowException() {
+		User user1 = new User(null, "username1", "pwd1");
+		User user2 = new User(null, "username2", "pwd2");
+		entityManager.persistFlushFind(user1);
+		User saved2_toUpdate = entityManager.persistFlushFind(user2);
 
+		saved2_toUpdate.setUsername("username1");
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> repository.saveAndFlush(saved2_toUpdate));
+	}
 
 	@Test
 	public void testDeleteSavedUser() {
@@ -189,9 +199,9 @@ public class UserRepositoryTest {
 		follower.add(new User(null, "two", "pwd"));
 		User user = new User(null, "test", "pwd");
 		user.setFollowerUsers(follower);
-		
+
 		follower.stream().forEach(u -> u.addFollowedUser(user));
-		
+
 		User saved = entityManager.persistFlushFind(user);
 		List<User> found = repository.findFollowerOfUserByUsername("test");
 
