@@ -3,6 +3,7 @@ package com.maurosalani.project.attsd.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
+import com.maurosalani.project.attsd.model.User;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -58,6 +60,19 @@ public class GameRepositoryTest {
 		Game gameFound = repository.findByNameLike("%game%");
 
 		assertThat(gameFound).isEqualTo(saved);
+	}
+
+	@Test
+	public void testUsersListIsPersistedWhenGameIsSaved() {
+		List<User> users = new LinkedList<User>();
+		users.add(new User(null, "one", "pwd"));
+		users.add(new User(null, "two", "pwd"));
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+		game.setUsers(users);
+
+		Game saved = repository.save(game);
+
+		assertThat(users).isEqualTo(saved.getUsers());
 	}
 
 }
