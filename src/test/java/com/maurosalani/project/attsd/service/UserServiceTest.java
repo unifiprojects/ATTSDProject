@@ -14,7 +14,6 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -67,5 +66,12 @@ public class UserServiceTest {
 		InOrder inOrder = inOrder(toSave, userRepository);
 		inOrder.verify(toSave).setId(null);
 		inOrder.verify(userRepository).save(toSave);
+	}
+
+	@Test
+	public void testInsertNewUser_UserIsNull_ShouldReturnNull() {		
+		User result = userService.insertNewUser(null);
+		assertThat(result).isNull();
+		verifyNoMoreInteractions(userRepository);
 	}
 }
