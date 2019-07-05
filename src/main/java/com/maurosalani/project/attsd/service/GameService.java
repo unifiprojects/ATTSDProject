@@ -35,7 +35,12 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 
-	public Game updateGameById(Long id, Game game) throws GameNotFoundException{
+	public Game updateGameById(Long id, Game game) throws GameNotFoundException, IllegalArgumentException {
+		if (id == null || game == null)
+			throw new IllegalArgumentException();
+		if (gameRepository.findById(id) == null)
+			throw new GameNotFoundException();
+
 		game.setId(id);
 		return gameRepository.save(game);
 	}

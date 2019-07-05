@@ -100,4 +100,26 @@ public class GameServiceTest {
 		inOrder.verify(replacement).setId(1L);
 		inOrder.verify(gameRepository).save(replacement);
 	}
+
+	@Test
+	public void testUpdateGameById_GameIsNull_ShouldThrowException() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> gameService.updateGameById(1L, null));
+		verifyNoMoreInteractions(gameRepository);
+	}
+
+	@Test
+	public void testUpdateGameById_IdNotFound_ShouldThrowException() {
+		Game game = new Game(1L, "name", "description", new Date());
+		when(gameRepository.findById(1L)).thenReturn(null);
+		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.updateGameById(1L, game));
+	}
+
+	@Test
+	public void testUpdateGameById_IdIsNull_ShouldThrowException() {
+		Game game = new Game(1L, "name", "description", new Date());
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> gameService.updateGameById(null, game));
+		verifyNoMoreInteractions(gameRepository);
+	}
 }

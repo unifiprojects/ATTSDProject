@@ -40,6 +40,7 @@ public class UserService {
 			throw new IllegalArgumentException();
 		if (userRepository.findById(id) == null)
 			throw new UserNotFoundException();
+
 		user.setId(id);
 		return userRepository.save(user);
 	}
