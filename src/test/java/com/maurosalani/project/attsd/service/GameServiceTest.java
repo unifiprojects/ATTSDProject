@@ -2,10 +2,12 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,5 +40,11 @@ public class GameServiceTest {
 		Game game2 = new Game(2L, "game2", "description2", new Date());
 		when(gameRepository.findAll()).thenReturn(asList(game1, game2));
 		assertThat(gameService.getAllGames()).containsExactly(game1, game2);
+	}
+	
+	@Test
+	public void testGetGameByIdWhenGameDoesNotExist() {
+		when(gameRepository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThat(gameService.getGameById(1L)).isNull();
 	}
 }

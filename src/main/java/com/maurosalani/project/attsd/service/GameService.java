@@ -22,4 +22,9 @@ public class GameService {
 		return gameRepository.findAll();
 	}
 
+	public Game getGameById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
