@@ -36,8 +36,8 @@ public class GameService {
 	}
 
 	public Game updateGameById(Long id, Game game) throws GameNotFoundException{
-		// TODO Auto-generated method stub
-		return null;
+		game.setId(id);
+		return gameRepository.save(game);
 	}
 
 }
