@@ -1,4 +1,4 @@
-package com.maurosalani.project.attsd.repositories;
+package com.maurosalani.project.attsd.repository;
 
 import java.util.List;
 

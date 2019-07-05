@@ -1,4 +1,4 @@
-package com.maurosalani.project.attsd.repositories;
+package com.maurosalani.project.attsd.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.repository.GameRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
