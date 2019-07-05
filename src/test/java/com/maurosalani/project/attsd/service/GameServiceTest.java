@@ -47,4 +47,11 @@ public class GameServiceTest {
 		when(gameRepository.findById(anyLong())).thenReturn(Optional.empty());
 		assertThat(gameService.getGameById(1L)).isNull();
 	}
+	
+	@Test
+	public void testGetGameByIdWithExistingGame() {
+		Game game = new Game(1L, "game", "description", new Date());
+		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
+		assertThat(gameService.getGameById(1L)).isEqualTo(game);
+	}
 }
