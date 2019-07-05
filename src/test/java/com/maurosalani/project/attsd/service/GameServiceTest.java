@@ -2,7 +2,10 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -11,6 +14,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -53,5 +57,20 @@ public class GameServiceTest {
 		Game game = new Game(1L, "game", "description", new Date());
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameById(1L)).isEqualTo(game);
+	}
+	
+	@Test
+	public void testInsertNewgame_setsIdToNull_returnsSavedGame() {
+		Game toSave = spy(new Game(99L, "toSaveGame", "description", new Date(1000)));
+		Game saved = new Game(1L, "savedGame", "description", new Date(1000));
+
+		when(gameRepository.save(any(Game.class))).thenReturn(saved);
+
+		Game result = gameService.insertNewGame(toSave);
+
+		assertThat(result).isEqualTo(saved);
+		InOrder inOrder = inOrder(toSave, gameRepository);
+		inOrder.verify(toSave).setId(null);
+		inOrder.verify(gameRepository).save(toSave);
 	}
 }

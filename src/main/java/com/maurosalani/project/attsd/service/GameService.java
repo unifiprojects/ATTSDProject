@@ -26,4 +26,9 @@ public class GameService {
 		return gameRepository.findById(id).orElse(null);
 	}
 
+	public Game insertNewGame(Game game) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
