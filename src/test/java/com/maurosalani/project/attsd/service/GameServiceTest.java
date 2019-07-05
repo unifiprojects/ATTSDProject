@@ -2,10 +2,12 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -72,5 +74,11 @@ public class GameServiceTest {
 		InOrder inOrder = inOrder(toSave, gameRepository);
 		inOrder.verify(toSave).setId(null);
 		inOrder.verify(gameRepository).save(toSave);
+	}
+	
+	@Test
+	public void testInsertNewGame_GameIsNull_ShouldThrowException() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.insertNewGame(null));
+		verifyNoMoreInteractions(gameRepository);
 	}
 }

@@ -27,8 +27,8 @@ public class GameService {
 	}
 
 	public Game insertNewGame(Game game) {
-		// TODO Auto-generated method stub
-		return null;
+		game.setId(null);
+		return gameRepository.save(game);
 	}
 
 }
