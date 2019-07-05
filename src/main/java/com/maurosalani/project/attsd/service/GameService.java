@@ -27,6 +27,9 @@ public class GameService {
 	}
 
 	public Game insertNewGame(Game game) {
+		if (game == null)
+			throw new IllegalArgumentException();
+
 		game.setId(null);
 		return gameRepository.save(game);
 	}
