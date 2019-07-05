@@ -3,6 +3,7 @@ package com.maurosalani.project.attsd.service;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
@@ -21,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.repository.GameRepository;
 
@@ -79,5 +81,23 @@ public class GameServiceTest {
 	public void testInsertNewGame_GameIsNull_ShouldThrowException() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.insertNewGame(null));
 		verifyNoMoreInteractions(gameRepository);
+	}
+
+	@Test
+	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame() {
+		Game replacement = spy(new Game(null, "replacement_game", "description", new Date()));
+		Game replaced = new Game(1L, "replaced_game", "description", new Date());
+		when(gameRepository.save(any(Game.class))).thenReturn(replaced);
+
+		Game result = null;
+		try {
+			result = gameService.updateGameById(1L, replacement);
+		} catch (GameNotFoundException e) {
+			fail();
+		}
+		assertThat(result).isEqualTo(replaced);
+		InOrder inOrder = inOrder(replacement, gameRepository);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(gameRepository).save(replacement);
 	}
 }

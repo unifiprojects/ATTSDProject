@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.repository.GameRepository;
 
@@ -32,6 +33,11 @@ public class GameService {
 
 		game.setId(null);
 		return gameRepository.save(game);
+	}
+
+	public Game updateGameById(Long id, Game game) throws GameNotFoundException{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
