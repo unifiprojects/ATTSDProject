@@ -35,7 +35,7 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public User updateUserById(Long id, User user) throws UserNotFoundException {
+	public User updateUserById(Long id, User user) throws UserNotFoundException, IllegalArgumentException {
 		if (id == null || user == null)
 			throw new IllegalArgumentException();
 		if (userRepository.findById(id) == null)
@@ -45,7 +45,7 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public void deleteById(Long id) throws UserNotFoundException {
+	public void deleteById(Long id) throws UserNotFoundException, IllegalArgumentException {
 		if (id == null)
 			throw new IllegalArgumentException();
 		if (userRepository.findById(id) == null)
