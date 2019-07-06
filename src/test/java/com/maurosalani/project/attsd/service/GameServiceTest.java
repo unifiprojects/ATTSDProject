@@ -2,12 +2,15 @@ package com.maurosalani.project.attsd.service;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -133,5 +136,13 @@ public class GameServiceTest {
 	public void testDeleteById_IdNotFound_ShouldThrowException() {
 		when(gameRepository.findById(1L)).thenReturn(null);
 		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.deleteById(1L));
+	}
+
+	@Test
+	public void testDeleteById_IdFound() {
+		Game game = new Game(1L, "name", "description", new Date());
+		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
+		assertThatCode(() -> gameService.deleteById(1L)).doesNotThrowAnyException();
+		verify(gameRepository, times(1)).deleteById(1L);
 	}
 }
