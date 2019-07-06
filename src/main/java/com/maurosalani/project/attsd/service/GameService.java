@@ -50,7 +50,7 @@ public class GameService {
 			throw new IllegalArgumentException();
 		if (gameRepository.findById(id) == null)
 			throw new GameNotFoundException();
-
+		gameRepository.deleteById(id);
 	}
 
 }
