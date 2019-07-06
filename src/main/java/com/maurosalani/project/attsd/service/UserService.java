@@ -31,8 +31,8 @@ public class UserService {
 		return userRepository.findByUsername(username).orElse(null);
 	}
 
-	public List<User> getUsersByUsernameLike(String string) {
-		return userRepository.findByUsernameLike(string);
+	public List<User> getUsersByUsernameLike(String username) {
+		return userRepository.findByUsernameLike(username);
 	}
 
 	public User insertNewUser(User user) {

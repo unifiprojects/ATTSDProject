@@ -32,7 +32,7 @@ public class UserRepository {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public List<User> findByUsernameLike(String anyString) {
+	public List<User> findByUsernameLike(String username) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 }
