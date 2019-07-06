@@ -122,4 +122,10 @@ public class GameServiceTest {
 				.isThrownBy(() -> gameService.updateGameById(null, game));
 		verifyNoMoreInteractions(gameRepository);
 	}
+
+	@Test
+	public void testDeleteById_IdIsNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.deleteById(null));
+		verifyNoMoreInteractions(gameRepository);
+	}
 }

@@ -45,4 +45,8 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 
+	public void deleteById(Long id) {
+
+	}
+
 }
