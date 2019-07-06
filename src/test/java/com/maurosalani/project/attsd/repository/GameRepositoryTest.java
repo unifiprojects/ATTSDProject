@@ -55,12 +55,14 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindByNameLike() {
-		Game game = new Game(null, "game name", "game description", new Date(1000));
-		Game saved = entityManager.persistFlushFind(game);
+		Game game1 = new Game(null, "game name 1", "game description 1", new Date(1000));
+		Game game2 = new Game(null, "game name 2", "game description 2", new Date(1000));
+		Game saved1 = entityManager.persistFlushFind(game1);
+		Game saved2 = entityManager.persistFlushFind(game2);
 
-		Game gameFound = repository.findByNameLike("%game%");
+		List<Game> gamesFound = repository.findByNameLike("%game%");
 
-		assertThat(gameFound).isEqualTo(saved);
+		assertThat(gamesFound).containsExactlyInAnyOrder(saved1, saved2);
 	}
 
 	@Test
@@ -106,15 +108,15 @@ public class GameRepositoryTest {
 
 		assertThat(updated.getName()).isEqualTo("new_name");
 	}
-	
+
 	@Test
 	public void testDescriptionIsUpdated() {
 		Game game = new Game(null, "game_name", "game_description", new Date());
 		Game savedAndToUpdate = entityManager.persistFlushFind(game);
 		savedAndToUpdate.setDescription("new_description");
-		
+
 		Game updated = repository.save(savedAndToUpdate);
-		
+
 		assertThat(updated.getDescription()).isEqualTo("new_description");
 	}
 
