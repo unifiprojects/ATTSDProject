@@ -46,7 +46,8 @@ public class GameService {
 	}
 
 	public void deleteById(Long id) {
-
+		if (id == null)
+			throw new IllegalArgumentException();
 	}
 
 }
