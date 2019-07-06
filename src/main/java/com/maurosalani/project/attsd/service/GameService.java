@@ -31,6 +31,10 @@ public class GameService {
 		return gameRepository.findByName(name).orElse(null);
 	}
 
+	public List<Game> getGamesByNameLike(String name) {
+		return gameRepository.findByNameLike(name);
+	}
+
 	public Game insertNewGame(Game game) {
 		if (game == null)
 			throw new IllegalArgumentException();
@@ -55,10 +59,6 @@ public class GameService {
 		if (gameRepository.findById(id) == null)
 			throw new GameNotFoundException();
 		gameRepository.deleteById(id);
-	}
-
-	public List<Game> getGamesByNameLike(String name) {
-		return gameRepository.findByNameLike(name);
 	}
 
 }
