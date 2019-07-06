@@ -173,4 +173,11 @@ public class UserServiceTest {
 				.isThrownBy(() -> userService.addUserToFollowedUsers(null, user));
 	}
 
+	@Test
+	public void testAddUserToFollowedUsersList_ToAddUserIsNull_ShouldThrowException() {
+		User user = new User(1L, "username", "pwd");
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.addUserToFollowedUsers(user, null));
+	}
+
 }
