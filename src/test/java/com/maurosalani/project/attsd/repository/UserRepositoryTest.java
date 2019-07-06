@@ -54,6 +54,18 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void testFindByUsernameLike() {
+		User user1 = new User(null, "user one", "pwd");
+		User user2 = new User(null, "user two", "pwd");
+		User saved1 = entityManager.persistFlushFind(user1);
+		User saved2 = entityManager.persistFlushFind(user2);
+
+		List<User> usersFound = repository.findByUsernameLike("%user%");
+
+		assertThat(usersFound).containsExactlyInAnyOrder(saved1, saved2);
+	}
+
+	@Test
 	public void testUsernameAndPasswordAreMandatoryWhenUserIsSaved() {
 		User userNoUsername = new User(null, null, "pwd");
 		User userNoPassword = new User(null, "username", null);

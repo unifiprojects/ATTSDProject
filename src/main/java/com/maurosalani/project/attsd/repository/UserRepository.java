@@ -12,6 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByUsername(String string);
 
+	List<User> findByUsernameLike(String string);
+
 	@Query("select u.games from User u where u.username = ?1")
 	List<Game> findGamesOfUserByUsername(String username);
 
@@ -20,4 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query("select u.followerUsers from User u where u.username = ?1")
 	List<User> findFollowerOfUserByUsername(String string);
+
 }
