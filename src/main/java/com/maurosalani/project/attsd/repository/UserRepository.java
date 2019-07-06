@@ -27,4 +27,8 @@ public class UserRepository {
 	public void deleteById(Long id) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
+
+	public Optional<User> findByUsername(String username) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
 }
