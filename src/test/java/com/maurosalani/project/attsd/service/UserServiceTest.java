@@ -65,6 +65,13 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testGetUserByUsernameWithExistingUser() {
+		User user = new User(1L, "username", "pwd");
+		when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
+		assertThat(userService.getUserByUsername("username")).isEqualTo(user);
+	}
+
+	@Test
 	public void testInsertNewUser_setsIdToNull_returnsSavedUser() {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
