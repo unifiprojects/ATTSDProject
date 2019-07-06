@@ -180,4 +180,21 @@ public class UserServiceTest {
 				.isThrownBy(() -> userService.addUserToFollowedUsers(user, null));
 	}
 
+	@Test
+	public void testAddUserToFollowedUsersList_ShouldReturnModifiedUser() {
+		User user1 = spy(new User(1L, "username", "pwd"));
+		User user2 = spy(new User(2L, "username", "pwd"));
+		User resulted = new User(1L, "username", "pwd");
+		resulted.addFollowedUser(user2);
+		when(userRepository.save(any(User.class))).thenReturn(resulted);
+
+		User saved = userService.addUserToFollowedUsers(user1, user2);
+		assertThat(saved).isEqualTo(resulted);
+
+		InOrder inOrder = inOrder(user1, user2, userRepository);
+		inOrder.verify(user1).addFollowedUser(user2);
+		inOrder.verify(user2).addFollowerUser(user1);
+		inOrder.verify(userRepository).save(user1);
+
+	}
 }

@@ -1,11 +1,17 @@
 package com.maurosalani.project.attsd.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class User {
 
 	private Long id;
 
 	private String username;
 	private String password;
+
+	List<User> followedUsers;
+	List<User> followerUsers;
 
 	public User() {
 
@@ -76,6 +82,18 @@ public class User {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+
+	public void addFollowedUser(User user) {
+		if (this.followedUsers == null)
+			this.followedUsers = new LinkedList<User>();
+		this.followedUsers.add(user);
+	}
+
+	public void addFollowerUser(User user) {
+		if (this.followerUsers == null)
+			this.followerUsers = new LinkedList<User>();
+		this.followerUsers.add(user);
 	}
 
 }
