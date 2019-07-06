@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -67,7 +68,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testGetGameByNameWhenGameDoesNotExist() {
-		when(gameRepository.findByName(any())).thenReturn(Optional.empty());
+		when(gameRepository.findByName(anyString())).thenReturn(Optional.empty());
 		assertThat(gameService.getGameByName("name")).isNull();
 	}
 
@@ -80,7 +81,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testGetGamesByNameLikeWhenGameDoesNotExist() {
-		when(gameRepository.findByNameLike(any())).thenReturn(null);
+		when(gameRepository.findByNameLike(anyString())).thenReturn(null);
 		assertThat(gameService.getGamesByNameLike("name")).isNull();
 	}
 
