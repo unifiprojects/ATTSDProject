@@ -45,9 +45,12 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 
-	public void deleteById(Long id) {
+	public void deleteById(Long id) throws GameNotFoundException, IllegalArgumentException {
 		if (id == null)
 			throw new IllegalArgumentException();
+		if (gameRepository.findById(id) == null)
+			throw new GameNotFoundException();
+
 	}
 
 }
