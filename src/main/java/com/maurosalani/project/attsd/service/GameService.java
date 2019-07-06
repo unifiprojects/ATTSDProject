@@ -27,6 +27,10 @@ public class GameService {
 		return gameRepository.findById(id).orElse(null);
 	}
 
+	public Game getGameByName(String name) {
+		return gameRepository.findByName(name).orElse(null);
+	}
+
 	public Game insertNewGame(Game game) {
 		if (game == null)
 			throw new IllegalArgumentException();

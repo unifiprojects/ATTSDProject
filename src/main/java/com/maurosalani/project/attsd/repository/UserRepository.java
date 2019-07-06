@@ -20,6 +20,14 @@ public class UserRepository {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
+	public Optional<User> findByUsername(String username) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public List<User> findByUsernameLike(String username) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
 	public User save(User user) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
@@ -28,11 +36,4 @@ public class UserRepository {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public Optional<User> findByUsername(String username) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-	}
-
-	public List<User> findByUsernameLike(String username) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-	}
 }

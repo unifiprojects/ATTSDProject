@@ -66,6 +66,12 @@ public class GameServiceTest {
 	}
 
 	@Test
+	public void testGetGameByNameWhenGameDoesNotExist() {
+		when(gameRepository.findByName(any())).thenReturn(Optional.empty());
+		assertThat(gameService.getGameByName("name")).isNull();
+	}
+
+	@Test
 	public void testInsertNewgame_setsIdToNull_returnsSavedGame() {
 		Game toSave = spy(new Game(99L, "toSaveGame", "description", new Date(1000)));
 		Game saved = new Game(1L, "savedGame", "description", new Date(1000));
