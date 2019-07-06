@@ -166,4 +166,11 @@ public class UserServiceTest {
 		verify(userRepository, times(1)).deleteById(1L);
 	}
 
+	@Test
+	public void testAddUserToFollowedUsersList_UserIsNull_ShouldThrowException() {
+		User user = new User(1L, "username", "pwd");
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.addUserToFollowedUsers(null, user));
+	}
+
 }

@@ -62,4 +62,8 @@ public class UserService {
 		userRepository.deleteById(id);
 	}
 
+	public User addUserToFollowedUsers(User user, User toAdd) {
+		throw new IllegalArgumentException();
+	}
+
 }
