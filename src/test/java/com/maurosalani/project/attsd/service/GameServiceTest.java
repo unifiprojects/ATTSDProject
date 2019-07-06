@@ -128,4 +128,10 @@ public class GameServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.deleteById(null));
 		verifyNoMoreInteractions(gameRepository);
 	}
+
+	@Test
+	public void testDeleteById_IdNotFound_ShouldThrowException() {
+		when(gameRepository.findById(1L)).thenReturn(null);
+		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.deleteById(1L));
+	}
 }
