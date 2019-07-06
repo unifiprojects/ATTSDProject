@@ -63,7 +63,12 @@ public class UserService {
 	}
 
 	public User addUserToFollowedUsers(User user, User toAdd) {
-		throw new IllegalArgumentException();
+		if (user == null || toAdd == null)
+			throw new IllegalArgumentException();
+		user.addFollowedUser(toAdd);
+		toAdd.addFollowerUser(user);
+
+		return userRepository.save(user);
 	}
 
 }
