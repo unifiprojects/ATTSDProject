@@ -57,4 +57,8 @@ public class GameService {
 		gameRepository.deleteById(id);
 	}
 
+	public List<Game> getGamesByNameLike(String name) {
+		return gameRepository.findByNameLike(name);
+	}
+
 }
