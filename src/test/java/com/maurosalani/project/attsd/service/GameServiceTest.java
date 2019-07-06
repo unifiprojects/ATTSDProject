@@ -72,6 +72,13 @@ public class GameServiceTest {
 	}
 
 	@Test
+	public void testGetGameByNameWithExistingGame() {
+		Game game = new Game(1L, "game", "description", new Date());
+		when(gameRepository.findByName("game")).thenReturn(Optional.of(game));
+		assertThat(gameService.getGameByName("game")).isEqualTo(game);
+	}
+
+	@Test
 	public void testInsertNewgame_setsIdToNull_returnsSavedGame() {
 		Game toSave = spy(new Game(99L, "toSaveGame", "description", new Date(1000)));
 		Game saved = new Game(1L, "savedGame", "description", new Date(1000));
