@@ -86,6 +86,14 @@ public class GameServiceTest {
 	}
 
 	@Test
+	public void testGetGamesByNameLikeWithExistingGames() {
+		Game game1 = new Game(1L, "game1", "description1", new Date());
+		Game game2 = new Game(2L, "game2", "description2", new Date());
+		when(gameRepository.findByNameLike("name")).thenReturn(asList(game1, game2));
+		assertThat(gameService.getGamesByNameLike("name")).containsExactly(game1, game2);
+	}
+
+	@Test
 	public void testInsertNewgame_setsIdToNull_returnsSavedGame() {
 		Game toSave = spy(new Game(99L, "toSaveGame", "description", new Date(1000)));
 		Game saved = new Game(1L, "savedGame", "description", new Date(1000));

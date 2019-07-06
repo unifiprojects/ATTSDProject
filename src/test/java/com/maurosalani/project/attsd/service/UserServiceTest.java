@@ -78,7 +78,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUsersByUsernameLikeWithExistingUser() {
+	public void testGetUsersByUsernameLikeWithExistingUsers() {
 		User user1 = new User(1L, "username1", "pwd1");
 		User user2 = new User(2L, "username2", "pwd2");
 		when(userRepository.findByUsernameLike("username")).thenReturn(asList(user1, user2));
