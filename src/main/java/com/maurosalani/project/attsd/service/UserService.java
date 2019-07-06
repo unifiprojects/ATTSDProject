@@ -31,6 +31,10 @@ public class UserService {
 		return userRepository.findByUsername(username).orElse(null);
 	}
 
+	public List<User> getUsersByUsernameLike(String string) {
+		return userRepository.findByUsernameLike(string);
+	}
+
 	public User insertNewUser(User user) {
 		if (user == null)
 			throw new IllegalArgumentException();

@@ -72,6 +72,12 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testGetUsersByUsernameLikeWhenUserDoesNotExist() {
+		when(userRepository.findByUsernameLike(anyString())).thenReturn(null);
+		assertThat(userService.getUsersByUsernameLike("username")).isNull();
+	}
+
+	@Test
 	public void testInsertNewUser_setsIdToNull_returnsSavedUser() {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");

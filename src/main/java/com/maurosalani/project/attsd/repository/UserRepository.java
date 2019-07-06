@@ -31,4 +31,8 @@ public class UserRepository {
 	public Optional<User> findByUsername(String username) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
+
+	public List<User> findByUsernameLike(String anyString) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
 }
