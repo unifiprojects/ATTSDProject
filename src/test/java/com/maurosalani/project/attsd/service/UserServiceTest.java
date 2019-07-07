@@ -207,7 +207,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testAddGameToGamesList_GameIsNull_ShouldThrowException() {
-		User user = spy(new User(1L, "username", "pwd"));
+		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> userService.addGameToGames(user, null));
 	}
