@@ -73,7 +73,12 @@ public class UserService {
 	}
 
 	public User addGameToGames(User user, Game game) {
-		throw new IllegalArgumentException();
+		if (user == null || game == null)
+			throw new IllegalArgumentException();
+		user.addGame(game);
+		game.addUser(user);
+
+		return userRepository.save(user);
 	}
 
 }
