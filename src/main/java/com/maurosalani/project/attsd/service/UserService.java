@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -69,6 +70,10 @@ public class UserService {
 		toAdd.addFollowerUser(user);
 
 		return userRepository.save(user);
+	}
+
+	public User addGameToGames(User user, Game game) {
+		throw new IllegalArgumentException();
 	}
 
 }

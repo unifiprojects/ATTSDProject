@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -190,11 +192,16 @@ public class UserServiceTest {
 
 		User saved = userService.addUserToFollowedUsers(user1, user2);
 		assertThat(saved).isEqualTo(resulted);
-
 		InOrder inOrder = inOrder(user1, user2, userRepository);
 		inOrder.verify(user1).addFollowedUser(user2);
 		inOrder.verify(user2).addFollowerUser(user1);
 		inOrder.verify(userRepository).save(user1);
+	}
 
+	@Test
+	public void testAddGameToGamesList_UserIsNull_ShouldThrowException() {
+		Game game = new Game(1L, "game name", "game description", new Date(1000));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.addGameToGames(null, game));
 	}
 }
