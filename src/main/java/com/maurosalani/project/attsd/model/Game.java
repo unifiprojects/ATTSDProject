@@ -1,6 +1,8 @@
 package com.maurosalani.project.attsd.model;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Game {
 
@@ -9,6 +11,8 @@ public class Game {
 	private String name;
 	private String description;
 	private Date releaseDate;
+
+	List<User> users;
 
 	public Game() {
 
@@ -100,6 +104,12 @@ public class Game {
 	public String toString() {
 		return "Game [id=" + id + ", name=" + name + ", description=" + description + ", releaseDate=" + releaseDate
 				+ "]";
+	}
+
+	public void addUser(User user) {
+		if (this.users == null)
+			this.users = new LinkedList<User>();
+		this.users.add(user);
 	}
 
 }

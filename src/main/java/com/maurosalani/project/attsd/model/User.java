@@ -12,6 +12,7 @@ public class User {
 
 	List<User> followedUsers;
 	List<User> followerUsers;
+	List<Game> games;
 
 	public User() {
 
@@ -94,6 +95,13 @@ public class User {
 		if (this.followerUsers == null)
 			this.followerUsers = new LinkedList<User>();
 		this.followerUsers.add(user);
+	}
+
+	public void addGame(Game game) {
+		if (this.games == null)
+			this.games = new LinkedList<Game>();
+		this.games.add(game);
+
 	}
 
 }
