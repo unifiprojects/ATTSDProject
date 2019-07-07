@@ -204,4 +204,11 @@ public class UserServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> userService.addGameToGames(null, game));
 	}
+
+	@Test
+	public void testAddGameToGamesList_GameIsNull_ShouldThrowException() {
+		User user = spy(new User(1L, "username", "pwd"));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.addGameToGames(user, null));
+	}
 }
