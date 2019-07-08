@@ -35,4 +35,9 @@ public class UserRestController {
 		return userService.getUserByUsername(username);
 	}
 
+	@GetMapping(path = "/usernamelike/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public List<User> getUsersByUsernameLike(@PathVariable String username) {
+		return userService.getUsersByUsernameLike(username);
+	}
+
 }

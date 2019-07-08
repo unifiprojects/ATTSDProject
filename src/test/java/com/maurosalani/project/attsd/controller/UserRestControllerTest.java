@@ -105,7 +105,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByIdWhitExistingUser() throws Exception {
+	public void testFindUserByIdWithExistingUser() throws Exception {
 		when(userService.getUserById(anyLong())).thenReturn(new User(1L, "username", "pwd"));
 		
 		given().
@@ -131,7 +131,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByUsernameWhitExistingUser() throws Exception {
+	public void testFindUserByUsernameWithExistingUser() throws Exception {
 		when(userService.getUserByUsername(anyString())).thenReturn(new User(1L, "testName", "pwd"));
 		
 		given().
@@ -144,5 +144,18 @@ public class UserRestControllerTest {
 				"password", equalTo("pwd"));
 	}
 	
-
+	@Test
+	public void testGetUsersByUsernameLike_UsernameNotFound() throws Exception {
+		when(userService.getUsersByUsernameLike("user")).thenReturn(Collections.emptyList());
+		
+		given().
+		when().
+			get("/api/users/usernamelike/user").
+		then().
+			statusCode(200).
+			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+		assertThat().
+			body(is(equalTo("[]")));
+	}
+	
 }
