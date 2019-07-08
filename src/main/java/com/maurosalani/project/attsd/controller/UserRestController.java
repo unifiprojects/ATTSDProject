@@ -32,14 +32,8 @@ public class UserRestController {
 	}
 
 	@GetMapping(path = "/id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User getUserByIdWithNoId() throws BadRequestException, UserNotFoundException {
-		User user;
-		try {
-			user = userService.getUserById(null);
-		} catch (IllegalArgumentException e) {
-			throw new BadRequestException();
-		}
-		return user;
+	public User getUserByIdWithNoId() throws BadRequestException {
+		throw new BadRequestException();
 	}
 
 	@GetMapping(path = "/username/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

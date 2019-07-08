@@ -182,9 +182,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByIdWithEmptyId() throws Exception {
-		when(userService.getUserById(null)).thenThrow(IllegalArgumentException.class);
-		
+	public void testFindUserByIdWithEmptyId() throws Exception {		
 		given().
 		when().
 			get("/api/users/id").

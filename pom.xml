@@ -247,6 +247,8 @@
                 <exclude>**/*Application.*</exclude>
                 <exclude>**/model/*</exclude>
                 <exclude>**/service/*</exclude>
+                <exclude>**/exception/*</exclude>
+                <exclude>**/exception_handler/*</exclude>
               </excludes>
             </configuration>
           </plugin>
