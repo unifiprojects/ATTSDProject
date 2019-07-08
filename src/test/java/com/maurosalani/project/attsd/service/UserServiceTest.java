@@ -80,7 +80,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUserByUsernameWithExistingUser() throws Exception{
+	public void testGetUserByUsernameWithExistingUser() throws Exception {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
 		assertThat(userService.getUserByUsername("username")).isEqualTo(user);
@@ -88,8 +88,8 @@ public class UserServiceTest {
 
 	@Test
 	public void testGetUsersByUsernameLikeWhenUserDoesNotExist() {
-		when(userRepository.findByUsernameLike(anyString())).thenReturn(null);
-		assertThat(userService.getUsersByUsernameLike("username")).isNull();
+		when(userRepository.findByUsernameLike(anyString())).thenReturn(Collections.emptyList());
+		assertThat(userService.getUsersByUsernameLike("username")).isEmpty();
 	}
 
 	@Test
