@@ -47,6 +47,10 @@ public class UserRestControllerTest {
 				.setHandlerExceptionResolvers(handlerExceptionResolver));
 	}
 
+	/**
+	 * Necessary to register the exception handler for these unit tests
+	 * @return
+	 */
 	private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
 		StaticApplicationContext applicationContext = new StaticApplicationContext();
 		applicationContext.registerSingleton("exceptionHandler", GlobalExceptionHandler.class);
@@ -145,7 +149,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUsersByUsernameLikeWhenNotFound() throws Exception {
+	public void testGetUsersByUsernameLikeWhenNotFound()  {
 		when(userService.getUsersByUsernameLike("user")).thenReturn(Collections.emptyList());
 		
 		given().
@@ -159,7 +163,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUsersByUsernameLikeWithExistingUsers() throws Exception {
+	public void testGetUsersByUsernameLikeWithExistingUsers()  {
 	    User user1 = new User(1L, "user1", "pwd1");
 	    User user2 = new User(2L, "user2", "pwd2");
 	    
@@ -182,7 +186,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUserByIdWithEmptyId() throws Exception {		
+	public void testGetUserByIdWithEmptyId()  {		
 		given().
 		when().
 			get("/api/users/id").
@@ -192,7 +196,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUserByUsernameWithEmptyUsername() throws Exception {		
+	public void testGetUserByUsernameWithEmptyUsername()  {		
 		given().
 		when().
 			get("/api/users/username").
@@ -202,13 +206,32 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUsersByUsernameLikeWithEmptyUsername() throws Exception {		
+	public void testGetUsersByUsernameLikeWithEmptyUsername()  {		
 		given().
 		when().
 			get("/api/users/usernamelike").
 		then().	
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testPost_InsertNewEmployee() {
+		User requestBodyUser = new User(null, "testUsername", "pwd");
+		when(userService.insertNewUser(requestBodyUser)).
+			thenReturn(new User(1L, "testUsername", "pwd"));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyUser).
+		when().
+			post("/api/users/new").
+		then().
+			statusCode(200).
+			body(
+				"id", equalTo(1),
+				"username", equalTo("testUsername"),
+				"password", equalTo("pwd"));
 	}
 	
 }
