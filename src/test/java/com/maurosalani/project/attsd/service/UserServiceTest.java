@@ -74,8 +74,7 @@ public class UserServiceTest {
 
 	@Test
 	public void testGetUserByIdWithIdNull() throws Exception {
-		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.getUserById(null));
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.getUserById(null));
 	}
 
 	@Test
@@ -83,6 +82,11 @@ public class UserServiceTest {
 		when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
 				.isThrownBy(() -> userService.getUserByUsername("username"));
+	}
+
+	@Test
+	public void testGetUserByUsernameWithUsernameNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.getUserByUsername(null));
 	}
 
 	@Test
@@ -97,12 +101,6 @@ public class UserServiceTest {
 		when(userRepository.findByUsernameLike(anyString())).thenReturn(Collections.emptyList());
 		assertThat(userService.getUsersByUsernameLike("username")).isEmpty();
 	}
-	
-	@Test
-	public void testGetUserByUsernameWithUsernameNull() {
-		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.getUserByUsername(null));
-	}
 
 	@Test
 	public void testGetUsersByUsernameLikeWithExistingUsers() {
@@ -110,6 +108,12 @@ public class UserServiceTest {
 		User user2 = new User(2L, "username2", "pwd2");
 		when(userRepository.findByUsernameLike("username")).thenReturn(asList(user1, user2));
 		assertThat(userService.getUsersByUsernameLike("username")).containsExactly(user1, user2);
+	}
+
+	@Test
+	public void testGetUsersByUsernameLikeWithUsernameNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.getUsersByUsernameLike(null));
 	}
 
 	@Test

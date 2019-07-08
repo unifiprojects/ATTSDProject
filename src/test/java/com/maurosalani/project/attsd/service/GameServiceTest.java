@@ -104,6 +104,11 @@ public class GameServiceTest {
 		when(gameRepository.findByNameLike("name")).thenReturn(asList(game1, game2));
 		assertThat(gameService.getGamesByNameLike("name")).containsExactly(game1, game2);
 	}
+	
+	@Test
+	public void testGetGamesByNameLikeWithNameNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.getGamesByNameLike(null));
+	}
 
 	@Test
 	public void testInsertNewgame_setsIdToNull_returnsSavedGame() {
