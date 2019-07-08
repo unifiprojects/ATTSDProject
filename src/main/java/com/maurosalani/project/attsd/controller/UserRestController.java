@@ -30,4 +30,9 @@ public class UserRestController {
 		return userService.getUserById(id);
 	}
 
+	@GetMapping(path = "/username/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User getUserByUsername(@PathVariable String username) throws UserNotFoundException {
+		return userService.getUserByUsername(username);
+	}
+
 }
