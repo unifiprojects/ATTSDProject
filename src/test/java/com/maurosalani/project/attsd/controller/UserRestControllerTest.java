@@ -182,10 +182,20 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByIdWithEmptyId() throws Exception {		
+	public void testGetUserByIdWithEmptyId() throws Exception {		
 		given().
 		when().
 			get("/api/users/id").
+		then().	
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testGetUserByUsernameWithEmptyUsername() throws Exception {		
+		given().
+		when().
+			get("/api/users/username").
 		then().	
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
