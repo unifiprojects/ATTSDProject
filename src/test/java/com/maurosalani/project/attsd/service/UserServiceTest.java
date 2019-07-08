@@ -4,15 +4,24 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
@@ -33,6 +42,9 @@ public class UserServiceTest {
 	@InjectMocks
 	private UserService userService;
 
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
 	@Test
 	public void testFindAllWhenDatabaseIsEmpty() {
 		when(userRepository.findAll()).thenReturn(Collections.emptyList());
@@ -48,13 +60,14 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUserByIdWhenUserDoesNotExist() {
+	public void testGetUserByIdWhenUserDoesNotExist_ShouldThrowException() throws Exception {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-		assertThat(userService.getUserById(1L)).isNull();
+		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.getUserById(1L));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
 	@Test
-	public void testGetUserByIdWithExistingUser() {
+	public void testGetUserByIdWithExistingUser() throws Exception {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		assertThat(userService.getUserById(1L)).isEqualTo(user);
@@ -109,17 +122,14 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserById_setsIdToArgument_ShouldReturnSavedUser() {
+	public void testUpdateUserById_setsIdToArgument_ShouldReturnSavedUser() throws Exception {
 		User replacement = spy(new User(null, "replacement_user", "replacement_pwd"));
 		User replaced = new User(1L, "replaced_user", "replaced_user");
 		when(userRepository.save(any(User.class))).thenReturn(replaced);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(replaced));
 
-		User result = null;
-		try {
-			result = userService.updateUserById(1L, replacement);
-		} catch (UserNotFoundException e) {
-			fail();
-		}
+		User result = userService.updateUserById(1L, replacement);
+
 		assertThat(result).isEqualTo(replaced);
 		InOrder inOrder = inOrder(replacement, userRepository);
 		inOrder.verify(replacement).setId(1L);
@@ -136,8 +146,8 @@ public class UserServiceTest {
 	@Test
 	public void testUpdateUserById_IdNotFound_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
-		when(userRepository.findById(1L)).thenReturn(null);
-		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.updateUserById(1L, user));
+		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.updateUserById(user.getId(), user));
 	}
 
 	@Test
@@ -156,8 +166,9 @@ public class UserServiceTest {
 
 	@Test
 	public void testDeleteById_IdNotFound_ShouldThrowException() {
-		when(userRepository.findById(1L)).thenReturn(null);
+		when(userRepository.findById(1L)).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.deleteById(1L));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
 	@Test
@@ -201,15 +212,13 @@ public class UserServiceTest {
 	@Test
 	public void testAddGameToGamesList_UserIsNull_ShouldThrowException() {
 		Game game = new Game(1L, "game name", "game description", new Date(1000));
-		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addGame(null, game));
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.addGame(null, game));
 	}
 
 	@Test
 	public void testAddGameToGamesList_GameIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
-		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addGame(user, null));
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.addGame(user, null));
 	}
 
 	@Test

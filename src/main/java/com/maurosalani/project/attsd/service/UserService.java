@@ -24,8 +24,8 @@ public class UserService {
 		return userRepository.findAll();
 	}
 
-	public User getUserById(Long id) {
-		return userRepository.findById(id).orElse(null);
+	public User getUserById(Long id) throws UserNotFoundException {
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 	}
 
 	public User getUserByUsername(String username) {
@@ -47,8 +47,8 @@ public class UserService {
 	public User updateUserById(Long id, User user) throws UserNotFoundException, IllegalArgumentException {
 		if (id == null || user == null)
 			throw new IllegalArgumentException();
-		if (userRepository.findById(id) == null)
-			throw new UserNotFoundException();
+
+		checkExistanceOfUser(id);
 
 		user.setId(id);
 		return userRepository.save(user);
@@ -57,10 +57,14 @@ public class UserService {
 	public void deleteById(Long id) throws UserNotFoundException, IllegalArgumentException {
 		if (id == null)
 			throw new IllegalArgumentException();
-		if (userRepository.findById(id) == null)
-			throw new UserNotFoundException();
+
+		checkExistanceOfUser(id);
 
 		userRepository.deleteById(id);
+	}
+
+	private void checkExistanceOfUser(Long id) throws UserNotFoundException {
+		getUserById(id);
 	}
 
 	public User addFollowedUser(User user, User followedToAdd) {
