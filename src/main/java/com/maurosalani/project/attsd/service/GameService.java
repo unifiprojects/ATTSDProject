@@ -12,6 +12,8 @@ import com.maurosalani.project.attsd.repository.GameRepository;
 @Service
 public class GameService {
 
+	private static final String GAME_NOT_FOUND = "Game not found";
+	
 	@Autowired
 	private GameRepository gameRepository;
 
@@ -24,14 +26,23 @@ public class GameService {
 	}
 
 	public Game getGameById(Long id) throws GameNotFoundException {
-		return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
+		if (id == null)
+			throw new IllegalArgumentException();
+		
+		return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
 	}
 
 	public Game getGameByName(String name) throws GameNotFoundException {
-		return gameRepository.findByName(name).orElseThrow(() -> new GameNotFoundException("Game not found"));
+		if (name == null)
+			throw new IllegalArgumentException();
+		
+		return gameRepository.findByName(name).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
 	}
 
 	public List<Game> getGamesByNameLike(String name) {
+		if (name == null)
+			throw new IllegalArgumentException();
+		
 		return gameRepository.findByNameLike(name);
 	}
 

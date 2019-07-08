@@ -69,6 +69,11 @@ public class GameServiceTest {
 	}
 
 	@Test
+	public void testGetGameByIdWithIdNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.getGameById(null));
+	}
+
+	@Test
 	public void testGetGameByNameWhenGameDoesNotExist_ShouldThrowException() {
 		when(gameRepository.findByName(anyString())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.getGameByName("game"));
@@ -79,6 +84,11 @@ public class GameServiceTest {
 		Game game = new Game(1L, "game", "description", new Date());
 		when(gameRepository.findByName("game")).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameByName("game")).isEqualTo(game);
+	}
+
+	@Test
+	public void testGetGameByNameWithNameNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> gameService.getGameByName(null));
 	}
 
 	@Test
@@ -117,7 +127,8 @@ public class GameServiceTest {
 	}
 
 	@Test
-	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame() throws IllegalArgumentException, GameNotFoundException {
+	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame()
+			throws IllegalArgumentException, GameNotFoundException {
 		Game replacement = spy(new Game(null, "replacement_game", "description", new Date()));
 		Game replaced = new Game(1L, "replaced_game", "description", new Date());
 		when(gameRepository.save(any(Game.class))).thenReturn(replaced);

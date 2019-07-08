@@ -13,6 +13,8 @@ import com.maurosalani.project.attsd.repository.UserRepository;
 @Service
 public class UserService {
 
+	private static final String USER_NOT_FOUND = "User not found";
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -25,14 +27,23 @@ public class UserService {
 	}
 
 	public User getUserById(Long id) throws UserNotFoundException {
-		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+		if (id == null)
+			throw new IllegalArgumentException();
+		
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 	public User getUserByUsername(String username) throws UserNotFoundException {
-		return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+		if (username == null)
+			throw new IllegalArgumentException();
+		
+		return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 	public List<User> getUsersByUsernameLike(String username) {
+		if (username == null)
+			throw new IllegalArgumentException();
+		
 		return userRepository.findByUsernameLike(username);
 	}
 
