@@ -15,7 +15,11 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User getUserById(Long id) throws UserNotFoundException{
+	public User getUserById(Long id) throws UserNotFoundException {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public User getUserByUsername(String username) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

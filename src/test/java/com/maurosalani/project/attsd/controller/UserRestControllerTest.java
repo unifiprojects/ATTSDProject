@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -116,5 +117,18 @@ public class UserRestControllerTest {
 				"username", equalTo("username"), 
 				"password", equalTo("pwd"));
 	}
+	
+	@Test
+	public void testFindUserByUsernameWhenNotFound() throws Exception {
+		when(userService.getUserByUsername(anyString())).thenThrow(UserNotFoundException.class);
+		
+		given().
+		when().
+			get("/api/users/username/testName").
+		then().	
+			statusCode(404).
+			statusLine(containsString("User Not Found"));
+	}
+	
 
 }
