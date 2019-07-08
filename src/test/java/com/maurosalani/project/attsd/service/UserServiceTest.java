@@ -76,11 +76,12 @@ public class UserServiceTest {
 	@Test
 	public void testGetUserByUsernameWhenUserDoesNotExist() {
 		when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-		assertThat(userService.getUserByUsername("username")).isNull();
+		assertThatExceptionOfType(UserNotFoundException.class)
+				.isThrownBy(() -> userService.getUserByUsername("username"));
 	}
 
 	@Test
-	public void testGetUserByUsernameWithExistingUser() {
+	public void testGetUserByUsernameWithExistingUser() throws Exception{
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
 		assertThat(userService.getUserByUsername("username")).isEqualTo(user);
@@ -147,7 +148,8 @@ public class UserServiceTest {
 	public void testUpdateUserById_IdNotFound_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
-		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.updateUserById(user.getId(), user));
+		assertThatExceptionOfType(UserNotFoundException.class)
+				.isThrownBy(() -> userService.updateUserById(user.getId(), user));
 	}
 
 	@Test

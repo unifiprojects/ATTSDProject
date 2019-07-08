@@ -28,8 +28,8 @@ public class UserService {
 		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 	}
 
-	public User getUserByUsername(String username) {
-		return userRepository.findByUsername(username).orElse(null);
+	public User getUserByUsername(String username) throws UserNotFoundException {
+		return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
 	}
 
 	public List<User> getUsersByUsernameLike(String username) {
