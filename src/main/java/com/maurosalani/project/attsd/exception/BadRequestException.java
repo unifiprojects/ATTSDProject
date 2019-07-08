@@ -1,6 +1,6 @@
 package com.maurosalani.project.attsd.exception;
 
-public class UserNotFoundException extends Exception {
+public class BadRequestException extends Exception {
 
 	/**
 	 * 
