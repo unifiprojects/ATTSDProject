@@ -130,5 +130,19 @@ public class UserRestControllerTest {
 			statusLine(containsString("User Not Found"));
 	}
 	
+	@Test
+	public void testFindUserByUsernameWhitExistingUser() throws Exception {
+		when(userService.getUserByUsername(anyString())).thenReturn(new User(1L, "testName", "pwd"));
+		
+		given().
+		when().
+			get("/api/users/username/testName").
+		then().	
+			statusCode(200).
+			body("id", equalTo(1), 
+				"username", equalTo("testName"), 
+				"password", equalTo("pwd"));
+	}
+	
 
 }
