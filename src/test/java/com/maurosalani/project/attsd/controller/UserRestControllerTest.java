@@ -216,7 +216,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPost_InsertNewEmployee() {
+	public void testPost_InsertNewUser() {
 		User requestBodyUser = new User(null, "testUsername", "pwd");
 		when(userService.insertNewUser(requestBodyUser)).
 			thenReturn(new User(1L, "testUsername", "pwd"));
@@ -232,6 +232,25 @@ public class UserRestControllerTest {
 				"id", equalTo(1),
 				"username", equalTo("testUsername"),
 				"password", equalTo("pwd"));
+	}
+	
+	@Test
+	public void testPut_UpdatePasswordOfUser() throws Exception {
+		User requestBodyUser = new User(null, "testUsername", "new_password");
+		when(userService.updateUserById(1L, requestBodyUser)).
+			thenReturn(new User(1L, "testUsername", "new_password"));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyUser).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(200).
+			body(
+				"id", equalTo(1),
+				"username", equalTo("testUsername"),
+				"password", equalTo("new_password"));
 	}
 	
 }
