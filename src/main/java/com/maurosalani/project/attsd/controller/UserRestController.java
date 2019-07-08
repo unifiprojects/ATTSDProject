@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,24 +33,29 @@ public class UserRestController {
 		return userService.getUserById(id);
 	}
 
-	@GetMapping(path = "/id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User getUserByIdWithNoId() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
 	@GetMapping(path = "/username/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User getUserByUsername(@PathVariable String username) throws UserNotFoundException {
 		return userService.getUserByUsername(username);
 	}
 
-	@GetMapping(path = "/username", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User getUserByUsernameWithNoUsername() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
 	@GetMapping(path = "/usernamelike/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<User> getUsersByUsernameLike(@PathVariable String username) {
 		return userService.getUsersByUsernameLike(username);
+	}
+
+	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User insertNewUser(@RequestBody User user) {
+		return userService.insertNewUser(user);
+	}
+
+	@GetMapping(path = "/id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User getUserByIdWithNoId() throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@GetMapping(path = "/username", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User getUserByUsernameWithNoUsername() throws BadRequestException {
+		throw new BadRequestException();
 	}
 
 	@GetMapping(path = "/usernamelike", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
