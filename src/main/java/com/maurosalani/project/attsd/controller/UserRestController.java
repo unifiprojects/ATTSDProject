@@ -51,4 +51,9 @@ public class UserRestController {
 		return userService.getUsersByUsernameLike(username);
 	}
 
+	@GetMapping(path = "/usernamelike", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public List<User> getUsersByUsernameLikeWithNoUsername() throws BadRequestException {
+		throw new BadRequestException();
+	}
+
 }

@@ -201,4 +201,14 @@ public class UserRestControllerTest {
 			statusLine(containsString("Bad Request"));
 	}
 	
+	@Test
+	public void testGetUsersByUsernameLikeWithEmptyUsername() throws Exception {		
+		given().
+		when().
+			get("/api/users/usernamelike").
+		then().	
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
 }
