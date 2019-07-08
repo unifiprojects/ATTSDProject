@@ -5,20 +5,29 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
 
 @RestController
+@RequestMapping("/api/users")
 public class UserRestController {
 
 	@Autowired
 	private UserService userService;
 
-	@GetMapping(path = "/api/users", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<User> getAllUsers() {
 		return userService.getAllUsers();
+	}
+
+	@GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User getUserById(@PathVariable Long id) throws UserNotFoundException {
+		return userService.getUserById(id);
 	}
 
 }
