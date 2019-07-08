@@ -63,20 +63,20 @@ public class UserService {
 		userRepository.deleteById(id);
 	}
 
-	public User addUserToFollowedUsers(User user, User toAdd) {
-		if (user == null || toAdd == null)
+	public User addFollowedUser(User user, User followedToAdd) {
+		if (user == null || followedToAdd == null)
 			throw new IllegalArgumentException();
-		user.addFollowedUser(toAdd);
-		toAdd.addFollowerUser(user);
+		user.addFollowedUser(followedToAdd);
+		followedToAdd.addFollowerUser(user);
 
 		return userRepository.save(user);
 	}
 
-	public User addGameToGames(User user, Game game) {
-		if (user == null || game == null)
+	public User addGame(User user, Game gameToAdd) {
+		if (user == null || gameToAdd == null)
 			throw new IllegalArgumentException();
-		user.addGame(game);
-		game.addUser(user);
+		user.addGame(gameToAdd);
+		gameToAdd.addUser(user);
 
 		return userRepository.save(user);
 	}

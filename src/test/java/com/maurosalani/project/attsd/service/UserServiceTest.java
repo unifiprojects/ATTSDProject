@@ -172,14 +172,14 @@ public class UserServiceTest {
 	public void testAddUserToFollowedUsersList_UserIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addUserToFollowedUsers(null, user));
+				.isThrownBy(() -> userService.addFollowedUser(null, user));
 	}
 
 	@Test
 	public void testAddUserToFollowedUsersList_ToAddUserIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addUserToFollowedUsers(user, null));
+				.isThrownBy(() -> userService.addFollowedUser(user, null));
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public class UserServiceTest {
 		resulted.addFollowedUser(user2);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
 
-		User saved = userService.addUserToFollowedUsers(user1, user2);
+		User saved = userService.addFollowedUser(user1, user2);
 		assertThat(saved).isEqualTo(resulted);
 		InOrder inOrder = inOrder(user1, user2, userRepository);
 		inOrder.verify(user1).addFollowedUser(user2);
@@ -202,14 +202,14 @@ public class UserServiceTest {
 	public void testAddGameToGamesList_UserIsNull_ShouldThrowException() {
 		Game game = new Game(1L, "game name", "game description", new Date(1000));
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addGameToGames(null, game));
+				.isThrownBy(() -> userService.addGame(null, game));
 	}
 
 	@Test
 	public void testAddGameToGamesList_GameIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addGameToGames(user, null));
+				.isThrownBy(() -> userService.addGame(user, null));
 	}
 
 	@Test
@@ -220,7 +220,7 @@ public class UserServiceTest {
 		resulted.addGame(game);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
 
-		User saved = userService.addGameToGames(user, game);
+		User saved = userService.addGame(user, game);
 		assertThat(saved).isEqualTo(resulted);
 		InOrder inOrder = inOrder(user, game, userRepository);
 		inOrder.verify(user).addGame(game);
