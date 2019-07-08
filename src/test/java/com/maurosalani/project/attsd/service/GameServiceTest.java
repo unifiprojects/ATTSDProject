@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -27,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.repository.GameRepository;
 
@@ -54,26 +56,26 @@ public class GameServiceTest {
 	}
 
 	@Test
-	public void testGetGameByIdWhenGameDoesNotExist() {
+	public void testGetGameByIdWhenGameDoesNotExist_ShouldThrowException() {
 		when(gameRepository.findById(anyLong())).thenReturn(Optional.empty());
-		assertThat(gameService.getGameById(1L)).isNull();
+		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.getGameById(1L));
 	}
 
 	@Test
-	public void testGetGameByIdWithExistingGame() {
+	public void testGetGameByIdWithExistingGame() throws Exception {
 		Game game = new Game(1L, "game", "description", new Date());
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameById(1L)).isEqualTo(game);
 	}
 
 	@Test
-	public void testGetGameByNameWhenGameDoesNotExist() {
+	public void testGetGameByNameWhenGameDoesNotExist_ShouldThrowException() {
 		when(gameRepository.findByName(anyString())).thenReturn(Optional.empty());
-		assertThat(gameService.getGameByName("name")).isNull();
+		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.getGameByName("game"));
 	}
 
 	@Test
-	public void testGetGameByNameWithExistingGame() {
+	public void testGetGameByNameWithExistingGame() throws Exception {
 		Game game = new Game(1L, "game", "description", new Date());
 		when(gameRepository.findByName("game")).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameByName("game")).isEqualTo(game);
@@ -115,17 +117,14 @@ public class GameServiceTest {
 	}
 
 	@Test
-	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame() {
+	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame() throws IllegalArgumentException, GameNotFoundException {
 		Game replacement = spy(new Game(null, "replacement_game", "description", new Date()));
 		Game replaced = new Game(1L, "replaced_game", "description", new Date());
 		when(gameRepository.save(any(Game.class))).thenReturn(replaced);
+		when(gameRepository.findById(1L)).thenReturn(Optional.of(replaced));
 
-		Game result = null;
-		try {
-			result = gameService.updateGameById(1L, replacement);
-		} catch (GameNotFoundException e) {
-			fail();
-		}
+		Game result = gameService.updateGameById(1L, replacement);
+
 		assertThat(result).isEqualTo(replaced);
 		InOrder inOrder = inOrder(replacement, gameRepository);
 		inOrder.verify(replacement).setId(1L);
@@ -142,8 +141,9 @@ public class GameServiceTest {
 	@Test
 	public void testUpdateGameById_IdNotFound_ShouldThrowException() {
 		Game game = new Game(1L, "name", "description", new Date());
-		when(gameRepository.findById(1L)).thenReturn(null);
+		when(gameRepository.findById(1L)).thenReturn(Optional.empty());
 		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.updateGameById(1L, game));
+		verifyNoMoreInteractions(ignoreStubs(gameRepository));
 	}
 
 	@Test
@@ -162,8 +162,9 @@ public class GameServiceTest {
 
 	@Test
 	public void testDeleteById_IdNotFound_ShouldThrowException() {
-		when(gameRepository.findById(1L)).thenReturn(null);
+		when(gameRepository.findById(1L)).thenReturn(Optional.empty());
 		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.deleteById(1L));
+		verifyNoMoreInteractions(ignoreStubs(gameRepository));
 	}
 
 	@Test

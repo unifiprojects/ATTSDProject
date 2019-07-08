@@ -63,7 +63,6 @@ public class UserServiceTest {
 	public void testGetUserByIdWhenUserDoesNotExist_ShouldThrowException() throws Exception {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.getUserById(1L));
-		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
 	@Test

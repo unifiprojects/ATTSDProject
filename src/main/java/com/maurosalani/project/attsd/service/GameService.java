@@ -23,12 +23,12 @@ public class GameService {
 		return gameRepository.findAll();
 	}
 
-	public Game getGameById(Long id) {
-		return gameRepository.findById(id).orElse(null);
+	public Game getGameById(Long id) throws GameNotFoundException {
+		return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
 	}
 
-	public Game getGameByName(String name) {
-		return gameRepository.findByName(name).orElse(null);
+	public Game getGameByName(String name) throws GameNotFoundException {
+		return gameRepository.findByName(name).orElseThrow(() -> new GameNotFoundException("Game not found"));
 	}
 
 	public List<Game> getGamesByNameLike(String name) {
@@ -46,8 +46,8 @@ public class GameService {
 	public Game updateGameById(Long id, Game game) throws GameNotFoundException, IllegalArgumentException {
 		if (id == null || game == null)
 			throw new IllegalArgumentException();
-		if (gameRepository.findById(id) == null)
-			throw new GameNotFoundException();
+
+		checkExistanceOfGame(id);
 
 		game.setId(id);
 		return gameRepository.save(game);
@@ -56,9 +56,14 @@ public class GameService {
 	public void deleteById(Long id) throws GameNotFoundException, IllegalArgumentException {
 		if (id == null)
 			throw new IllegalArgumentException();
-		if (gameRepository.findById(id) == null)
-			throw new GameNotFoundException();
+
+		checkExistanceOfGame(id);
+
 		gameRepository.deleteById(id);
+	}
+
+	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
+		getGameById(id);
 	}
 
 }
