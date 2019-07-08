@@ -108,7 +108,7 @@ public class Game {
 
 	public void addUser(User user) {
 		if (this.users == null)
-			this.users = new LinkedList<User>();
+			this.users = new LinkedList<>();
 		this.users.add(user);
 	}
 

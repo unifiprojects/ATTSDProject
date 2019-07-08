@@ -43,7 +43,7 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 
-	public Game updateGameById(Long id, Game game) throws GameNotFoundException, IllegalArgumentException {
+	public Game updateGameById(Long id, Game game) throws GameNotFoundException {
 		if (id == null || game == null)
 			throw new IllegalArgumentException();
 
@@ -53,7 +53,7 @@ public class GameService {
 		return gameRepository.save(game);
 	}
 
-	public void deleteById(Long id) throws GameNotFoundException, IllegalArgumentException {
+	public void deleteById(Long id) throws GameNotFoundException {
 		if (id == null)
 			throw new IllegalArgumentException();
 

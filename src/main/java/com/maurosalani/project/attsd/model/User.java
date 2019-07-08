@@ -87,19 +87,19 @@ public class User {
 
 	public void addFollowedUser(User user) {
 		if (this.followedUsers == null)
-			this.followedUsers = new LinkedList<User>();
+			this.followedUsers = new LinkedList<>();
 		this.followedUsers.add(user);
 	}
 
 	public void addFollowerUser(User user) {
 		if (this.followerUsers == null)
-			this.followerUsers = new LinkedList<User>();
+			this.followerUsers = new LinkedList<>();
 		this.followerUsers.add(user);
 	}
 
 	public void addGame(Game game) {
 		if (this.games == null)
-			this.games = new LinkedList<Game>();
+			this.games = new LinkedList<>();
 		this.games.add(game);
 
 	}
