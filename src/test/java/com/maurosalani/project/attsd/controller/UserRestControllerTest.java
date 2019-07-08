@@ -145,7 +145,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUsersByUsernameLike_UsernameNotFound() throws Exception {
+	public void testGetUsersByUsernameLikeWhenNotFound() throws Exception {
 		when(userService.getUsersByUsernameLike("user")).thenReturn(Collections.emptyList());
 		
 		given().
@@ -158,4 +158,26 @@ public class UserRestControllerTest {
 			body(is(equalTo("[]")));
 	}
 	
+	@Test
+	  public void testGetUsersByUsernameLikeWithExistingUsers() throws Exception {
+	    User user1 = new User(1L, "user1", "pwd1");
+	    User user2 = new User(2L, "user2", "pwd2");
+	    
+	    when(userService.getUsersByUsernameLike("user")).thenReturn(asList(user1,user2));
+	    
+	    given().
+	    when().
+	      get("/api/users/usernamelike/user").
+	    then().
+	      statusCode(200).
+	      contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+	    assertThat().
+	      body(
+	        "id[0]", equalTo(1),
+	        "username[0]", equalTo("user1"),
+	        "password[0]", equalTo("pwd1"),
+	        "id[1]", equalTo(2),
+	        "username[1]", equalTo("user2"),
+	        "password[1]", equalTo("pwd2"));
+	  }
 }
