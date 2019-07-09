@@ -302,4 +302,16 @@ public class GameRestControllerTest {
 
 		verify(gameService, times(1)).deleteGameById(1L);
 	}
+	
+	@Test
+	public void testDelete_removeNotExistingGame_shouldReturn404() throws GameNotFoundException {
+		doThrow(GameNotFoundException.class).when(gameService).deleteGameById(anyLong());
+		
+		given().
+		when().
+			delete("/api/games/delete/1").
+		then().
+			statusCode(404).
+			statusLine(containsString("Game Not Found"));
+	}
 }
