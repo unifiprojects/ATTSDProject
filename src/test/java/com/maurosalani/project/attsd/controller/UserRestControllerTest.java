@@ -7,6 +7,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -252,5 +254,16 @@ public class UserRestControllerTest {
 				"username", equalTo("testUsername"),
 				"password", equalTo("new_password"));
 	}
-	
+
+	@Test
+	public void testDelete_removeExistingUser() throws Exception {
+		given().
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(204);
+
+		verify(userService, times(1)).deleteUserById(1L);
+	}
+
 }
