@@ -191,4 +191,34 @@ public class GameRestControllerTest {
 				"description[1]", equalTo("description2"),
 				"releaseDate[1]", equalTo(1000));
 	}
+	
+	@Test
+	public void testGetGameByIdWithEmptyId()  {		
+		given().
+		when().
+			get("/api/games/id").
+		then().	
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testGetGameByNameWithEmptyName()  {		
+		given().
+		when().
+			get("/api/games/name").
+		then().	
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testGetGamesByNameLikeWithEmptyName()  {		
+		given().
+		when().
+			get("/api/games/namelike").
+		then().	
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
 }

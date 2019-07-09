@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -38,5 +40,26 @@ public class GameRestController {
 	@GetMapping(path = "/namelike/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<Game> getGamesByNameLike(@PathVariable String name) {
 		return gameService.getGamesByNameLike(name);
+	}
+	
+	
+	
+	
+	
+	
+	
+	@GetMapping(path = "/id")
+	public Game getGameByIdWithNoId() throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@GetMapping(path = "/name")
+	public Game getGameByNameWithNoName() throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@GetMapping(path = "/namelike")
+	public List<Game> getGamesByNameLikeWithNoName() throws BadRequestException {
+		throw new BadRequestException();
 	}
 }
