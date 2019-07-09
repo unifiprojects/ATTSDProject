@@ -29,10 +29,14 @@ public class GameRestController {
 	public Game getGameById(@PathVariable Long id) throws GameNotFoundException {
 		return gameService.getGameById(id);
 	}
-	
+
 	@GetMapping(path = "/name/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Game getGameByName(@PathVariable String name) throws GameNotFoundException {
 		return gameService.getGameByName(name);
 	}
 
+	@GetMapping(path = "/namelike/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public List<Game> getGamesByNameLike(@PathVariable String name) {
+		return gameService.getGamesByNameLike(name);
+	}
 }

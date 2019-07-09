@@ -153,4 +153,18 @@ public class GameRestControllerTest {
 				"description", equalTo("description"),
 				"releaseDate", equalTo(1000));
 	}
+	
+	@Test
+	public void testGetGamesByNameLikeWithNoMatches()  {
+		when(gameService.getGamesByNameLike("testName")).thenReturn(Collections.emptyList());
+		
+		given().
+		when().
+			get("/api/games/namelike/testName").
+		then().
+			statusCode(200).
+			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+		assertThat().
+			body(is(equalTo("[]")));
+	}
 }

@@ -153,12 +153,12 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUsersByUsernameLikeWhenNotFound()  {
-		when(userService.getUsersByUsernameLike("user")).thenReturn(Collections.emptyList());
+	public void testGetUsersByUsernameLikeWithNoMatches()  {
+		when(userService.getUsersByUsernameLike("testUsername")).thenReturn(Collections.emptyList());
 		
 		given().
 		when().
-			get("/api/users/usernamelike/user").
+			get("/api/users/usernamelike/testUsername").
 		then().
 			statusCode(200).
 			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
