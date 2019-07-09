@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 

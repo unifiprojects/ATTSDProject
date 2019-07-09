@@ -139,5 +139,18 @@ public class GameRestControllerTest {
 			statusLine(containsString("Game Not Found"));
 	}
 	
-	
+	@Test
+	public void testFindGameByNameWithExistingGame() throws GameNotFoundException {
+		when(gameService.getGameByName(anyString())).thenReturn(new Game(1L, "name", "description", new Date(1000)));
+		
+		given().
+		when().
+			get("/api/games/name/testName").
+		then().	
+			statusCode(200).
+			body("id", equalTo(1), 
+				"name", equalTo("name"), 
+				"description", equalTo("description"),
+				"releaseDate", equalTo(1000));
+	}
 }
