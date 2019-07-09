@@ -29,7 +29,7 @@ public class GameService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public Game updateGameById(Long id, Game game) {
+	public Game updateGameById(Long id, Game game) throws GameNotFoundException{
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

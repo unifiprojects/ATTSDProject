@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -70,6 +68,11 @@ public class GameRestController {
 
 	@GetMapping(path = "/namelike")
 	public List<Game> getGamesByNameLikeWithNoName() throws BadRequestException {
+		throw new BadRequestException();
+	}
+	
+	@PutMapping(path = "/update")
+	public Game updateGameWithNoId(@RequestBody Game game) throws BadRequestException {
 		throw new BadRequestException();
 	}
 }

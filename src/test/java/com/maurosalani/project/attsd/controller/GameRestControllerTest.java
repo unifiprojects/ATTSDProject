@@ -259,4 +259,18 @@ public class GameRestControllerTest {
 				"description", equalTo("new_description"),
 				"releaseDate", equalTo(1000));
 	}
+	
+	@Test
+	public void testPut_UpdateOfGame_WithEmptyId()  {
+		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+			body(requestBodyGame).
+		when().
+			put("/api/games/update").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
 }
