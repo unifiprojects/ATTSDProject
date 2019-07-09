@@ -24,7 +24,9 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -109,6 +111,21 @@ public class GameRestControllerTest {
 		then().	
 			statusCode(404).
 			statusLine(containsString("Game Not Found"));
+	}
+	
+	@Test
+	public void testFindGameByIdWithExistingGame() throws GameNotFoundException {
+		when(gameService.getGameById(anyLong())).thenReturn(new Game(1L, "name", "description", new Date(1000)));
+		
+		given().
+		when().
+			get("/api/games/id/1").
+		then().	
+			statusCode(200).
+			body("id", equalTo(1), 
+				"name", equalTo("name"), 
+				"description", equalTo("description"),
+				"releaseDate", equalTo(1000));
 	}
 	
 	
