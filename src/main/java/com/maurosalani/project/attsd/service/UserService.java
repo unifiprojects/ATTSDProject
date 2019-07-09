@@ -35,7 +35,7 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public void deleteUserById(Long id) {
+	public void deleteUserById(Long id) throws UserNotFoundException{
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

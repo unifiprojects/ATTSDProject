@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -99,7 +100,7 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	public void testFindUserByIdWhenNotFound() throws Exception {
+	public void testFindUserByIdWhenNotFound() throws UserNotFoundException {
 		when(userService.getUserById(anyLong())).thenThrow(UserNotFoundException.class);
 
 		given().
@@ -111,7 +112,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByIdWithExistingUser() throws Exception {
+	public void testFindUserByIdWithExistingUser() throws UserNotFoundException {
 		when(userService.getUserById(anyLong())).thenReturn(new User(1L, "username", "pwd"));
 		
 		given().
@@ -125,7 +126,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByUsernameWhenNotFound() throws Exception {
+	public void testFindUserByUsernameWhenNotFound() throws UserNotFoundException {
 		when(userService.getUserByUsername(anyString())).thenThrow(UserNotFoundException.class);
 		
 		given().
@@ -137,7 +138,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testFindUserByUsernameWithExistingUser() throws Exception {
+	public void testFindUserByUsernameWithExistingUser() throws UserNotFoundException {
 		when(userService.getUserByUsername(anyString())).thenReturn(new User(1L, "testName", "pwd"));
 		
 		given().
@@ -237,7 +238,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdatePasswordOfUser() throws Exception {
+	public void testPut_UpdatePasswordOfUser()  {
 		User requestBodyUser = new User(null, "testUsername", "new_password");
 		when(userService.updateUserById(1L, requestBodyUser)).
 			thenReturn(new User(1L, "testUsername", "new_password"));
@@ -256,7 +257,7 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	public void testDelete_removeExistingUser() throws Exception {
+	public void testDelete_removeExistingUser() throws UserNotFoundException {
 		given().
 		when().
 			delete("/api/users/delete/1").
@@ -264,6 +265,19 @@ public class UserRestControllerTest {
 			statusCode(204);
 
 		verify(userService, times(1)).deleteUserById(1L);
+	}
+	
+	@Test
+	public void testDelete_removeNotExistingUser_shouldReturn404() throws UserNotFoundException {
+		doThrow(UserNotFoundException.class).when(userService).deleteUserById(anyLong());
+		
+		given().
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(404).
+			statusLine(containsString("User Not Found"));
+		
 	}
 
 }
