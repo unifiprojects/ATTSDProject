@@ -1,6 +1,11 @@
 package com.maurosalani.project.attsd.controller;
 
-import static org.junit.Assert.*;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,10 +54,18 @@ public class GameRestControllerTest {
 
 		return webMvcConfigurationSupport.handlerExceptionResolver();
 	}
-	
+
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testFindAllGamesWithEmptyDatabase() {
+		when(gameService.getAllGames()).thenReturn(Collections.emptyList());
+
+		given().
+		when().
+			get("/api/games").
+		then().
+			statusCode(200).
+			assertThat().
+				body(is(equalTo("[]")));
 	}
 
 }
