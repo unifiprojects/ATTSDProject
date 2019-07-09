@@ -257,7 +257,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfUser_IdIsNull()  {
+	public void testPut_UpdateOfUser_WithEmptyId()  {
 		User requestBodyUser = new User(null, "testUsername", "new_password");
 
 		given().
@@ -306,7 +306,15 @@ public class UserRestControllerTest {
 		then().
 			statusCode(404).
 			statusLine(containsString("User Not Found"));
-		
 	}
-
+	
+	@Test
+	public void testDelete_WithEmptyId()  {
+		given().
+		when().
+			delete("/api/users/delete").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
 }

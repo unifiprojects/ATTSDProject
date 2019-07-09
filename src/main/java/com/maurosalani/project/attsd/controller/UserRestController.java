@@ -64,23 +64,28 @@ public class UserRestController {
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 
-	@GetMapping(path = "/id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(path = "/id")
 	public User getUserByIdWithNoId() throws BadRequestException {
 		throw new BadRequestException();
 	}
 
-	@GetMapping(path = "/username", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(path = "/username")
 	public User getUserByUsernameWithNoUsername() throws BadRequestException {
 		throw new BadRequestException();
 	}
 
-	@GetMapping(path = "/usernamelike", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(path = "/usernamelike")
 	public List<User> getUsersByUsernameLikeWithNoUsername() throws BadRequestException {
 		throw new BadRequestException();
 	}
 
-	@PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updateUser(@RequestBody User user) throws BadRequestException {
+	@PutMapping(path = "/update")
+	public User updateUserWithNoId(@RequestBody User user) throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@DeleteMapping(path = "/delete")
+	public void deleteUserWithNoId() throws BadRequestException {
 		throw new BadRequestException();
 	}
 
