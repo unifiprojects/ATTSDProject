@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -25,7 +26,9 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -272,5 +275,20 @@ public class GameRestControllerTest {
 		then().
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testPut_UpdateOfGame_IdNotFound() throws GameNotFoundException  {
+		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
+		doThrow(GameNotFoundException.class).when(gameService).updateGameById(1L, requestBodyGame);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyGame).
+		when().
+			put("/api/games/update/1").
+		then().
+			statusCode(404).
+			statusLine(containsString("Game Not Found"));
 	}
 }
