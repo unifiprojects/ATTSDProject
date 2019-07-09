@@ -314,4 +314,14 @@ public class GameRestControllerTest {
 			statusCode(404).
 			statusLine(containsString("Game Not Found"));
 	}
+	
+	@Test
+	public void testDelete_WithEmptyId()  {
+		given().
+		when().
+			delete("/api/games/delete").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
 }
