@@ -167,4 +167,28 @@ public class GameRestControllerTest {
 		assertThat().
 			body(is(equalTo("[]")));
 	}
+	
+	@Test
+	public void testGetGamesByNameLikeWithExistingGames()  {
+		Game game1 = new Game(1L, "testName1", "description1", new Date(1000));
+		Game game2 = new Game(2L, "testName2", "description2", new Date(1000));
+	    
+	    when(gameService.getGamesByNameLike("testName")).thenReturn(asList(game1,game2));
+	    
+	    given().
+	    when().
+	      	get("/api/games/namelike/testName").
+	    then().
+	      	statusCode(200).
+	      	contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+	    assertThat().
+	    	body("id[0]", equalTo(1), 
+				"name[0]", equalTo("testName1"), 
+				"description[0]", equalTo("description1"),
+				"releaseDate[0]", equalTo(1000),
+				"id[1]", equalTo(2), 
+				"name[1]", equalTo("testName2"), 
+				"description[1]", equalTo("description2"),
+				"releaseDate[1]", equalTo(1000));
+	}
 }

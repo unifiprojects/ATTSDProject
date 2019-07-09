@@ -168,24 +168,24 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testGetUsersByUsernameLikeWithExistingUsers()  {
-	    User user1 = new User(1L, "user1", "pwd1");
-	    User user2 = new User(2L, "user2", "pwd2");
+	    User user1 = new User(1L, "testUsername1", "pwd1");
+	    User user2 = new User(2L, "testUsername2", "pwd2");
 	    
-	    when(userService.getUsersByUsernameLike("user")).thenReturn(asList(user1,user2));
+	    when(userService.getUsersByUsernameLike("testUsername")).thenReturn(asList(user1,user2));
 	    
 	    given().
 	    when().
-	      	get("/api/users/usernamelike/user").
+	      	get("/api/users/usernamelike/testUsername").
 	    then().
 	      	statusCode(200).
 	      	contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
 	    assertThat().
 	      	body(
 		        "id[0]", equalTo(1),
-		        "username[0]", equalTo("user1"),
+		        "username[0]", equalTo("testUsername1"),
 		        "password[0]", equalTo("pwd1"),
 		        "id[1]", equalTo(2),
-		        "username[1]", equalTo("user2"),
+		        "username[1]", equalTo("testUsername2"),
 		        "password[1]", equalTo("pwd2"));
 	}
 	
