@@ -52,6 +52,7 @@ public class UserRestControllerTest {
 
 	/**
 	 * Necessary to register the exception handler for these unit tests
+	 * 
 	 * @return
 	 */
 	private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
