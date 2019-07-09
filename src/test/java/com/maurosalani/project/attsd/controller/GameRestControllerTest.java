@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -24,9 +25,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
-import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -126,6 +125,18 @@ public class GameRestControllerTest {
 				"name", equalTo("name"), 
 				"description", equalTo("description"),
 				"releaseDate", equalTo(1000));
+	}
+	
+	@Test
+	public void testFindGameByNameWhenNotFound() throws GameNotFoundException {
+		when(gameService.getGameByName(anyString())).thenThrow(GameNotFoundException.class);
+		
+		given().
+		when().
+			get("/api/games/name/testName").
+		then().	
+			statusCode(404).
+			statusLine(containsString("Game Not Found"));
 	}
 	
 	

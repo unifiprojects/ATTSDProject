@@ -13,7 +13,11 @@ public class GameService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public Game getGameById(Long id) throws GameNotFoundException{
+	public Game getGameById(Long id) throws GameNotFoundException {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public Game getGameByName(String name) throws GameNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
