@@ -54,7 +54,7 @@ public class UserRestController {
 	}
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updateUser(@PathVariable Long id, @RequestBody User user) {
+	public User updateUser(@PathVariable Long id, @RequestBody User user) throws UserNotFoundException {
 		return userService.updateUserById(id, user);
 	}
 
@@ -76,6 +76,11 @@ public class UserRestController {
 
 	@GetMapping(path = "/usernamelike", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<User> getUsersByUsernameLikeWithNoUsername() throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User updateUser(@RequestBody User user) throws BadRequestException {
 		throw new BadRequestException();
 	}
 

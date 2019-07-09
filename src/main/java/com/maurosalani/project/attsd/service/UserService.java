@@ -31,11 +31,11 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User updateUserById(Long id, User user) {
+	public User updateUserById(Long id, User user) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public void deleteUserById(Long id) throws UserNotFoundException{
+	public void deleteUserById(Long id) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

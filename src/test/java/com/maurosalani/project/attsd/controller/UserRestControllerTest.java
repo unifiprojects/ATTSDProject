@@ -238,7 +238,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdatePasswordOfUser()  {
+	public void testPut_UpdatePasswordOfUser() throws UserNotFoundException  {
 		User requestBodyUser = new User(null, "testUsername", "new_password");
 		when(userService.updateUserById(1L, requestBodyUser)).
 			thenReturn(new User(1L, "testUsername", "new_password"));
@@ -254,6 +254,35 @@ public class UserRestControllerTest {
 				"id", equalTo(1),
 				"username", equalTo("testUsername"),
 				"password", equalTo("new_password"));
+	}
+	
+	@Test
+	public void testPut_UpdateOfUser_IdIsNull()  {
+		User requestBodyUser = new User(null, "testUsername", "new_password");
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
+			body(requestBodyUser).
+		when().
+			put("/api/users/update").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testPut_UpdateOfUser_IdNotFound() throws UserNotFoundException  {
+		User requestBodyUser = new User(null, "testUsername", "new_password");
+		doThrow(UserNotFoundException.class).when(userService).updateUserById(1L,requestBodyUser);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyUser).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(404).
+			statusLine(containsString("User Not Found"));
 	}
 
 	@Test
