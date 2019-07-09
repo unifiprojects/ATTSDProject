@@ -1,6 +1,7 @@
 package com.maurosalani.project.attsd.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
@@ -63,6 +65,14 @@ public class GameRepositoryTest {
 		List<Game> gamesFound = repository.findByNameLike("%game%");
 
 		assertThat(gamesFound).containsExactlyInAnyOrder(saved1, saved2);
+	}
+	
+	@Test
+	public void testNameIsMandatoryWhenGameIsSaved() {
+		Game gameNoName = new Game(null, null, "game_description", new Date(1000));
+		
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> repository.saveAndFlush(gameNoName));
 	}
 
 	@Test
