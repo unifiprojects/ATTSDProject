@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -21,6 +23,11 @@ public class GameRestController {
 	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<Game> getAllGames() {
 		return gameService.getAllGames();
+	}
+
+	@GetMapping(path = "/id/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public Game getGameById(@PathVariable Long id) throws GameNotFoundException {
+		return gameService.getGameById(id);
 	}
 
 }

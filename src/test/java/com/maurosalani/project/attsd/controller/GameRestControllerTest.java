@@ -2,8 +2,10 @@ package com.maurosalani.project.attsd.controller;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
@@ -74,8 +77,8 @@ public class GameRestControllerTest {
 
 	@Test
 	public void testFindAllGamesWithExistingGames() {
-		Game game1 = new Game(1L, "game1", "description1",new Date(1000));
-		Game game2 = new Game(2L, "game2", "description2",new Date(1000));
+		Game game1 = new Game(1L, "game1", "description1", new Date(1000));
+		Game game2 = new Game(2L, "game2", "description2", new Date(1000));
 		when(gameService.getAllGames()).thenReturn(asList(game1, game2));
 
 		given().
@@ -95,5 +98,18 @@ public class GameRestControllerTest {
 				"releaseDate[1]", equalTo(1000));
 
 	}
+	
+	@Test
+	public void testFindGameByIdWhenNotFound() throws GameNotFoundException {
+		when(gameService.getGameById(anyLong())).thenThrow(GameNotFoundException.class);
+
+		given().
+		when().
+			get("/api/games/id/1").
+		then().	
+			statusCode(404).
+			statusLine(containsString("Game Not Found"));
+	}
+	
 	
 }
