@@ -47,23 +47,23 @@ public class GameRestController {
 	public List<Game> getGamesByNameLike(@PathVariable String name) {
 		return gameService.getGamesByNameLike(name);
 	}
-	
+
 	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Game insertNewGame(@RequestBody Game game) {
 		return gameService.insertNewGame(game);
 	}
-	
+
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Game updateGameById(@PathVariable Long id, @RequestBody Game game) throws GameNotFoundException {
 		return gameService.updateGameById(id, game);
 	}
-	
+
 	@DeleteMapping(path = "/delete/{id}")
 	public void deleteGame(@PathVariable Long id, HttpServletResponse response) throws GameNotFoundException {
 		gameService.deleteGameById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
-	
+
 	@GetMapping(path = "/id")
 	public Game getGameByIdWithNoId() throws BadRequestException {
 		throw new BadRequestException();
@@ -78,9 +78,14 @@ public class GameRestController {
 	public List<Game> getGamesByNameLikeWithNoName() throws BadRequestException {
 		throw new BadRequestException();
 	}
-	
+
 	@PutMapping(path = "/update")
 	public Game updateGameWithNoId(@RequestBody Game game) throws BadRequestException {
+		throw new BadRequestException();
+	}
+
+	@DeleteMapping(path = "/delete")
+	public void deleteGameWithNoId() throws BadRequestException {
 		throw new BadRequestException();
 	}
 }
