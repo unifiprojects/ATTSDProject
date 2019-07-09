@@ -221,4 +221,23 @@ public class GameRestControllerTest {
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
 	}
+	
+	@Test
+	public void testPost_InsertNewGame() {
+		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
+		when(gameService.insertNewGame(requestBodyGame)).
+			thenReturn(new Game(1L, "name", "description", new Date(1000)));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyGame).
+		when().
+			post("/api/games/new").
+		then().
+			statusCode(200).
+			body("id", equalTo(1), 
+				"name", equalTo("name"), 
+				"description", equalTo("description"),
+				"releaseDate", equalTo(1000));
+	}
 }
