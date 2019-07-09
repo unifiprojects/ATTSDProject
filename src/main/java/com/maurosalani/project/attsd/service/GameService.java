@@ -29,4 +29,8 @@ public class GameService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
+	public Game updateGameById(Long id, Game game) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
 }

@@ -240,4 +240,23 @@ public class GameRestControllerTest {
 				"description", equalTo("description"),
 				"releaseDate", equalTo(1000));
 	}
+	
+	@Test
+	public void testPut_UpdateDescriptionOfGame() throws GameNotFoundException  {
+		Game requestBodyGame = new Game(null, "name", "new_description", new Date(1000));
+		when(gameService.updateGameById(1L, requestBodyGame)).
+			thenReturn(new Game(1L, "name", "new_description", new Date(1000)));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(requestBodyGame).
+		when().
+			put("/api/games/update/1").
+		then().
+			statusCode(200).
+			body("id", equalTo(1), 
+				"name", equalTo("name"), 
+				"description", equalTo("new_description"),
+				"releaseDate", equalTo(1000));
+	}
 }
