@@ -8,6 +8,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -26,9 +28,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
-import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -290,5 +290,16 @@ public class GameRestControllerTest {
 		then().
 			statusCode(404).
 			statusLine(containsString("Game Not Found"));
+	}
+	
+	@Test
+	public void testDelete_removeExistingGame() throws GameNotFoundException {
+		given().
+		when().
+			delete("/api/games/delete/1").
+		then().
+			statusCode(204);
+
+		verify(gameService, times(1)).deleteGameById(1L);
 	}
 }
