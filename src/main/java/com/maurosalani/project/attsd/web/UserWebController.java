@@ -1,5 +1,7 @@
 package com.maurosalani.project.attsd.web;
 
+import java.util.HashMap;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -8,8 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.maurosalani.project.attsd.model.User;
+
 @Controller
 public class UserWebController {
+
+	private HashMap<String, User> loggedUser = new HashMap<String, User>();
 
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response,
@@ -21,4 +27,9 @@ public class UserWebController {
 		response.addCookie(cookie);
 		return "index";
 	}
+
+	public void setLoggedUser(HashMap<String, User> loggedUser) {
+		this.loggedUser = loggedUser;
+	}
+
 }
