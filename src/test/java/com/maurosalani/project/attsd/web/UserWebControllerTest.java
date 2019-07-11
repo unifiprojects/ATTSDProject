@@ -5,8 +5,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashMap;
-
 import javax.servlet.http.Cookie;
 
 import org.junit.After;
@@ -54,9 +52,7 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testAccessIndex_UserLoggedIn() throws Exception {
-		HashMap<String, User> loggedUser = new HashMap<>();
-		loggedUser.put("token", new User(1L, "usernameTest", "passwordTest"));
-		userWebController.setLoggedUser(loggedUser);
+		userWebController.getLoggedUsers().put("token", new User(1L, "usernameTest", "passwordTest"));
 		
 		mvc.perform(get("/").cookie(new Cookie("login_token", "token"))).
 			andExpect(status().is2xxSuccessful()).
@@ -69,10 +65,21 @@ public class UserWebControllerTest {
 	public void testAccessLogin() throws Exception {
 		mvc.perform(get("/login")).andExpect(status().is2xxSuccessful());
 	}
+	
+	@Test
+	public void testAccessLogin_UserAlreadyLogged() throws Exception {
+		userWebController.getLoggedUsers().put("token", new User(1L, "usernameTest", "passwordTest"));
+		
+		mvc.perform(get("/login").cookie(new Cookie("login_token", "token"))).
+			andExpect(status().is2xxSuccessful()).
+			andExpect(model().attribute("errorMessage", "You are already logged! Try to log out from homepage.")).
+			andExpect(model().attribute("disableInputText", true)).
+			andExpect(cookie().value("login_token", "token"));
+	}	
 
 	@After
 	public void resetLoggedUsers() throws Exception {
-		userWebController.setLoggedUser(new HashMap<>());
+		userWebController.getLoggedUsers().clear();
 	}
 
 }

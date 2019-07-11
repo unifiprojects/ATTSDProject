@@ -15,12 +15,12 @@ import com.maurosalani.project.attsd.model.User;
 @Controller
 public class UserWebController {
 
-	private HashMap<String, User> loggedUser = new HashMap<>();
+	private HashMap<String, User> loggedUsers = new HashMap<>();
 
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
-		User user = loggedUser.get(token);
+		User user = loggedUsers.get(token);
 		if (user != null) {
 			response.addCookie(new Cookie("login_token", token));
 			model.addAttribute("isLogged", true);
@@ -31,17 +31,27 @@ public class UserWebController {
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
 		}
-		
+
 		return "index";
 	}
-	
+
 	@GetMapping("/login")
-	public String login() {
+	public String login(Model model, HttpServletResponse response,
+			@CookieValue(value = "login_token", required = false) String token) {
+		if(isAlreadyLogged(token)) {
+			model.addAttribute("errorMessage", "You are already logged! Try to log out from homepage.");
+			model.addAttribute("disableInputText", true);
+			response.addCookie(new Cookie("login_token", token));
+		} 
 		return "login";
 	}
 
-	void setLoggedUser(HashMap<String, User> loggedUser) {
-		this.loggedUser = loggedUser;
+	private boolean isAlreadyLogged(String token) {
+		return loggedUsers.containsKey(token);
+	}
+
+	HashMap<String, User> getLoggedUsers() {
+		return loggedUsers;
 	}
 
 }
