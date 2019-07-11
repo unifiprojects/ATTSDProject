@@ -28,7 +28,7 @@ public class UserWebController {
 		return "index";
 	}
 
-	public void setLoggedUser(HashMap<String, User> loggedUser) {
+	void setLoggedUser(HashMap<String, User> loggedUser) {
 		this.loggedUser = loggedUser;
 	}
 
