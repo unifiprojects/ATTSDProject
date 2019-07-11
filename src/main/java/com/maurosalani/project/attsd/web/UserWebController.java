@@ -31,7 +31,13 @@ public class UserWebController {
 			cookie.setMaxAge(0);
 			response.addCookie(cookie);
 		}
+		
 		return "index";
+	}
+	
+	@GetMapping("/login")
+	public String login() {
+		return "login";
 	}
 
 	void setLoggedUser(HashMap<String, User> loggedUser) {

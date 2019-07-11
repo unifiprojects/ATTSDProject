@@ -65,7 +65,10 @@ public class UserWebControllerTest {
 			andExpect(cookie().value("login_token", "token"));
 	}
 
-	
+	@Test
+	public void testAccessLogin() throws Exception {
+		mvc.perform(get("/login")).andExpect(status().is2xxSuccessful());
+	}
 
 	@After
 	public void resetLoggedUsers() throws Exception {
