@@ -20,11 +20,17 @@ public class UserWebController {
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
-		
-		model.addAttribute("isLogged", false);
-		Cookie cookie = new Cookie("login_token", "");
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
+		User user = loggedUser.get(token);
+		if(user != null) {
+			response.addCookie(new Cookie("login_token", token));
+			model.addAttribute("isLogged", true);
+			model.addAttribute("username", user.getUsername());
+		}else {
+			model.addAttribute("isLogged", false);
+			Cookie cookie = new Cookie("login_token", "");
+			cookie.setMaxAge(0);
+			response.addCookie(cookie);
+		}
 		return "index";
 	}
 

@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.Cookie;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserWebControllerTest {
 	
 	@Autowired
 	private UserWebController userWebController;
-
+	
 	@Test
 	public void testStatus2XX() throws Exception {
 		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
@@ -64,5 +65,9 @@ public class UserWebControllerTest {
 			andExpect(cookie().value("login_token", "token"));
 	}
 
+	@After
+	public void resetLoggedUsers() throws Exception {
+		userWebController.setLoggedUser(new HashMap<String, User>());
+	}
 
 }
