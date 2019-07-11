@@ -27,12 +27,15 @@ public class UserWebController {
 			model.addAttribute("username", user.getUsername());
 		} else {
 			model.addAttribute("isLogged", false);
-			Cookie cookie = new Cookie("login_token", "");
-			cookie.setMaxAge(0);
-			response.addCookie(cookie);
+			response.addCookie(emptyLoginCookie());
 		}
-
 		return "index";
+	}
+
+	private Cookie emptyLoginCookie() {
+		Cookie cookie = new Cookie("login_token", "");
+		cookie.setMaxAge(0);
+		return cookie;
 	}
 
 	@GetMapping("/login")
@@ -42,7 +45,10 @@ public class UserWebController {
 			model.addAttribute("errorMessage", "You are already logged! Try to log out from homepage.");
 			model.addAttribute("disableInputText", true);
 			response.addCookie(new Cookie("login_token", token));
-		} 
+		} else {
+			model.addAttribute("errorMessage", "");
+			model.addAttribute("disableInputText", false);
+		}	
 		return "login";
 	}
 
