@@ -15,17 +15,17 @@ import com.maurosalani.project.attsd.model.User;
 @Controller
 public class UserWebController {
 
-	private HashMap<String, User> loggedUser = new HashMap<String, User>();
+	private HashMap<String, User> loggedUser = new HashMap<>();
 
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
 		User user = loggedUser.get(token);
-		if(user != null) {
+		if (user != null) {
 			response.addCookie(new Cookie("login_token", token));
 			model.addAttribute("isLogged", true);
 			model.addAttribute("username", user.getUsername());
-		}else {
+		} else {
 			model.addAttribute("isLogged", false);
 			Cookie cookie = new Cookie("login_token", "");
 			cookie.setMaxAge(0);

@@ -45,7 +45,7 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testUserNotLoggedIn_UsernNotLogged() throws Exception {
-		mvc.perform(get("/").cookie(new Cookie("login_token", "token"))).
+		mvc.perform(get("/").cookie(new Cookie("login_token", "tokenNotExisting"))).
 			andExpect(status().is2xxSuccessful()).
 			andExpect(model().attribute("isLogged", false)).
 			andExpect(cookie().value("login_token", "")).
@@ -54,8 +54,8 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testUserLoggedIn() throws Exception {
-		HashMap<String, User> loggedUser = new HashMap<String, User>();
-		loggedUser.put("token", new User(1L,"usernameTest","passwordTest"));
+		HashMap<String, User> loggedUser = new HashMap<>();
+		loggedUser.put("token", new User(1L, "usernameTest", "passwordTest"));
 		userWebController.setLoggedUser(loggedUser);
 		
 		mvc.perform(get("/").cookie(new Cookie("login_token", "token"))).
@@ -67,7 +67,7 @@ public class UserWebControllerTest {
 
 	@After
 	public void resetLoggedUsers() throws Exception {
-		userWebController.setLoggedUser(new HashMap<String, User>());
+		userWebController.setLoggedUser(new HashMap<>());
 	}
 
 }
