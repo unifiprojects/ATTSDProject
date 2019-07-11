@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.servlet.http.Cookie;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +34,15 @@ public class UserWebControllerTest {
 			andExpect(cookie().value("login_token", "")).
 			andExpect(cookie().maxAge("login_token", 0));
 	}
+	
+	@Test
+	public void testUserNotLoggedIn_UsernNotLogged() throws Exception {
+		mvc.perform(get("/").cookie(new Cookie("login_token", "token"))).
+			andExpect(status().is2xxSuccessful()).
+			andExpect(model().attribute("isLogged", false)).
+			andExpect(cookie().value("login_token", "")).
+			andExpect(cookie().maxAge("login_token", 0));
+	}
+	
 
 }
