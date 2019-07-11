@@ -1,6 +1,8 @@
 package com.maurosalani.project.attsd.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
@@ -20,6 +22,14 @@ public class UserWebControllerTest {
 	@Test
 	public void testStatus2XX() throws Exception {
 		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
+	}
+	
+	@Test
+	public void testUserNotLoggedIn_LoginTokenNotFound() throws Exception {
+		mvc.perform(get("/")).
+			andExpect(status().is2xxSuccessful()).
+			andExpect(model().attribute("isLogged", false)).
+			andExpect(cookie().value("login_token", ""));
 	}
 
 }
