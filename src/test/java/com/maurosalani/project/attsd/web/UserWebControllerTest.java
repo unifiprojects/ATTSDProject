@@ -29,7 +29,8 @@ public class UserWebControllerTest {
 		mvc.perform(get("/")).
 			andExpect(status().is2xxSuccessful()).
 			andExpect(model().attribute("isLogged", false)).
-			andExpect(cookie().value("login_token", ""));
+			andExpect(cookie().value("login_token", "")).
+			andExpect(cookie().maxAge("login_token", 0));
 	}
 
 }

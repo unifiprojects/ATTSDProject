@@ -13,7 +13,9 @@ public class UserWebController {
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response) {
 		model.addAttribute("isLogged", false);
-		response.addCookie(new Cookie("login_token", ""));
+		Cookie cookie = new Cookie("login_token", "");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
 		return  "index";
 	}
 }
