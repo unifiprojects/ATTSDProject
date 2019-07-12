@@ -79,7 +79,13 @@ public class UserWebController {
 
 	@PostMapping("/save")
 	public String save(Model model, HttpServletResponse response, HttpSession session, User user) {
-		User userSaved = userService.insertNewUser(user);
+		User userSaved = null;
+		try {
+			userSaved = userService.insertNewUser(user);
+		} catch (DataIntegrityViolationException e) {
+			model.addAttribute(MESSAGE_MODEL, "Username already used or data not specified correctly.");
+			return "registration";
+		}
 		model.addAttribute("user", userSaved);
 		return "registrationSuccess";
 	}
