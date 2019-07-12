@@ -135,6 +135,20 @@ public class UserWebControllerTest {
 		assertThat(userWebController.getLoggedUsers()).hasSize(1);
 	}
 	
+	@Test
+	public void testLogUser_Failed() throws Exception {
+	    when(userService.getUserByUsernameAndPassword("username", "password")).
+	      thenReturn(null);
+	    
+	    mvc.perform(post("/log").
+	        param("username", "username").
+	        param("password", "password")).
+			andExpect(status().is2xxSuccessful()).
+		  	andExpect(model().attribute("errorMessage", "Username or password invalid.")).
+		  	andExpect(cookie().doesNotExist("login_token"));
+	    
+		assertThat(userWebController.getLoggedUsers()).hasSize(0);
+	}
 	
 	@After
 	public void resetLoggedUsers() throws Exception {
