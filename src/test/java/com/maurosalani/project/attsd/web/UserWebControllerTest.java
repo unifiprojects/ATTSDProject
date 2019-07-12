@@ -152,6 +152,22 @@ public class UserWebControllerTest {
 		assertThat(userWebController.getLoggedUsers()).hasSize(0);
 	}	
 	
+	@Test
+	public void testRegisterUser_Success() throws Exception {
+	    User user = new User (null , "usernameTest", "passwordTest");
+	    User userReturned = new User (1L , "usernameTest", "passwordTest");
+	    when(userService.insertNewUser(user)).
+	        thenReturn(userReturned);
+	    
+	    mvc.perform(post("/verifyRegister").
+		        param("username", "usernameTest").
+		        param("password", "passwordTest")).
+	      	andExpect(cookie().doesNotExist("login_token")).
+	      	andExpect(model().attribute("message", user.getUsername() + " you have successfully registered")).
+			andExpect(model().attribute("disableInputText", false)).
+			andExpect(status().is2xxSuccessful());
+	}
+	
 	@After
 	public void resetLoggedUsers() throws Exception {
 		userWebController.getLoggedUsers().clear();

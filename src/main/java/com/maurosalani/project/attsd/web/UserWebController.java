@@ -74,16 +74,16 @@ public class UserWebController {
 	}
 
 	@PostMapping("/verifyLogin")
-	public String logUser(Model model, HttpServletResponse response, String username, String password) {
+	public String loginUser(Model model, HttpServletResponse response, String username, String password) {
 		User user = userService.getUserByUsernameAndPassword(username, password);
-		if(user == null) {
+		if (user == null) {
 			model.addAttribute("message", "Username or password invalid.");
 			return "login";
-		}else {
+		} else {
 			response.addCookie(new Cookie("login_token", generateToken()));
 			loggedUsers.put("token", user);
 			return "redirect:/";
-		}	
+		}
 	}
 
 	String generateToken() {
