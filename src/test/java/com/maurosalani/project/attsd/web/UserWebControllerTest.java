@@ -4,8 +4,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +29,7 @@ public class UserWebControllerTest {
 
 	private static final String MESSAGE_MODEL = "message";
 
-	private static final String DISABLE_INPUT_TEXT_FLAG_MODEL = "disableInputText";
+	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
 
 	@Autowired
 	private MockMvc mvc;
@@ -46,8 +44,9 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testAccessIndex_WhenUserNotLoggedIn_AndLoginTokenNotFound() throws Exception {
-		mvc.perform(get("/")).andExpect(status().is2xxSuccessful())
-				.andExpect(model().attributeDoesNotExist("username"));
+		mvc.perform(get("/"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attributeDoesNotExist("username"));
 	}
 
 	@Test
@@ -56,7 +55,7 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/");
 
 		mvc.perform(requestToPerform).andExpect(status().is2xxSuccessful())
-				.andExpect(model().attributeExists("username"));
+			.andExpect(model().attributeExists("username"));
 	}
 
 	@Test
@@ -69,15 +68,18 @@ public class UserWebControllerTest {
 		User user = new User(1L, "usernameTest", "pwdTest");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/login");
 
-		mvc.perform(requestToPerform).andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true));
+		mvc.perform(requestToPerform)
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
 	@Test
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
-		mvc.perform(get("/login")).andExpect(status().is2xxSuccessful()).andExpect(model().attribute(MESSAGE_MODEL, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false));
+		mvc.perform(get("/login"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE_MODEL, ""))
+			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
 	@Test
@@ -85,10 +87,9 @@ public class UserWebControllerTest {
 		User user = new User(1L, "username", "password");
 		when(userService.getUserByUsernameAndPassword("username", "password")).thenReturn(user);
 
-		mvc.perform(post("/verifyLogin").param("username", "username").param("password", "password"))
-				.andDo(print())
-				.andExpect(request().sessionAttribute("user", user))
-				.andExpect(view().name("redirect:/"));
+		mvc.perform(post("/verifyLogin").param("username", "username").param("password", "password"))			
+			.andExpect(request().sessionAttribute("user", user))
+			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
@@ -96,9 +97,17 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenReturn(null);
 
 		mvc.perform(post("/verifyLogin").param("username", "wrong_username").param("password", "wrong_password"))
-				.andExpect(view().name("login")).andExpect(status().isUnauthorized())
-				.andExpect(model().attribute(MESSAGE_MODEL, "Username or password invalid."))
-				.andExpect(request().sessionAttribute("user", equalTo(null)));
+			.andExpect(status().isUnauthorized())
+			.andExpect(model().attribute(MESSAGE_MODEL, "Username or password invalid."))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("login"));
+	}
+
+	@Test
+	public void testLogoutUser() throws Exception {
+		mvc.perform(get("/logout"))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
@@ -112,15 +121,15 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/register");
 
 		mvc.perform(requestToPerform).andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true));
+			.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
 	@Test
 	public void testAccessRegister_UserIsNotLogged() throws Exception {
 		mvc.perform(get("/register")).andExpect(status().is2xxSuccessful())
 				.andExpect(model().attribute(MESSAGE_MODEL, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false));
+				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {

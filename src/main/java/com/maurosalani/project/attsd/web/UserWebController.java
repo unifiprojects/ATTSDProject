@@ -18,7 +18,7 @@ public class UserWebController {
 
 	private static final String MESSAGE_MODEL = "message";
 
-	private static final String DISABLE_INPUT_TEXT_FLAG_MODEL = "disableInputText";
+	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
 
 	@Autowired
 	private UserService userService;
@@ -36,10 +36,10 @@ public class UserWebController {
 	public String login(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true);
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
 		} else {
 			model.addAttribute(MESSAGE_MODEL, "");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false);
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
 		}
 		return "login";
 	}
@@ -62,10 +62,10 @@ public class UserWebController {
 	public String register(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true);
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
 		} else {
 			model.addAttribute(MESSAGE_MODEL, "");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false);
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
 		}
 		return "register";
 	}
