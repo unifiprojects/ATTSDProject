@@ -1,15 +1,12 @@
 package com.maurosalani.project.attsd.web;
 
-import java.util.HashMap;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -19,83 +16,65 @@ import com.maurosalani.project.attsd.service.UserService;
 @Controller
 public class UserWebController {
 
-	private HashMap<String, User> loggedUsers = new HashMap<>();
+	private static final String MESSAGE_MODEL = "message";
+
+	private static final String DISABLE_INPUT_TEXT_FLAG_MODEL = "disableInputText";
 
 	@Autowired
 	private UserService userService;
 
 	@GetMapping("/")
-	public String index(Model model, HttpServletResponse response,
-			@CookieValue(value = "login_token", required = false) String token) {
-		User user = loggedUsers.get(token);
-		if (user != null) {
-			response.addCookie(new Cookie("login_token", token));
-			model.addAttribute("isLogged", true);
+	public String index(Model model, HttpSession session) {
+		if (isAlreadyLogged(session)) {
+			User user = (User) session.getAttribute("user");
 			model.addAttribute("username", user.getUsername());
-		} else {
-			model.addAttribute("isLogged", false);
-			response.addCookie(emptyLoginCookie());
 		}
 		return "index";
 	}
 
-	private Cookie emptyLoginCookie() {
-		Cookie cookie = new Cookie("login_token", "");
-		cookie.setMaxAge(0);
-		return cookie;
-	}
-
 	@GetMapping("/login")
-	public String login(Model model, HttpServletResponse response,
-			@CookieValue(value = "login_token", required = false) String token) {
-		if (isAlreadyLogged(token)) {
-			model.addAttribute("errorMessage", "You are already logged! Try to log out from homepage.");
-			model.addAttribute("disableInputText", true);
-			response.addCookie(new Cookie("login_token", token));
+	public String login(Model model, HttpSession session) {
+		if (isAlreadyLogged(session)) {
+			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true);
 		} else {
-			model.addAttribute("errorMessage", "");
-			model.addAttribute("disableInputText", false);
+			model.addAttribute(MESSAGE_MODEL, "");
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false);
 		}
 		return "login";
 	}
 
-	@GetMapping("/register")
-	public String register(Model model, HttpServletResponse response,
-			@CookieValue(value = "login_token", required = false) String token) {
-		if (isAlreadyLogged(token)) {
-			model.addAttribute("errorMessage", "You are logged! Try to log out from homepage.");
-			model.addAttribute("disableInputText", true);
-			response.addCookie(new Cookie("login_token", token));
+	@PostMapping("/verifyLogin")
+	public String logUser(Model model, HttpServletResponse response, String username, String password,
+			HttpSession session) {
+		User user = userService.getUserByUsernameAndPassword(username, password);
+		if (user == null) {
+			model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			return "login";
 		} else {
-			model.addAttribute("errorMessage", "");
-			model.addAttribute("disableInputText", false);
+			session.setAttribute("user", user);
+			return "redirect:/";
+		}
+	}
+
+	@GetMapping("/register")
+	public String register(Model model, HttpSession session) {
+		if (isAlreadyLogged(session)) {
+			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, true);
+		} else {
+			model.addAttribute(MESSAGE_MODEL, "");
+			model.addAttribute(DISABLE_INPUT_TEXT_FLAG_MODEL, false);
 		}
 		return "register";
 	}
 
-	@PostMapping("/verifyLogin")
-	public String logUser(Model model, HttpServletResponse response, String username, String password) {
-		User user = userService.getUserByUsernameAndPassword(username, password);
-		if(user == null) {
-			model.addAttribute("errorMessage", "Username or password invalid.");
-			return "login";
-		}else {
-			response.addCookie(new Cookie("login_token", generateToken()));
-			loggedUsers.put("token", user);
-			return "redirect:/";
-		}	
-	}
-
-	String generateToken() {
-		return RandomStringUtils.randomAlphanumeric(20);
-	}
-
-	private boolean isAlreadyLogged(String token) {
-		return loggedUsers.containsKey(token);
-	}
-
-	HashMap<String, User> getLoggedUsers() {
-		return loggedUsers;
+	private boolean isAlreadyLogged(HttpSession session) {
+		if (session == null || session.getAttribute("user") == null)
+			return false;
+		else
+			return true;
 	}
 
 }
