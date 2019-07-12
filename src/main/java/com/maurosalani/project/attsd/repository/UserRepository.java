@@ -36,4 +36,8 @@ public class UserRepository {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
+	public Optional<User> findByUsernameAndPassword(String username, String password) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
 }

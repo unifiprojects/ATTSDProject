@@ -97,6 +97,13 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testGetUserByUsernameAndPassword_WhenUserDoesNotExist() {
+		when(userRepository.findByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class)
+				.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", "password"));
+	}
+
+	@Test
 	public void testGetUsersByUsernameLikeWhenUserDoesNotExist() {
 		when(userRepository.findByUsernameLike(anyString())).thenReturn(Collections.emptyList());
 		assertThat(userService.getUsersByUsernameLike("username")).isEmpty();

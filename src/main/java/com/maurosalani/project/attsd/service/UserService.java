@@ -29,21 +29,21 @@ public class UserService {
 	public User getUserById(Long id) throws UserNotFoundException {
 		if (id == null)
 			throw new IllegalArgumentException();
-		
+
 		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 	public User getUserByUsername(String username) throws UserNotFoundException {
 		if (username == null)
 			throw new IllegalArgumentException();
-		
+
 		return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 	public List<User> getUsersByUsernameLike(String username) {
 		if (username == null)
 			throw new IllegalArgumentException();
-		
+
 		return userRepository.findByUsernameLike(username);
 	}
 
@@ -94,6 +94,10 @@ public class UserService {
 		gameToAdd.addUser(user);
 
 		return userRepository.save(user);
+	}
+
+	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException {
+		return userRepository.findByUsernameAndPassword(username, password).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 }
