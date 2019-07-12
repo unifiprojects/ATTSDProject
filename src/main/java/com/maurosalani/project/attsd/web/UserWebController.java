@@ -72,6 +72,14 @@ public class UserWebController {
 		return "register";
 	}
 
+	@PostMapping("/log")
+	public String logUser(Model model, HttpServletResponse response, String username, String password) {
+		User user = userService.getUserByUsernameAndPassword(username, password);
+		response.addCookie(new Cookie("login_token", "token"));
+		loggedUsers.put("token", user);
+		return "redirect:/";
+	}
+
 	private boolean isAlreadyLogged(String token) {
 		return loggedUsers.containsKey(token);
 	}
