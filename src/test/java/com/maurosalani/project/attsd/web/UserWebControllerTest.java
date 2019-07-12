@@ -1,9 +1,12 @@
 package com.maurosalani.project.attsd.web;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import javax.servlet.http.Cookie;
 
@@ -12,10 +15,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.service.UserService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserWebController.class)
@@ -26,6 +31,9 @@ public class UserWebControllerTest {
 	
 	@Autowired
 	private UserWebController userWebController;
+	
+	@MockBean
+	private UserService userService;
 	
 	@Test
 	public void testStatus2XX() throws Exception {
@@ -109,6 +117,18 @@ public class UserWebControllerTest {
 			andExpect(model().attribute("errorMessage", "")).
 			andExpect(model().attribute("disableInputText", false)).
 			andExpect(cookie().doesNotExist("login_token"));
+	}
+	
+	@Test
+	public void testLogUser_Success() throws Exception {
+		when(userService.getUserByUsernameAndPassword("username", "password")).
+			thenReturn(new User (1L, "username", "password"));
+		
+		mvc.perform(post("/log").
+				param("username", "username").
+				param("password", "password")).
+			andExpect(cookie().exists("login_token")).
+			andExpect(view().name("redirect:/"));
 	}
 	
 	@After
