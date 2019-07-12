@@ -126,7 +126,7 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsernameAndPassword("username", "password")).
 			thenReturn(user);
 		
-		mvc.perform(post("/log").
+		mvc.perform(post("/verifyLogin").
 				param("username", "username").
 				param("password", "password")).
 			andExpect(cookie().value("login_token", userWebController.generateToken(user))).
@@ -140,7 +140,7 @@ public class UserWebControllerTest {
 	    when(userService.getUserByUsernameAndPassword("username", "password")).
 	      thenReturn(null);
 	    
-	    mvc.perform(post("/log").
+	    mvc.perform(post("/verifyLogin").
 	        param("username", "username").
 	        param("password", "password")).
 			andExpect(status().is2xxSuccessful()).
@@ -149,6 +149,8 @@ public class UserWebControllerTest {
 	    
 		assertThat(userWebController.getLoggedUsers()).hasSize(0);
 	}
+	
+	
 	
 	@After
 	public void resetLoggedUsers() throws Exception {

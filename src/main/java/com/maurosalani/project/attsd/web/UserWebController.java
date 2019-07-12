@@ -21,7 +21,7 @@ public class UserWebController {
 	private HashMap<String, User> loggedUsers = new HashMap<>();
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@GetMapping("/")
 	public String index(Model model, HttpServletResponse response,
@@ -72,7 +72,7 @@ public class UserWebController {
 		return "register";
 	}
 
-	@PostMapping("/log")
+	@PostMapping("/verifyLogin")
 	public String logUser(Model model, HttpServletResponse response, String username, String password) {
 		User user = userService.getUserByUsernameAndPassword(username, password);
 		if(user == null) {
