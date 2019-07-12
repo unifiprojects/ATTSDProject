@@ -1,9 +1,13 @@
 package com.maurosalani.project.attsd.web;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -82,6 +86,8 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsernameAndPassword("username", "password")).thenReturn(user);
 
 		mvc.perform(post("/verifyLogin").param("username", "username").param("password", "password"))
+				.andDo(print())
+				.andExpect(request().sessionAttribute("user", user))
 				.andExpect(view().name("redirect:/"));
 	}
 
@@ -92,7 +98,7 @@ public class UserWebControllerTest {
 		mvc.perform(post("/verifyLogin").param("username", "wrong_username").param("password", "wrong_password"))
 				.andExpect(view().name("login")).andExpect(status().isUnauthorized())
 				.andExpect(model().attribute(MESSAGE_MODEL, "Username or password invalid."))
-				.andExpect(model().attributeDoesNotExist("username"));
+				.andExpect(request().sessionAttribute("user", equalTo(null)));
 	}
 
 	@Test

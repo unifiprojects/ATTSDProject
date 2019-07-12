@@ -45,7 +45,7 @@ public class UserWebController {
 	}
 
 	@PostMapping("/verifyLogin")
-	public String logUser(Model model, HttpServletResponse response, String username, String password,
+	public String verifyLoginUser(Model model, HttpServletResponse response, String username, String password,
 			HttpSession session) {
 		User user = userService.getUserByUsernameAndPassword(username, password);
 		if (user == null) {
