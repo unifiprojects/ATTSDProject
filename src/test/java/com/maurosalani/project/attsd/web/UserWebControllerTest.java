@@ -1,8 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,7 +82,7 @@ public class UserWebControllerTest {
 		
 		mvc.perform(get("/login").cookie(new Cookie("login_token", "token"))).
 			andExpect(status().is2xxSuccessful()).
-			andExpect(model().attribute("errorMessage", "You are already logged! Try to log out from homepage.")).
+			andExpect(model().attribute("message", "You are already logged! Try to log out from homepage.")).
 			andExpect(model().attribute("disableInputText", true)).
 			andExpect(cookie().value("login_token", "token"));
 	}	
@@ -93,7 +91,7 @@ public class UserWebControllerTest {
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
 		mvc.perform(get("/login")).
 			andExpect(status().is2xxSuccessful()).
-			andExpect(model().attribute("errorMessage", "")).
+			andExpect(model().attribute("message", "")).
 			andExpect(model().attribute("disableInputText", false)).
 			andExpect(cookie().doesNotExist("login_token"));
 	}
@@ -109,7 +107,7 @@ public class UserWebControllerTest {
 		
 		mvc.perform(get("/register").cookie(new Cookie("login_token", "token"))).
 			andExpect(status().is2xxSuccessful()).
-			andExpect(model().attribute("errorMessage", "You are logged! Try to log out from homepage.")).
+			andExpect(model().attribute("message", "You are logged! Try to log out from homepage.")).
 			andExpect(model().attribute("disableInputText", true)).
 			andExpect(cookie().value("login_token", "token"));	
 	}
@@ -118,13 +116,13 @@ public class UserWebControllerTest {
 	public void testAccessRegister_UserIsNotLogged() throws Exception {		
 		mvc.perform(get("/register")).
 			andExpect(status().is2xxSuccessful()).
-			andExpect(model().attribute("errorMessage", "")).
+			andExpect(model().attribute("message", "")).
 			andExpect(model().attribute("disableInputText", false)).
 			andExpect(cookie().doesNotExist("login_token"));
 	}
 	
 	@Test
-	public void testLogUser_Success() throws Exception {
+	public void testLoginUser_Success() throws Exception {
 		User user = new User (1L, "username", "password");
 		when(userService.getUserByUsernameAndPassword("username", "password")).
 			thenReturn(user);
@@ -140,7 +138,7 @@ public class UserWebControllerTest {
 	}
 	
 	@Test
-	public void testLogUser_Failed() throws Exception {
+	public void testLoginUser_Failed() throws Exception {
 	    when(userService.getUserByUsernameAndPassword("username", "password")).
 	      thenReturn(null);
 	    
@@ -148,13 +146,11 @@ public class UserWebControllerTest {
 	        param("username", "username").
 	        param("password", "password")).
 			andExpect(status().is2xxSuccessful()).
-		  	andExpect(model().attribute("errorMessage", "Username or password invalid.")).
+		  	andExpect(model().attribute("message", "Username or password invalid.")).
 		  	andExpect(cookie().doesNotExist("login_token"));
 	    
 		assertThat(userWebController.getLoggedUsers()).hasSize(0);
-	}
-	
-	
+	}	
 	
 	@After
 	public void resetLoggedUsers() throws Exception {

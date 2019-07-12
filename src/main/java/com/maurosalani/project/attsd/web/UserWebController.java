@@ -49,11 +49,11 @@ public class UserWebController {
 	public String login(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
 		if (isAlreadyLogged(token)) {
-			model.addAttribute("errorMessage", "You are already logged! Try to log out from homepage.");
+			model.addAttribute("message", "You are already logged! Try to log out from homepage.");
 			model.addAttribute("disableInputText", true);
 			response.addCookie(new Cookie("login_token", token));
 		} else {
-			model.addAttribute("errorMessage", "");
+			model.addAttribute("message", "");
 			model.addAttribute("disableInputText", false);
 		}
 		return "login";
@@ -63,11 +63,11 @@ public class UserWebController {
 	public String register(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
 		if (isAlreadyLogged(token)) {
-			model.addAttribute("errorMessage", "You are logged! Try to log out from homepage.");
+			model.addAttribute("message", "You are logged! Try to log out from homepage.");
 			model.addAttribute("disableInputText", true);
 			response.addCookie(new Cookie("login_token", token));
 		} else {
-			model.addAttribute("errorMessage", "");
+			model.addAttribute("message", "");
 			model.addAttribute("disableInputText", false);
 		}
 		return "register";
@@ -77,7 +77,7 @@ public class UserWebController {
 	public String logUser(Model model, HttpServletResponse response, String username, String password) {
 		User user = userService.getUserByUsernameAndPassword(username, password);
 		if(user == null) {
-			model.addAttribute("errorMessage", "Username or password invalid.");
+			model.addAttribute("message", "Username or password invalid.");
 			return "login";
 		}else {
 			response.addCookie(new Cookie("login_token", generateToken()));
