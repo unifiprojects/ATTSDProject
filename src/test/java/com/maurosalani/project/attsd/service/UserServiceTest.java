@@ -104,6 +104,14 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testGetUserByUsernameAndPassword_WithUsernameOrPasswordNull() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", null));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> userService.getUserByUsernameAndPassword(null, "password"));
+	}
+
+	@Test
 	public void testGetUsersByUsernameLikeWhenUserDoesNotExist() {
 		when(userRepository.findByUsernameLike(anyString())).thenReturn(Collections.emptyList());
 		assertThat(userService.getUsersByUsernameLike("username")).isEmpty();

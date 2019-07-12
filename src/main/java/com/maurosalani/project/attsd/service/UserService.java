@@ -97,7 +97,10 @@ public class UserService {
 	}
 
 	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException {
-		return userRepository.findByUsernameAndPassword(username, password).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+		if (username == null || password == null)
+			throw new IllegalArgumentException();
+		return userRepository.findByUsernameAndPassword(username, password)
+				.orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
 }
