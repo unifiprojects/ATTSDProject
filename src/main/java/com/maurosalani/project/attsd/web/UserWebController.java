@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,14 +80,14 @@ public class UserWebController {
 			model.addAttribute("errorMessage", "Username or password invalid.");
 			return "login";
 		}else {
-			response.addCookie(new Cookie("login_token", generateToken(user)));
+			response.addCookie(new Cookie("login_token", generateToken()));
 			loggedUsers.put("token", user);
 			return "redirect:/";
 		}	
 	}
 
-	String generateToken(User user) {
-		return user.hashCode() + "";
+	String generateToken() {
+		return RandomStringUtils.randomAlphanumeric(20);
 	}
 
 	private boolean isAlreadyLogged(String token) {

@@ -1,6 +1,8 @@
 package com.maurosalani.project.attsd.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.servlet.http.Cookie;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,9 +132,10 @@ public class UserWebControllerTest {
 		mvc.perform(post("/verifyLogin").
 				param("username", "username").
 				param("password", "password")).
-			andExpect(cookie().value("login_token", userWebController.generateToken(user))).
+			andExpect(cookie().exists("login_token")).
+			andExpect(cookie().value("login_token", CoreMatchers.not(CoreMatchers.equalTo("")))).
 			andExpect(view().name("redirect:/"));
-		
+	
 		assertThat(userWebController.getLoggedUsers()).hasSize(1);
 	}
 	
