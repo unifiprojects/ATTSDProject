@@ -54,6 +54,15 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void testFindByUsernameAndPassword() {
+		User user = new User(null, "test", "pwd");
+		User saved = entityManager.persistFlushFind(user);
+		User userFound = repository.findByUsernameAndPassword("test", "pwd");
+
+		assertThat(userFound).isEqualTo(saved);
+	}
+	
+	@Test
 	public void testFindByUsernameLike() {
 		User user1 = new User(null, "user one", "pwd");
 		User user2 = new User(null, "user two", "pwd");
