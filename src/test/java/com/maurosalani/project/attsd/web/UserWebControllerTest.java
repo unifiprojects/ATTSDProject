@@ -111,25 +111,39 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testAccessRegister() throws Exception {
-		mvc.perform(get("/register")).andExpect(status().is2xxSuccessful());
+	public void testAccessRegistration() throws Exception {
+		mvc.perform(get("/registration")).andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
-	public void testAccessRegister_UserAlreadyLogged() throws Exception {
+	public void testRegistration_UserAlreadyLogged() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/register");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/registration");
 
-		mvc.perform(requestToPerform).andExpect(status().is2xxSuccessful())
+		mvc.perform(requestToPerform)
+			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
 			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
 	@Test
-	public void testAccessRegister_UserIsNotLogged() throws Exception {
-		mvc.perform(get("/register")).andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE_MODEL, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+	public void testRegistration_UserIsNotLogged() throws Exception {
+		mvc.perform(get("/registration"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE_MODEL, ""))
+			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+	}
+
+	@Test
+	public void testSave_SuccessAfterRegistration() throws Exception {
+		User newUser = new User(null, "usernameTest", "pwdTest");
+		User userSaved = new User(1L, "usernameTest", "pwdTest");
+		when(userService.insertNewUser(newUser)).thenReturn(userSaved);
+		
+		mvc.perform(post("/save"))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute("user", userSaved))
+			.andExpect(view().name("registrationSuccess"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {

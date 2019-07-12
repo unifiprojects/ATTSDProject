@@ -60,13 +60,13 @@ public class UserWebController {
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
-		if(isAlreadyLogged(session))
+		if (isAlreadyLogged(session))
 			session.invalidate();
 		return "redirect:/";
 	}
-	
-	@GetMapping("/register")
-	public String register(Model model, HttpSession session) {
+
+	@GetMapping("/registration")
+	public String registration(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
@@ -74,8 +74,10 @@ public class UserWebController {
 			model.addAttribute(MESSAGE_MODEL, "");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
 		}
-		return "register";
+		return "registration";
 	}
+
+	
 
 	private boolean isAlreadyLogged(HttpSession session) {
 		if (session == null || session.getAttribute("user") == null)
