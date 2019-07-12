@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -130,7 +131,10 @@ public class UserWebControllerTest {
 				param("password", "password")).
 			andExpect(cookie().value("login_token", userWebController.generateToken(user))).
 			andExpect(view().name("redirect:/"));
+		
+		assertThat(userWebController.getLoggedUsers()).hasSize(1);
 	}
+	
 	
 	@After
 	public void resetLoggedUsers() throws Exception {
