@@ -91,6 +91,17 @@ public class UserWebControllerTest {
 		mvc.perform(get("/register")).andExpect(status().is2xxSuccessful());
 	}
 	
+	@Test
+	public void testAccessRegister_UserAlreadyLogged() throws Exception {
+		userWebController.getLoggedUsers().put("token", new User(1L, "usernameTest", "passwordTest"));
+		
+		mvc.perform(get("/register").cookie(new Cookie("login_token", "token"))).
+			andExpect(status().is2xxSuccessful()).
+			andExpect(model().attribute("errorMessage", "You are logged! Try to log out from homepage.")).
+			andExpect(model().attribute("disableInputText", true)).
+			andExpect(cookie().value("login_token", "token"));	
+	}
+	
 	@After
 	public void resetLoggedUsers() throws Exception {
 		userWebController.getLoggedUsers().clear();
