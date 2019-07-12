@@ -165,6 +165,7 @@ public class UserWebControllerTest {
 	      	andExpect(cookie().doesNotExist("login_token")).
 	      	andExpect(model().attribute("message", user.getUsername() + " you have successfully registered")).
 			andExpect(model().attribute("disableInputText", false)).
+			andExpect(view().name("login")).
 			andExpect(status().is2xxSuccessful());
 	}
 	
