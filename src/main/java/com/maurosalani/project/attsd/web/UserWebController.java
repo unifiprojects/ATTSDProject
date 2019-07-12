@@ -89,9 +89,15 @@ public class UserWebController {
 	@PostMapping("/verifyRegister")
 	public String registerUser(Model model, User user) {
 		user = userService.insertNewUser(user);
-		model.addAttribute("message", user.getUsername() + " you have successfully registered");
-		model.addAttribute("disableInputText", false);
-		return "login";
+		if (user != null) {
+			model.addAttribute("message", user.getUsername() + " you have successfully registered");
+			model.addAttribute("disableInputText", false);
+			return "login";
+		} else {
+			model.addAttribute("message", "Username already used!");
+			model.addAttribute("disableInputText", false);
+			return "register";
+		}
 	}
 
 	String generateToken() {
