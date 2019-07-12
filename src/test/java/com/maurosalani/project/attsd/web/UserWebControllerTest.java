@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
 
@@ -97,7 +98,7 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect() throws Exception {
-		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenReturn(null);
+		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenThrow(UserNotFoundException.class);
 
 		mvc.perform(post("/verifyLogin").param("username", "wrong_username").param("password", "wrong_password"))
 			.andExpect(status().isUnauthorized())
