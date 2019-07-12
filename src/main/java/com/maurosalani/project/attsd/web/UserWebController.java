@@ -55,9 +55,14 @@ public class UserWebController {
 	@GetMapping("/register")
 	public String register(Model model, HttpServletResponse response,
 			@CookieValue(value = "login_token", required = false) String token) {
-		model.addAttribute("errorMessage", "You are logged! Try to log out from homepage.");
-		model.addAttribute("disableInputText", true);
-		response.addCookie(new Cookie("login_token", token));
+		if(isAlreadyLogged(token)) {
+			model.addAttribute("errorMessage", "You are logged! Try to log out from homepage.");
+			model.addAttribute("disableInputText", true);
+			response.addCookie(new Cookie("login_token", token));
+		}else {
+			model.addAttribute("errorMessage", "");
+			model.addAttribute("disableInputText", false);
+		}
 		return "register";
 	}
 

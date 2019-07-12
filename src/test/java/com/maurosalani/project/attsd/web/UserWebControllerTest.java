@@ -102,6 +102,15 @@ public class UserWebControllerTest {
 			andExpect(cookie().value("login_token", "token"));	
 	}
 	
+	@Test
+	public void testAccessRegister_UserIsNotLogged() throws Exception {		
+		mvc.perform(get("/register")).
+			andExpect(status().is2xxSuccessful()).
+			andExpect(model().attribute("errorMessage", "")).
+			andExpect(model().attribute("disableInputText", false)).
+			andExpect(cookie().doesNotExist("login_token"));
+	}
+	
 	@After
 	public void resetLoggedUsers() throws Exception {
 		userWebController.getLoggedUsers().clear();
