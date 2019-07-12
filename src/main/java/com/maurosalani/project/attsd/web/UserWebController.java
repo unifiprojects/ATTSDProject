@@ -75,9 +75,14 @@ public class UserWebController {
 	@PostMapping("/log")
 	public String logUser(Model model, HttpServletResponse response, String username, String password) {
 		User user = userService.getUserByUsernameAndPassword(username, password);
-		response.addCookie(new Cookie("login_token", generateToken(user)));
-		loggedUsers.put("token", user);
-		return "redirect:/";
+		if(user == null) {
+			model.addAttribute("errorMessage", "Username or password invalid.");
+			return "login";
+		}else {
+			response.addCookie(new Cookie("login_token", generateToken(user)));
+			loggedUsers.put("token", user);
+			return "redirect:/";
+		}	
 	}
 
 	String generateToken(User user) {
