@@ -1,6 +1,8 @@
 package com.maurosalani.project.attsd.web;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -135,15 +137,19 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSave_SuccessAfterRegistration() throws Exception {
-		User newUser = new User(null, "usernameTest", "pwdTest");
+	public void testSave_SuccessAfterRegistration() throws Exception {		
+		User userToInsert = new User(null, "usernameTest", "pwdTest");
 		User userSaved = new User(1L, "usernameTest", "pwdTest");
-		when(userService.insertNewUser(newUser)).thenReturn(userSaved);
+		when(userService.insertNewUser(userToInsert)).thenReturn(userSaved);
 		
-		mvc.perform(post("/save"))
+		mvc.perform(post("/save")
+				.param("username", userToInsert.getUsername())
+				.param("password", userToInsert.getPassword()))
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attribute("user", userSaved))
 			.andExpect(view().name("registrationSuccess"));
+		
+		verify(userService, times(1)).insertNewUser(userToInsert);
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {

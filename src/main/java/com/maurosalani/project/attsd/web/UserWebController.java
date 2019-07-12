@@ -77,7 +77,12 @@ public class UserWebController {
 		return "registration";
 	}
 
-	
+	@PostMapping("/save")
+	public String save(Model model, HttpServletResponse response, HttpSession session, User user) {
+		User userSaved = userService.insertNewUser(user);
+		model.addAttribute("user", userSaved);
+		return "registrationSuccess";
+	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
 		if (session == null || session.getAttribute("user") == null)
