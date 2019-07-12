@@ -58,6 +58,13 @@ public class UserWebController {
 		}
 	}
 
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		if(isAlreadyLogged(session))
+			session.invalidate();
+		return "redirect:/";
+	}
+	
 	@GetMapping("/register")
 	public String register(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
