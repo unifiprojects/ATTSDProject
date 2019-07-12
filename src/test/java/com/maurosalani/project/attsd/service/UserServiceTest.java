@@ -90,7 +90,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUserByUsernameWithExistingUser() throws Exception {
+	public void testGetUserByUsername_WithExistingUser() throws Exception {
 		User user = new User(1L, "username", "pwd");
 		when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
 		assertThat(userService.getUserByUsername("username")).isEqualTo(user);
