@@ -169,6 +169,22 @@ public class UserWebControllerTest {
 			andExpect(status().is2xxSuccessful());
 	}
 	
+	@Test
+	public void testRegisterUser_UsernameAlreadyUsed() throws Exception {
+		User user = new User (null , "usernameTest", "passwordTest");
+		when(userService.insertNewUser(user)).
+		      thenReturn(null);
+		  
+		mvc.perform(post("/verifyRegister").
+				param("username", "usernameTest").
+				param("password", "passwordTest")).
+			andExpect(cookie().doesNotExist("login_token")).
+			andExpect(model().attribute("message", "Username already used!")).
+			andExpect(model().attribute("disableInputText", false)).
+			andExpect(view().name("register")).
+			andExpect(status().is2xxSuccessful());
+	}
+	
 	@After
 	public void resetLoggedUsers() throws Exception {
 		userWebController.getLoggedUsers().clear();
