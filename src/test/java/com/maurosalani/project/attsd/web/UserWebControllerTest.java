@@ -121,13 +121,14 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testLogUser_Success() throws Exception {
+		User user = new User (1L, "username", "password");
 		when(userService.getUserByUsernameAndPassword("username", "password")).
-			thenReturn(new User (1L, "username", "password"));
+			thenReturn(user);
 		
 		mvc.perform(post("/log").
 				param("username", "username").
 				param("password", "password")).
-			andExpect(cookie().exists("login_token")).
+			andExpect(cookie().value("login_token", userWebController.generateToken(user))).
 			andExpect(view().name("redirect:/"));
 	}
 	
