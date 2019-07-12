@@ -112,6 +112,13 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testGetUserByUsernameAndPassworWithExistingUser() throws Exception {
+		User user = new User(1L, "username", "pwd");
+		when(userRepository.findByUsernameAndPassword("username", "password")).thenReturn(Optional.of(user));
+		assertThat(userService.getUserByUsernameAndPassword("username", "password")).isEqualTo(user);
+	}
+
+	@Test
 	public void testGetUsersByUsernameLikeWhenUserDoesNotExist() {
 		when(userRepository.findByUsernameLike(anyString())).thenReturn(Collections.emptyList());
 		assertThat(userService.getUsersByUsernameLike("username")).isEmpty();
