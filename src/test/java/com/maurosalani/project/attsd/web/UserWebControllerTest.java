@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -148,6 +149,21 @@ public class UserWebControllerTest {
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attribute("user", userSaved))
 			.andExpect(view().name("registrationSuccess"));
+		
+		verify(userService, times(1)).insertNewUser(userToInsert);
+	}
+	
+	@Test
+	public void testSave_UsernameAlreadyUsed() throws Exception {		
+		User userToInsert = new User(null, "usernameTest", "pwdTest");
+		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
+		
+		mvc.perform(post("/save")
+				.param("username", userToInsert.getUsername())
+				.param("password", userToInsert.getPassword()))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE_MODEL, "Username already used or data not specified correctly."))
+			.andExpect(view().name("registration"));
 		
 		verify(userService, times(1)).insertNewUser(userToInsert);
 	}
