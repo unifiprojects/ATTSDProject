@@ -51,6 +51,11 @@ public class UserWebController {
 		}	
 		return "login";
 	}
+	
+	@GetMapping("/register")
+	public String login() {
+		return "register";
+	}
 
 	private boolean isAlreadyLogged(String token) {
 		return loggedUsers.containsKey(token);

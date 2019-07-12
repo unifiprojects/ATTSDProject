@@ -76,7 +76,7 @@ public class UserWebControllerTest {
 			andExpect(model().attribute("disableInputText", true)).
 			andExpect(cookie().value("login_token", "token"));
 	}	
-
+	
 	@Test
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
 		mvc.perform(get("/login")).
@@ -84,11 +84,16 @@ public class UserWebControllerTest {
 			andExpect(model().attribute("errorMessage", "")).
 			andExpect(model().attribute("disableInputText", false)).
 			andExpect(cookie().doesNotExist("login_token"));
-	}	
-
+	}
+	
+	@Test
+	public void testAccessRegister() throws Exception {
+		mvc.perform(get("/register")).andExpect(status().is2xxSuccessful());
+	}
+	
 	@After
 	public void resetLoggedUsers() throws Exception {
 		userWebController.getLoggedUsers().clear();
 	}
-
+	
 }
