@@ -3,7 +3,6 @@ package com.maurosalani.project.attsd.web;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +57,8 @@ public class UserWebController {
 	}
 
 	@PostMapping("/verifyLogin")
-	public String verifyLoginUser(Model model, HttpServletResponse response, String username, String password,
-			HttpSession session) throws UserNotFoundException {
+	public String verifyLoginUser(Model model, String username, String password, HttpSession session)
+			throws UserNotFoundException {
 		User user = userService.getUserByUsernameAndPassword(username, password);
 		session.setAttribute("user", user);
 		return "redirect:/";
@@ -85,7 +84,7 @@ public class UserWebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpServletResponse response, HttpSession session, User user) throws UsernameAlreadyExistingException {
+	public String save(Model model, HttpSession session, User user) throws UsernameAlreadyExistingException {
 		User userSaved = userService.insertNewUser(user);
 		model.addAttribute("user", userSaved);
 		return "registrationSuccess";

@@ -277,7 +277,6 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
 			.andExpect(view().name("search"));
 	}
-	
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
