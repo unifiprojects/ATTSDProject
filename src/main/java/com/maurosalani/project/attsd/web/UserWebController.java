@@ -90,7 +90,12 @@ public class UserWebController {
 	public String search(Model model, HttpSession session, String content) {
 		List<User> usersFound = userService.getUsersByUsernameLike(content);
 		List<Game> gamesFound = gameService.getGamesByNameLike(content);
-		model.addAttribute(MESSAGE, "No element found.");
+
+		if (content == "" || content == null) {
+			model.addAttribute(MESSAGE, "Empty field for search.");
+		} else {
+			model.addAttribute(MESSAGE, "No element found.");
+		}
 		return "search";
 	}
 

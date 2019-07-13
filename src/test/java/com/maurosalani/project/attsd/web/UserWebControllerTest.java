@@ -223,6 +223,21 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(MESSAGE, "No element found."))
 			.andExpect(view().name("search"));
 	}
+	
+	@Test
+	public void testSearch_ContentIsEmpty() throws Exception {		
+		mvc.perform(get("/search")
+				.param("content", ""))
+			.andExpect(model().attribute(MESSAGE, "Empty field for search."))
+			.andExpect(view().name("search"));
+	}
+	
+	@Test
+	public void testSearch_ContentIsNull() throws Exception {		
+		mvc.perform(get("/search"))
+			.andExpect(model().attribute(MESSAGE, "Empty field for search."))
+			.andExpect(view().name("search"));
+	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
