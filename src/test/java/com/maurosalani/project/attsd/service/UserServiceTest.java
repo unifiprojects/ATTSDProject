@@ -140,7 +140,7 @@ public class UserServiceTest {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
 
-		when(userRepository.findByUsername(anyString())).thenReturn(null);
+		when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 		when(userRepository.save(any(User.class))).thenReturn(saved);
 
 		User result = userService.insertNewUser(toSave);
@@ -158,9 +158,9 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testInsertNewUser_UserUsernameAndPasswordAreNull_ShouldThrowException() {
+	public void testInsertNewUser_UsernameAndPasswordAreNull_ShouldThrowException() {
 		User userToInsert = new User(null, null, null); 
-		when(userRepository.findByUsername(null)).thenReturn(null);
+		when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
 		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 		
 		assertThatExceptionOfType(DataIntegrityViolationException.class).

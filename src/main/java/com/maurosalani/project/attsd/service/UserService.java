@@ -63,7 +63,7 @@ public class UserService {
 	}
 
 	private void checkIfUsernameAlreadyExists(User user) throws UsernameAlreadyExistingException {
-		if(userRepository.findByUsername(user.getUsername()) != null)
+		if(userRepository.findByUsername(user.getUsername()).isPresent())
 			throw new UsernameAlreadyExistingException("Username already existing.");
 	}
 
