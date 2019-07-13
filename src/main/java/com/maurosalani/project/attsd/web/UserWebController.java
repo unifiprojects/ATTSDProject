@@ -5,7 +5,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,16 +47,9 @@ public class UserWebController {
 
 	@PostMapping("/verifyLogin")
 	public String verifyLoginUser(Model model, HttpServletResponse response, String username, String password,
-			HttpSession session) {
+			HttpSession session) throws UserNotFoundException {
 		User user = null;
-		try{
-			user = userService.getUserByUsernameAndPassword(username, password);
-		}catch (UserNotFoundException e) {
-			model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			return "login";
-		}
-		
+		user = userService.getUserByUsernameAndPassword(username, password);
 		session.setAttribute("user", user);
 		return "redirect:/";
 	}

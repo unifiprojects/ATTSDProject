@@ -101,7 +101,7 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenThrow(UserNotFoundException.class);
 
 		mvc.perform(post("/verifyLogin").param("username", "wrong_username").param("password", "wrong_password"))
-			.andExpect(status().isUnauthorized())
+			.andExpect(status().isNotFound())
 			.andExpect(model().attribute(MESSAGE_MODEL, "Username or password invalid."))
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("login"));
