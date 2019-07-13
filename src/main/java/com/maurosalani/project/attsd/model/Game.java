@@ -15,7 +15,8 @@ public class Game {
 
 	}
 
-	public Game(String name, String description, Date releaseDate) {
+	public Game(Long id, String name, String description, Date releaseDate) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.releaseDate = releaseDate;

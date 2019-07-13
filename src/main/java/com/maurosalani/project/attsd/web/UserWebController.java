@@ -21,6 +21,10 @@ import com.maurosalani.project.attsd.service.UserService;
 @Controller
 public class UserWebController {
 
+	private static final String GAMES_LIST = "gamesList";
+
+	private static final String USERS_LIST = "usersList";
+	
 	private static final String MESSAGE = "message";
 
 	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
@@ -88,13 +92,17 @@ public class UserWebController {
 
 	@GetMapping("/search")
 	public String search(Model model, HttpSession session, String content) {
-		List<User> usersFound = userService.getUsersByUsernameLike(content);
-		List<Game> gamesFound = gameService.getGamesByNameLike(content);
-
 		if (content == "" || content == null) {
 			model.addAttribute(MESSAGE, "Empty field for search.");
 		} else {
-			model.addAttribute(MESSAGE, "No element found.");
+			List<User> usersFound = userService.getUsersByUsernameLike(content);
+			List<Game> gamesFound = gameService.getGamesByNameLike(content);
+			if (usersFound.isEmpty() && gamesFound.isEmpty()) {
+				model.addAttribute(MESSAGE, "No element found.");
+			}else {
+				model.addAttribute(USERS_LIST, usersFound);
+				model.addAttribute(GAMES_LIST, gamesFound);
+			}
 		}
 		return "search";
 	}

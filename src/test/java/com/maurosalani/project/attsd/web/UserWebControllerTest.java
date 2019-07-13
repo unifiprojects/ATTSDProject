@@ -8,8 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static java.util.Arrays.asList;
 
 import java.util.Collections;
+import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
@@ -33,6 +36,10 @@ import com.maurosalani.project.attsd.service.UserService;
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserWebController.class)
 public class UserWebControllerTest {
+
+	private static final String GAMES_LIST = "gamesList";
+
+	private static final String USERS_LIST = "usersList";
 
 	private static final String MESSAGE = "message";
 
@@ -238,6 +245,25 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(MESSAGE, "Empty field for search."))
 			.andExpect(view().name("search"));
 	}
+	
+	@Test
+	public void testSearch_ResultListsNotEmpty() throws Exception {		
+		String content = "content";
+		User user1 = new User(1L, "username1", "pwd1");
+		User user2 = new User(2L, "username2", "pwd2");
+		when(userService.getUsersByUsernameLike(content)).thenReturn(asList(user1, user2));
+		
+		Game game1 = new Game(1L, "name1", "description1", new Date(1000));
+		Game game2 = new Game(2L, "name2", "description2", new Date(2000));
+		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
+		
+		mvc.perform(get("/search")
+				.param("content", content))
+			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+			.andExpect(view().name("search"));
+	}
+	
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
