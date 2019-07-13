@@ -113,8 +113,18 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testLogoutUser() throws Exception {
+	public void testLogoutUser_SessionDoesNotExist() throws Exception {
 		mvc.perform(get("/logout"))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("redirect:/"));
+	}
+	
+	@Test
+	public void testLogoutUser_SessionExists() throws Exception {
+		User user = new User(null, "username", "pwd");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/logout");
+		
+		mvc.perform(requestToPerform)
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("redirect:/"));
 	}

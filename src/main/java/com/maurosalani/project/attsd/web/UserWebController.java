@@ -1,5 +1,7 @@
 package com.maurosalani.project.attsd.web;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -79,10 +81,8 @@ public class UserWebController {
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
-		if (session == null || session.getAttribute("user") == null)
-			return false;
-		else
-			return true;
+		Optional<User> opt = Optional.ofNullable((User) session.getAttribute("user"));
+		return opt.isPresent();
 	}
 
 }
