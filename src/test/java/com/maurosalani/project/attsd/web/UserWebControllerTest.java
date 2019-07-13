@@ -277,9 +277,9 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
 			.andExpect(view().name("search"));
 	}
-	
+		
 	@Test
-	public void testProfile_UsersFound() throws Exception {
+	public void testProfile_UserFound() throws Exception {
 		User user = new User(1L, "username", "password");
 		when(userService.getUserByUsername("username")).thenReturn(user);
 		
