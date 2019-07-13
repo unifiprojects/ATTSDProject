@@ -3,9 +3,11 @@ package com.maurosalani.project.attsd.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
@@ -47,12 +49,22 @@ public class UserService {
 		return userRepository.findByUsernameLike(username);
 	}
 
-	public User insertNewUser(User user) {
+	public User insertNewUser(User user) throws UsernameAlreadyExistingException {
 		if (user == null)
 			throw new IllegalArgumentException();
 
 		user.setId(null);
-		return userRepository.save(user);
+		try {
+			return userRepository.save(user);
+		} catch (DataIntegrityViolationException e) {
+			return checkIfUsernameAlreadyExists(user);
+		}
+	}
+
+	private User checkIfUsernameAlreadyExists(User user) throws UsernameAlreadyExistingException {
+		if(userRepository.findByUsername(user.getUsername()) != null)
+			throw new UsernameAlreadyExistingException();
+		return user;
 	}
 
 	public User updateUserById(Long id, User user) throws UserNotFoundException {

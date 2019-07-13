@@ -25,8 +25,10 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
@@ -134,7 +136,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testInsertNewUser_setsIdToNull_returnsSavedUser() {
+	public void testInsertNewUser_setsIdToNull_returnsSavedUser() throws UsernameAlreadyExistingException {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
 
@@ -152,6 +154,16 @@ public class UserServiceTest {
 	public void testInsertNewUser_UserIsNull_ShouldThrowException() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.insertNewUser(null));
 		verifyNoMoreInteractions(userRepository);
+	}
+
+	@Test
+	public void testInsertNewUser_UsernameAlreadyExists_ShouldThrowException() {
+		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd"); 
+		User userAlreadyExisting = new User(1L, "usernameAlreadyExisting", "anotherPwd"); 
+		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
+		when(userRepository.findByUsername("usernameAlreadyExisting")).thenReturn(Optional.of(userAlreadyExisting));
+		
+		assertThatExceptionOfType(UsernameAlreadyExistingException.class).isThrownBy(() -> userService.insertNewUser(userToInsert));
 	}
 
 	@Test
