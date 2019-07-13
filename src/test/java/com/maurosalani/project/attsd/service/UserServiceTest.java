@@ -19,9 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
@@ -41,9 +39,6 @@ public class UserServiceTest {
 
 	@InjectMocks
 	private UserService userService;
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testFindAllWhenDatabaseIsEmpty() {
