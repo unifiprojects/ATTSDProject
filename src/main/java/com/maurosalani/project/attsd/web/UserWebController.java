@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -100,7 +101,7 @@ public class UserWebController {
 	}
 
 	@GetMapping("/search")
-	public String search(Model model, HttpSession session, String content) {
+	public String search(Model model, HttpSession session, @RequestParam(value = "content_search", required = true) String content) {
 		if (contentIsNotValid(content)) {
 			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
@@ -118,7 +119,7 @@ public class UserWebController {
 	}
 
 	private boolean contentIsNotValid(String content) {
-		return StringUtils.isBlank(content); 
+		return StringUtils.isBlank(content);
 	}
 
 	@GetMapping("/profile/{username}")

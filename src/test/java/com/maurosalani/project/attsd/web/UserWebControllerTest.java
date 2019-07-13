@@ -1,9 +1,7 @@
 package com.maurosalani.project.attsd.web;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static java.util.Arrays.asList;
 
 import java.util.Collections;
 import java.util.Date;
@@ -230,7 +227,7 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
 		
 		mvc.perform(get("/search")
-				.param("content", content))
+				.param("content_search", content))
 			.andExpect(model().attribute(MESSAGE, "No element found."))
 			.andExpect(view().name("search"));
 	}
@@ -238,14 +235,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testSearch_ContentIsEmpty_ShouldShowError() throws Exception {		
 		mvc.perform(get("/search")
-				.param("content", ""))
-			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
-			.andExpect(view().name("search"));
-	}
-	
-	@Test
-	public void testSearch_ContentIsNull_ShouldShowError() throws Exception {		
-		mvc.perform(get("/search"))
+				.param("content_search", ""))
 			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
 			.andExpect(view().name("search"));
 	}
@@ -253,7 +243,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testSearch_ContentIsOnlyWhitespaces_ShouldShowError() throws Exception {		
 		mvc.perform(get("/search")
-				.param("content", "   "))
+				.param("content_search", "   "))
 			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
 			.andExpect(view().name("search"));
 	}
@@ -263,7 +253,7 @@ public class UserWebControllerTest {
 		String trimmedContent = new String(" someName ").trim();
 
 		mvc.perform(get("/search")
-				.param("content", " someName "));
+				.param("content_search", " someName "));
 		
 		verify(userService).getUsersByUsernameLike(trimmedContent);
 		verify(gameService).getGamesByNameLike(trimmedContent);		
@@ -281,7 +271,7 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
 		
 		mvc.perform(get("/search")
-				.param("content", content))
+				.param("content_search", content))
 			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
 			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
 			.andExpect(view().name("search"));
@@ -296,7 +286,7 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
 		
 		mvc.perform(get("/search")
-				.param("content", content))
+				.param("content_search", content))
 			.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
 			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
 			.andExpect(view().name("search"));
@@ -312,7 +302,7 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
 		
 		mvc.perform(get("/search")
-				.param("content", content))
+				.param("content_search", content))
 			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
 			.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
 			.andExpect(view().name("search"));
