@@ -140,6 +140,7 @@ public class UserServiceTest {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
 
+		when(userRepository.findByUsername(anyString())).thenReturn(null);
 		when(userRepository.save(any(User.class))).thenReturn(saved);
 
 		User result = userService.insertNewUser(toSave);
@@ -155,15 +156,28 @@ public class UserServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.insertNewUser(null));
 		verifyNoMoreInteractions(userRepository);
 	}
+	
+	@Test
+	public void testInsertNewUser_UserUsernameAndPasswordAreNull_ShouldThrowException() {
+		User userToInsert = new User(null, null, null); 
+		when(userRepository.findByUsername(null)).thenReturn(null);
+		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
+		
+		assertThatExceptionOfType(DataIntegrityViolationException.class).
+			isThrownBy(() -> userService.insertNewUser(userToInsert)).
+			withMessage("Username or password are invalid.");
+	}
 
 	@Test
 	public void testInsertNewUser_UsernameAlreadyExists_ShouldThrowException() {
 		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd"); 
 		User userAlreadyExisting = new User(1L, "usernameAlreadyExisting", "anotherPwd"); 
-		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 		when(userRepository.findByUsername("usernameAlreadyExisting")).thenReturn(Optional.of(userAlreadyExisting));
 		
-		assertThatExceptionOfType(UsernameAlreadyExistingException.class).isThrownBy(() -> userService.insertNewUser(userToInsert));
+		assertThatExceptionOfType(UsernameAlreadyExistingException.class).
+			isThrownBy(() -> userService.insertNewUser(userToInsert)).
+			withMessage("Username already existing.");
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
 	@Test

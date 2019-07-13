@@ -52,19 +52,19 @@ public class UserService {
 	public User insertNewUser(User user) throws UsernameAlreadyExistingException {
 		if (user == null)
 			throw new IllegalArgumentException();
-
+		checkIfUsernameAlreadyExists(user);
+		
 		user.setId(null);
 		try {
 			return userRepository.save(user);
 		} catch (DataIntegrityViolationException e) {
-			return checkIfUsernameAlreadyExists(user);
+			throw new DataIntegrityViolationException("Username or password are invalid.");
 		}
 	}
 
-	private User checkIfUsernameAlreadyExists(User user) throws UsernameAlreadyExistingException {
+	private void checkIfUsernameAlreadyExists(User user) throws UsernameAlreadyExistingException {
 		if(userRepository.findByUsername(user.getUsername()) != null)
-			throw new UsernameAlreadyExistingException();
-		return user;
+			throw new UsernameAlreadyExistingException("Username already existing.");
 	}
 
 	public User updateUserById(Long id, User user) throws UserNotFoundException {
