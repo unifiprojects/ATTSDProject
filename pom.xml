@@ -224,6 +224,7 @@
               <excludes>
                 <exclude>**/*Application.*</exclude>
                 <exclude>**/model/*</exclude>
+                <exclude>**/exception/*</exclude>
                 <exclude>**/service/*</exclude>
               </excludes>
             </configuration>
