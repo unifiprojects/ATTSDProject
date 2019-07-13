@@ -20,21 +20,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private static final String MESSAGE_MODEL = "message";
 
 	@ExceptionHandler(UserNotFoundException.class)
-	public String handleUserNotFound(Model model, HttpServletResponse response) throws IOException {
+	public String handleUserNotFound(Model model, HttpServletResponse response) {
 		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
 		response.setStatus(HttpStatus.NOT_FOUND.value());
 		return "login";
 	}
 
 	@ExceptionHandler(UsernameAlreadyExistingException.class)
-	public String handleUsernameAlreadyExisting(Model model, HttpServletResponse response) throws IOException {
+	public String handleUsernameAlreadyExisting(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.CONFLICT.value());
 		model.addAttribute(MESSAGE_MODEL, "Username already existing. Please choose another one.");
 		return "registration";
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public String handleDataIntegrityViolation(Model model, HttpServletResponse response) throws IOException {
+	public String handleDataIntegrityViolation(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
 		return "registration";

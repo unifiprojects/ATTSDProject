@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
@@ -84,7 +85,7 @@ public class UserWebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpSession session, User user) {
+	public String save(Model model, HttpServletResponse response, HttpSession session, User user) throws UsernameAlreadyExistingException {
 		User userSaved = userService.insertNewUser(user);
 		model.addAttribute("user", userSaved);
 		return "registrationSuccess";
