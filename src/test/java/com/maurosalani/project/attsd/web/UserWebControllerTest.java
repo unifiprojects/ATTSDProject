@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
 @RunWith(SpringRunner.class)
@@ -40,6 +43,9 @@ public class UserWebControllerTest {
 
 	@MockBean
 	private UserService userService;
+	
+	@MockBean
+	private GameService gameService;
 
 	@Test
 	public void testStatus2XX() throws Exception {
@@ -204,6 +210,18 @@ public class UserWebControllerTest {
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
 		.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
 		.andExpect(view().name("registration"));
+	}
+	
+	@Test
+	public void testSearch_ResultListsAreEmpty() throws Exception {		
+		String content = "content";
+		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
+		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
+		
+		mvc.perform(get("/search")
+				.param("content", content))
+			.andExpect(model().attribute(MESSAGE, "No element found."))
+			.andExpect(view().name("search"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {

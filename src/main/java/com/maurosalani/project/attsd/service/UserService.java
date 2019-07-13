@@ -1,5 +1,7 @@
 package com.maurosalani.project.attsd.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -11,7 +13,7 @@ public class UserService {
 
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
 
-	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException{
+	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
@@ -20,6 +22,10 @@ public class UserService {
 	}
 
 	public User insertNewUser(User user) throws UsernameAlreadyExistingException {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public List<User> getUsersByUsernameLike(String content) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

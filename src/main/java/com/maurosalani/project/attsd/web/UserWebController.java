@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
 @Controller
@@ -24,6 +27,9 @@ public class UserWebController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private GameService gameService;
 
 	@GetMapping("/")
 	public String index(Model model, HttpSession session) {
@@ -74,10 +80,18 @@ public class UserWebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpServletResponse response, HttpSession session, User user) {
+	public String save(Model model, HttpSession session, User user) {
 		User userSaved = userService.insertNewUser(user);
 		model.addAttribute("user", userSaved);
 		return "registrationSuccess";
+	}
+
+	@GetMapping("/search")
+	public String search(Model model, HttpSession session, String content) {
+		List<User> usersFound = userService.getUsersByUsernameLike(content);
+		List<Game> gamesFound = gameService.getGamesByNameLike(content);
+		model.addAttribute(MESSAGE, "No element found.");
+		return "search";
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
