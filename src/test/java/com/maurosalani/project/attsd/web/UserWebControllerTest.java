@@ -287,6 +287,17 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute("user", user))
 			.andExpect(view().name("profile"));
 	}
+	
+	@Test
+	public void testProfile_ProfileNotFound() throws Exception {
+		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
+
+		mvc.perform(get("/profile/wrong_username"))
+			.andExpect(status().isNotFound())
+			.andExpect(model().attribute(MESSAGE, "Profile not found."))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("profile404"));
+	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();

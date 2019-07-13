@@ -1,7 +1,5 @@
 package com.maurosalani.project.attsd.exception_handler;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 
@@ -18,13 +17,6 @@ import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private static final String MESSAGE_MODEL = "message";
-
-	@ExceptionHandler(UserNotFoundException.class)
-	public String handleUserNotFound(Model model, HttpServletResponse response) {
-		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
-		response.setStatus(HttpStatus.NOT_FOUND.value());
-		return "login";
-	}
 
 	@ExceptionHandler(UsernameAlreadyExistingException.class)
 	public String handleUsernameAlreadyExisting(Model model, HttpServletResponse response) {
@@ -38,6 +30,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
 		return "registration";
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	public String handleUserNotFound(Model model, HttpServletResponse response) {
+		model.addAttribute(MESSAGE_MODEL, "Profile not found.");
+		response.setStatus(HttpStatus.NOT_FOUND.value());
+		return "profile404";
+	}
+
+	@ExceptionHandler(LoginFailedException.class)
+	public String handleLoginFailed(Model model, HttpServletResponse response) {
+		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
+		response.setStatus(HttpStatus.NOT_FOUND.value());
+		return "login";
 	}
 
 }

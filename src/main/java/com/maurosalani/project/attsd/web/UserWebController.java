@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
@@ -59,8 +60,13 @@ public class UserWebController {
 
 	@PostMapping("/verifyLogin")
 	public String verifyLoginUser(Model model, String username, String password, HttpSession session)
-			throws UserNotFoundException {
-		User user = userService.getUserByUsernameAndPassword(username, password);
+			throws LoginFailedException {
+		User user;
+		try {
+			user = userService.getUserByUsernameAndPassword(username, password);
+		} catch (UserNotFoundException e) {
+			throw new LoginFailedException();
+		}
 		session.setAttribute("user", user);
 		return "redirect:/";
 	}
@@ -109,7 +115,7 @@ public class UserWebController {
 	}
 
 	@GetMapping("/profile/{username}")
-	public String profile(@PathVariable String username, Model model) {
+	public String profile(@PathVariable String username, Model model) throws UserNotFoundException {
 		User user = userService.getUserByUsername(username);
 		model.addAttribute("user", user);
 		return "profile";
