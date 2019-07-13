@@ -20,6 +20,8 @@ import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Controller
 public class UserWebController {
 
@@ -99,11 +101,12 @@ public class UserWebController {
 
 	@GetMapping("/search")
 	public String search(Model model, HttpSession session, String content) {
-		if (content == "" || content == null) {
-			model.addAttribute(MESSAGE, "Empty field for search.");
+		if (contentIsNotValid(content)) {
+			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
-			List<User> usersFound = userService.getUsersByUsernameLike(content);
-			List<Game> gamesFound = gameService.getGamesByNameLike(content);
+			String trimmedContent = content.trim();
+			List<User> usersFound = userService.getUsersByUsernameLike(trimmedContent);
+			List<Game> gamesFound = gameService.getGamesByNameLike(trimmedContent);
 			if (usersFound.isEmpty() && gamesFound.isEmpty()) {
 				model.addAttribute(MESSAGE, "No element found.");
 			} else {
@@ -112,6 +115,10 @@ public class UserWebController {
 			}
 		}
 		return "search";
+	}
+
+	private boolean contentIsNotValid(String content) {
+		return StringUtils.isBlank(content); 
 	}
 
 	@GetMapping("/profile/{username}")
