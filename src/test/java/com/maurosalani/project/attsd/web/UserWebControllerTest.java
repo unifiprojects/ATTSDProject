@@ -252,7 +252,6 @@ public class UserWebControllerTest {
 		User user1 = new User(1L, "username1", "pwd1");
 		User user2 = new User(2L, "username2", "pwd2");
 		when(userService.getUsersByUsernameLike(content)).thenReturn(asList(user1, user2));
-		
 		Game game1 = new Game(1L, "name1", "description1", new Date(1000));
 		Game game2 = new Game(2L, "name2", "description2", new Date(2000));
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
@@ -260,6 +259,21 @@ public class UserWebControllerTest {
 		mvc.perform(get("/search")
 				.param("content", content))
 			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+			.andExpect(view().name("search"));
+	}
+
+	@Test
+	public void testSearch_UsersFoundListIsEmpty() throws Exception {		
+		String content = "content";
+		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
+		Game game1 = new Game(1L, "name1", "description1", new Date(1000));
+		Game game2 = new Game(2L, "name2", "description2", new Date(2000));
+		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
+		
+		mvc.perform(get("/search")
+				.param("content", content))
+			.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
 			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
 			.andExpect(view().name("search"));
 	}

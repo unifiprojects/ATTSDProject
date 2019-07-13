@@ -24,7 +24,7 @@ public class UserWebController {
 	private static final String GAMES_LIST = "gamesList";
 
 	private static final String USERS_LIST = "usersList";
-	
+
 	private static final String MESSAGE = "message";
 
 	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
@@ -99,7 +99,7 @@ public class UserWebController {
 			List<Game> gamesFound = gameService.getGamesByNameLike(content);
 			if (usersFound.isEmpty() && gamesFound.isEmpty()) {
 				model.addAttribute(MESSAGE, "No element found.");
-			}else {
+			} else {
 				model.addAttribute(USERS_LIST, usersFound);
 				model.addAttribute(GAMES_LIST, gamesFound);
 			}
