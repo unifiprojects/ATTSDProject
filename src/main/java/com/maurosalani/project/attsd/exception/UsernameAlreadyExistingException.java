@@ -1,6 +1,6 @@
 package com.maurosalani.project.attsd.exception;
 
-public class UsernameAlreadyExistingException extends RuntimeException{
+public class UsernameAlreadyExistingException extends Exception{
 
 	/**
 	 * 
