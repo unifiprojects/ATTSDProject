@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import com.maurosalani.project.attsd.service.UserService;
 @Controller
 public class UserWebController {
 
-	private static final String MESSAGE_MODEL = "message";
+	private static final String MESSAGE = "message";
 
 	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
 
@@ -36,10 +35,10 @@ public class UserWebController {
 	@GetMapping("/login")
 	public String login(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
-			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
+			model.addAttribute(MESSAGE, "You are already logged! Try to log out from homepage.");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
 		} else {
-			model.addAttribute(MESSAGE_MODEL, "");
+			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
 		}
 		return "login";
@@ -48,8 +47,7 @@ public class UserWebController {
 	@PostMapping("/verifyLogin")
 	public String verifyLoginUser(Model model, HttpServletResponse response, String username, String password,
 			HttpSession session) throws UserNotFoundException {
-		User user = null;
-		user = userService.getUserByUsernameAndPassword(username, password);
+		User user = userService.getUserByUsernameAndPassword(username, password);
 		session.setAttribute("user", user);
 		return "redirect:/";
 	}
@@ -64,10 +62,10 @@ public class UserWebController {
 	@GetMapping("/registration")
 	public String registration(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
-			model.addAttribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage.");
+			model.addAttribute(MESSAGE, "You are already logged! Try to log out from homepage.");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
 		} else {
-			model.addAttribute(MESSAGE_MODEL, "");
+			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
 		}
 		return "registration";
@@ -75,13 +73,7 @@ public class UserWebController {
 
 	@PostMapping("/save")
 	public String save(Model model, HttpServletResponse response, HttpSession session, User user) {
-		User userSaved = null;
-		try {
-			userSaved = userService.insertNewUser(user);
-		} catch (DataIntegrityViolationException e) {
-			model.addAttribute(MESSAGE_MODEL, "Username already used or data not specified correctly.");
-			return "registration";
-		}
+		User userSaved = userService.insertNewUser(user);
 		model.addAttribute("user", userSaved);
 		return "registrationSuccess";
 	}

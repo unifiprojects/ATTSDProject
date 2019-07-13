@@ -1,8 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
 
@@ -31,7 +31,7 @@ import com.maurosalani.project.attsd.service.UserService;
 @WebMvcTest(controllers = UserWebController.class)
 public class UserWebControllerTest {
 
-	private static final String MESSAGE_MODEL = "message";
+	private static final String MESSAGE = "message";
 
 	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
 
@@ -47,7 +47,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testAccessIndex_WhenUserNotLoggedIn_AndLoginTokenNotFound() throws Exception {
+	public void testAccessIndex_WhenUserNotLoggedIn() throws Exception {
 		mvc.perform(get("/"))
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attributeDoesNotExist("username"));
@@ -58,7 +58,8 @@ public class UserWebControllerTest {
 		User user = new User(1L, "usernameTest", "pwdTest");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/");
 
-		mvc.perform(requestToPerform).andExpect(status().is2xxSuccessful())
+		mvc.perform(requestToPerform)
+			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attributeExists("username"));
 	}
 
@@ -74,7 +75,7 @@ public class UserWebControllerTest {
 
 		mvc.perform(requestToPerform)
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
 			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
@@ -82,7 +83,7 @@ public class UserWebControllerTest {
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
 		mvc.perform(get("/login"))
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE_MODEL, ""))
+			.andExpect(model().attribute(MESSAGE, ""))
 			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
@@ -91,7 +92,9 @@ public class UserWebControllerTest {
 		User user = new User(1L, "username", "password");
 		when(userService.getUserByUsernameAndPassword("username", "password")).thenReturn(user);
 
-		mvc.perform(post("/verifyLogin").param("username", "username").param("password", "password"))			
+		mvc.perform(post("/verifyLogin")
+				.param("username", "username")
+				.param("password", "password"))			
 			.andExpect(request().sessionAttribute("user", user))
 			.andExpect(view().name("redirect:/"));
 	}
@@ -100,9 +103,11 @@ public class UserWebControllerTest {
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect() throws Exception {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenThrow(UserNotFoundException.class);
 
-		mvc.perform(post("/verifyLogin").param("username", "wrong_username").param("password", "wrong_password"))
+		mvc.perform(post("/verifyLogin")
+				.param("username", "wrong_username")
+				.param("password", "wrong_password"))
 			.andExpect(status().isNotFound())
-			.andExpect(model().attribute(MESSAGE_MODEL, "Username or password invalid."))
+			.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("login"));
 	}
@@ -126,7 +131,7 @@ public class UserWebControllerTest {
 
 		mvc.perform(requestToPerform)
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE_MODEL, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
 			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
@@ -134,7 +139,7 @@ public class UserWebControllerTest {
 	public void testRegistration_UserIsNotLogged() throws Exception {
 		mvc.perform(get("/registration"))
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE_MODEL, ""))
+			.andExpect(model().attribute(MESSAGE, ""))
 			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
@@ -150,23 +155,45 @@ public class UserWebControllerTest {
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(model().attribute("user", userSaved))
 			.andExpect(view().name("registrationSuccess"));
-		
-		verify(userService, times(1)).insertNewUser(userToInsert);
 	}
 	
 	@Test
 	public void testSave_UsernameAlreadyUsed() throws Exception {		
-		User userToInsert = new User(null, "usernameTest", "pwdTest");
+		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd");
+		when(userService.insertNewUser(userToInsert)).thenThrow(UsernameAlreadyExistingException.class);
+		
+		mvc.perform(post("/save")
+				.param("username", userToInsert.getUsername())
+				.param("password", userToInsert.getPassword()))
+			.andExpect(status().is(HttpStatus.CONFLICT.value()))
+			.andExpect(model().attribute(MESSAGE, "Username already existing. Please choose another one."))
+			.andExpect(view().name("registration"));
+	}
+	
+	@Test
+	public void testSave_PasswordIsEmpty() throws Exception {		
+		User userToInsert = new User(null, "usernameTest", null);
 		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 		
 		mvc.perform(post("/save")
 				.param("username", userToInsert.getUsername())
 				.param("password", userToInsert.getPassword()))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE_MODEL, "Username already used or data not specified correctly."))
-			.andExpect(view().name("registration"));
+		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+		.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+		.andExpect(view().name("registration"));
+	}
+	
+	@Test
+	public void testSave_UsernameIsEmpty() throws Exception {		
+		User userToInsert = new User(null, null, "pwdTest");
+		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 		
-		verify(userService, times(1)).insertNewUser(userToInsert);
+		mvc.perform(post("/save")
+				.param("username", userToInsert.getUsername())
+				.param("password", userToInsert.getPassword()))
+		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+		.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+		.andExpect(view().name("registration"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
