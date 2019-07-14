@@ -369,6 +369,18 @@ public class UserWebControllerTest {
 				.andExpect(model().attribute(MESSAGE, "Unauthorized Operation."))
 				.andExpect(view().name("unauthorized401"));
 	}
+	
+	@Test
+	public void testAddFollowedUserToUser_UsernameInBodyNotFound() throws Exception {
+		User user = new User(1L,"username", "password");
+		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
+
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
+		mvc.perform(requestToPerform.param("usernameToAdd", "wrong_username"))
+				.andExpect(status().isNotFound())
+				.andExpect(model().attribute(MESSAGE, "Profile not found."))
+				.andExpect(view().name("profile404"));
+	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
