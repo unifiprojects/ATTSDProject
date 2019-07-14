@@ -142,7 +142,10 @@ public class UserWebController {
 
 	@PutMapping("/addUser")
 	public String addFollowedUserToUser(@RequestParam(name = "usernameToAdd") String usernameToAdd, Model model,
-			HttpSession session) throws UserNotFoundException {
+			HttpSession session) throws UserNotFoundException, UnauthorizedOperationException {
+		if (!isAlreadyLogged(session)) {
+			throw new UnauthorizedOperationException();
+		}
 		User user = (User) session.getAttribute("user");
 		User toAdd = userService.getUserByUsername(usernameToAdd);
 		userService.addFollowedUser(user, toAdd);
