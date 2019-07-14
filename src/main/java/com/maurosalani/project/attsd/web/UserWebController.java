@@ -11,10 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.UnauthorizedOperationException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
@@ -136,6 +138,15 @@ public class UserWebController {
 		Game game = gameService.getGameByName(name);
 		model.addAttribute("game", game);
 		return "game";
+	}
+
+	@PutMapping("/addUser")
+	public String addFollowedUserToUser(@RequestParam(name = "usernameToAdd") String usernameToAdd, Model model,
+			HttpSession session) throws UserNotFoundException {
+		User user = (User) session.getAttribute("user");
+		User toAdd = userService.getUserByUsername(usernameToAdd);
+		userService.addFollowedUser(user, toAdd);
+		return "redirect:/profile/" + toAdd.getUsername();
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
