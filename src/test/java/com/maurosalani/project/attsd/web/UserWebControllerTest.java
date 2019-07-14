@@ -366,7 +366,7 @@ public class UserWebControllerTest {
 	public void testAddFollowedUserToUser_UserIsNotLogged() throws Exception {
 		mvc.perform(put("/addUser").param("usernameToAdd", "usernameToAdd"))
 				.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
-				.andExpect(model().attribute(MESSAGE, "Unauthorized Operation."))
+				.andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
 				.andExpect(view().name("unauthorized401"));
 	}
 	

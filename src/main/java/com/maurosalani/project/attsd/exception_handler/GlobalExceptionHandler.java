@@ -57,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(UnauthorizedOperationException.class)
 	public String handleUnauthorizedOperation(Model model, HttpServletResponse response) {
-		model.addAttribute(MESSAGE_MODEL, "Unauthorized Operation.");
+		model.addAttribute(MESSAGE_MODEL, "Unauthorized Operation. You are not logged in!");
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		return "unauthorized401";
 	}
