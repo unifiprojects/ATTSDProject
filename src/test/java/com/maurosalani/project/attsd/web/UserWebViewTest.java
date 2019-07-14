@@ -1,12 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
-import static com.gargoylesoftware.htmlunit.WebAssert.assertFormPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertInputPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkNotPresentWithText;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkPresentWithText;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTextNotPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTextPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTitleEquals;
+import static com.gargoylesoftware.htmlunit.WebAssert.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -126,6 +120,17 @@ public class UserWebViewTest {
 		assertTextNotPresent(page, WELCOME_PLEASE_LOGIN);
 		assertLinkNotPresentWithText(page, "Log in");
 		assertLinkNotPresentWithText(page, "Register");
+	}
+	
+	@Test
+	public void testLoginPage_ShouldContainTextFields() throws Exception {
+		HtmlPage page = webClient.getPage("/login");
+		
+		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
+		assertFormPresent(page, "login_form");
+		assertInputPresent(page, "input_username");
+		assertInputPresent(page, "input_password");
+		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
 
 	@Before
