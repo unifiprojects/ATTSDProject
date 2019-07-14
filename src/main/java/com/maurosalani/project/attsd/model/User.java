@@ -1,6 +1,8 @@
 package com.maurosalani.project.attsd.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 public class User implements Serializable{
 
@@ -13,6 +15,10 @@ public class User implements Serializable{
 
 	private String username;
 	private String password;
+	
+	List<User> followedUsers;
+	List<User> followerUsers;
+	List<Game> games;
 
 	public User() {
 
@@ -46,6 +52,25 @@ public class User implements Serializable{
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void addFollowedUser(User user) {
+		if (this.followedUsers == null)
+			this.followedUsers = new LinkedList<>();
+		this.followedUsers.add(user);
+	}
+
+	public void addFollowerUser(User user) {
+		if (this.followerUsers == null)
+			this.followerUsers = new LinkedList<>();
+		this.followerUsers.add(user);
+	}
+
+	public void addGame(Game game) {
+		if (this.games == null)
+			this.games = new LinkedList<>();
+		this.games.add(game);
+
 	}
 
 	@Override

@@ -215,7 +215,8 @@ public class UserWebControllerTest {
 		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 
 		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
-				userToInsert.getPassword())).andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+				userToInsert.getPassword()))
+				.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
 				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
 				.andExpect(view().name("registration"));
 	}
@@ -342,11 +343,35 @@ public class UserWebControllerTest {
 				.andExpect(request().sessionAttribute("game", equalTo(null)))
 				.andExpect(view().name("game404"));
 	}
+	
+	@Test
+	public void testAddFollowedUserToUser_UserAddedSuccessfully() throws Exception {
+		User user = new User(1L,"username", "password");
+		User toAdd = new User(2L,"usernameToAdd", "passwordToAdd");
+		User userReturned = new User(1L,"username", "password");
+		userReturned.addFollowedUser(toAdd);
+		toAdd.addFollowerUser(userReturned);
+		
+		when(userService.getUserByUsername("usernameToAdd")).thenReturn(toAdd);
+		when(userService.addFollowedUser(user, toAdd)).thenReturn(userReturned);
+		
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
+		mvc.perform(requestToPerform.param("usernameToAdd", toAdd.getUsername()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/profile/" + toAdd.getUsername()));
+	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
 		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.get(url).session(session);
+		return requestToPerform;
+	}
+	
+	private MockHttpServletRequestBuilder addUserToSessionAndReturnPutRequest(User user, String url) {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("user", user);
+		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.put(url).session(session);
 		return requestToPerform;
 	}
 }
