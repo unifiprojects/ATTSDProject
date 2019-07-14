@@ -101,7 +101,8 @@ public class UserWebController {
 	}
 
 	@GetMapping("/search")
-	public String search(Model model, HttpSession session, @RequestParam(value = "content_search", required = true) String content) {
+	public String search(Model model, HttpSession session,
+			@RequestParam(value = "content_search", required = true) String content) {
 		if (contentIsNotValid(content)) {
 			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
@@ -127,6 +128,13 @@ public class UserWebController {
 		User user = userService.getUserByUsername(username);
 		model.addAttribute("user", user);
 		return "profile";
+	}
+
+	@GetMapping("/game/{name}")
+	public String game(@PathVariable String name, Model model) throws UserNotFoundException {
+		Game game = gameService.getGamesByName(name);
+		model.addAttribute("game", game);
+		return "game";
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
