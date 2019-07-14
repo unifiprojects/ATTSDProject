@@ -2,9 +2,9 @@ package com.maurosalani.project.attsd.web;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -136,7 +136,7 @@ public class UserWebControllerTest {
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect() throws Exception {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenThrow(UserNotFoundException.class);
 
-		mvc.perform(post("/verifyLogin")
+		mvc.perform(post("/verifyLogin")				
 				.param("username", "wrong_username")
 				.param("password", "wrong_password"))
 			.andExpect(status().isNotFound())

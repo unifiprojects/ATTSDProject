@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +21,6 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
-
-import org.apache.commons.lang3.StringUtils;
 
 @Controller
 public class UserWebController {
@@ -65,15 +64,14 @@ public class UserWebController {
 	}
 
 	@PostMapping("/verifyLogin")
-	public String verifyLoginUser(Model model, String username, String password, HttpSession session)
-			throws LoginFailedException {
-		User user;
+	public String verifyLoginUser(Model model, User user, HttpSession session) throws LoginFailedException {
+		User result;
 		try {
-			user = userService.getUserByUsernameAndPassword(username, password);
+			result = userService.getUserByUsernameAndPassword(user.getUsername(), user.getPassword());
 		} catch (UserNotFoundException e) {
 			throw new LoginFailedException();
 		}
-		session.setAttribute("user", user);
+		session.setAttribute("user", result);
 		return "redirect:/";
 	}
 
@@ -104,7 +102,8 @@ public class UserWebController {
 	}
 
 	@GetMapping("/search")
-	public String search(Model model, HttpSession session, @RequestParam(value = "content_search", required = true) String content) {
+	public String search(Model model, HttpSession session,
+			@RequestParam(value = "content_search", required = true) String content) {
 		if (contentIsNotValid(content)) {
 			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
