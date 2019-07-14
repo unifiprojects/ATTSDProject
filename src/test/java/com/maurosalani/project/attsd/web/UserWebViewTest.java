@@ -43,7 +43,7 @@ public class UserWebViewTest {
 	}
 	
 	@Test
-	public void testHomePageWhenUserNotLogged_ShouldContainSearchFormAndLoginLink() throws Exception {
+	public void testHomePageWhenUserNotLogged_ShouldContainSearchForm() throws Exception {
 		HtmlPage page = webClient.getPage("/");
 		
 		assertTitleEquals(page, "ATTSD-Project: Social Games");
@@ -51,6 +51,13 @@ public class UserWebViewTest {
 		assertTextPresent(page, "Welcome! Please Log in or Register");
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "search_bar");
+		
+	}
+	
+	@Test
+	public void testHomePageWhenUserNotLogged_ShouldContainLinksToLogin() throws Exception {
+		HtmlPage page = webClient.getPage("/");
+		
 		assertThat(page.getAnchorByText("Log in").getHrefAttribute()
 				).isEqualTo("/login");
 		assertThat(page.getAnchorByText("Register").getHrefAttribute()
