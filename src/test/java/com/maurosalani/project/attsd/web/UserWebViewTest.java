@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
+import static com.gargoylesoftware.htmlunit.WebAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -30,7 +31,22 @@ public class UserWebViewTest {
 	@Test
 	public void testHomePageTitle() throws Exception {
 		HtmlPage page = webClient.getPage("/");
-		assertThat(page.getTitleText()).isEqualTo("ATTSD-Project: Social Games");
+		assertTitleEquals(page, "ATTSD-Project: Social Games");
+	}
+	
+	@Test
+	public void testHomePageWhenUserNotLogged_ShouldContainSearchFormAndLoginLink() throws Exception {
+		HtmlPage page = webClient.getPage("/");
+		
+		assertTitleEquals(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, "Welcome! Please Log in or Register");
+		assertFormPresent(page, "search_form");
+		assertInputPresent(page, "search_bar");
+		assertThat(page.getAnchorByText("Log in").getHrefAttribute()
+				).isEqualTo("/login");
+		assertThat(page.getAnchorByText("Register").getHrefAttribute()
+				).isEqualTo("/registration");
 	}
 
 }
