@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -56,8 +57,24 @@ public class UserWebControllerTest {
 	private GameService gameService;
 
 	@Test
-	public void testStatus2XX() throws Exception {
+	public void testAccessIndex_ShouldReturnSuccess() throws Exception {
 		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void testAccessIndex_ShouldHaveLatestReleasesAttribute() throws Exception {
+		mvc.perform(get("/"))
+			.andExpect(model().attribute("latest_releases", equalTo(Collections.emptyList())));
+	}
+	
+	@Test
+	public void testAccessIndex_ShouldShowLatestReleasesGames() throws Exception {
+		Game game1 = new Game(1L, "Game1", "Description1", new Date(1));
+		Game game2 = new Game(2L, "Game2", "Description2", new Date(2));
+		when(gameService.getLatestReleasesGames(anyInt())).thenReturn(asList(game1, game2));
+		
+		mvc.perform(get("/"))
+			.andExpect(model().attribute("latest_releases", equalTo(asList(game1, game2))));
 	}
 
 	@Test

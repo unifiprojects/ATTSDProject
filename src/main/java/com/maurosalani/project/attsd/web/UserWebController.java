@@ -34,6 +34,8 @@ public class UserWebController {
 
 	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
 
+	private static final int COUNT_LATEST_RELEASES = 4;
+
 	@Autowired
 	private UserService userService;
 
@@ -46,6 +48,7 @@ public class UserWebController {
 			User user = (User) session.getAttribute("user");
 			model.addAttribute("username", user.getUsername());
 		}
+		model.addAttribute("latest_releases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
 		return "index";
 	}
 

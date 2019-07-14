@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	
-	<head>
-		<meta charset="UTF-8">
-		<title>ATTSD-Project: Social Games</title>
-	</head>
-	
-	<body>
-		<h1>ATTSD-Project: Social Games</h1>
-		<div>
-			<form name="search_form" th:action="@{/search}" method="get">
-				<input type="text" name="search_bar" id="search" placeholder="Search users and games..." />
-		      	<button type="submit">Search</button>
-		    </form>
-	    </div>
-		<div>
-			Welcome! Please <a th:href="@{/login}">Log in</a> or <a th:href="@{/registration}">Register</a>
-	    </div>
-	     
-	</body>
-	
+<head>
+<meta charset="UTF-8">
+<title>ATTSD-Project: Social Games</title>
+</head>
+<body>
+  <h1>ATTSD-Project: Social Games</h1>
+  <div>
+    <form name="search_form" th:action="@{/search}" method="get">
+      <input type="text" name="search_bar" id="search"
+        placeholder="Search users and games..." />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+  <div>
+    Welcome! Please
+    <a th:href="@{/login}">Log in</a>
+    or
+    <a th:href="@{/registration}">Register</a>
+  </div>
+  <div>
+    <h1>Latest releases!</h1>
+    <table id="latest_releases">
+      <tr th:each="game : ${latest_releases}">
+        <td th:text="${game.name}"></td>
+        <td th:text="${game.description}"></td>
+        <td th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></td>       
+      </tr>
+    </table>
+  </div>
+</body>
 </html>
