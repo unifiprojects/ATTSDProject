@@ -76,6 +76,8 @@ public class UserWebViewTest {
 				"Game2	Description2	" + dateFormat.format(new Date(2)) + "\n" + 
 				"Game3	Description3	" + dateFormat.format(new Date(3)) + "\n" + 
 				"Game4	Description4	" + dateFormat.format(new Date(4)));
+		assertTextPresent(page, "Latest releases!");
+		assertTextNotPresent(page, "No latest releases...");
 	}
 	
 	@Test
@@ -83,6 +85,7 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/");
 		
 		assertTextPresent(page, "No latest releases...");
+		assertTextNotPresent(page, "Latest releases!");
 	}
 	
 	private String removeWindowsCR(String s) {
