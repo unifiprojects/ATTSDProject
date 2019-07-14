@@ -145,6 +145,24 @@ public class UserWebViewTest {
 		
 		verify(userService).getUserByUsernameAndPassword("username", "pwd");
 	}
+	
+	@Test
+	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {	
+		User user = new User(1L, "username", "pwd");
+		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenReturn(user);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", user.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", user.getPassword()));
+		webClient.getPage(requestSettings);
+		
+		HtmlPage page = webClient.getPage("/login");
+		final HtmlForm loginForm = page.getFormByName("login_form");
+		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
+		assertThat(loginForm.getInputByName("username").isDisabled());
+		assertThat(loginForm.getInputByName("password").isDisabled());
+		assertThat(loginForm.getButtonByName("btn_submit").isDisabled());
+	}
 
 	@Before
 	/**

@@ -49,7 +49,7 @@ public class UserWebControllerTest {
 
 	private static final String MESSAGE = "message";
 
-	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
+	private static final String DISABLE_INPUT_FLAG = "disableInput";
 
 	@Autowired
 	private MockMvc mvc;
@@ -112,7 +112,7 @@ public class UserWebControllerTest {
 		mvc.perform(requestToPerform)
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
+				.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class UserWebControllerTest {
 		mvc.perform(get("/login"))
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(model().attribute(MESSAGE, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+				.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class UserWebControllerTest {
 		mvc.perform(requestToPerform)
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
+				.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class UserWebControllerTest {
 		mvc.perform(get("/registration"))
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(model().attribute(MESSAGE, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+				.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
 	}
 
 	@Test

@@ -8,15 +8,19 @@
     
     <div><a th:href="@{/}">Go back to homepage</a></div>
     
+    <div th:unless="${message.empty}">
+      <div th:text="${message}"> </div>
+    </div>
+    
     <form name="login_form" th:action="@{/verifyLogin}" method="post">
       <p>
-        Username: <input type="text" name = "username" autofocus="autofocus"/>
+        Username: <input type="text" name="username" autofocus="autofocus" th:disabled="${disableInput}"/>
       </p>
       <p>
-        Password: <input type="text" name = "password"/>
+        Password: <input type="text" name="password" th:disabled="${disableInput}"/>
       </p>
-      <button type="submit" name="btn_submit">Log in</button>
+      <button type="submit" name="btn_submit" th:disabled="${disableInput}">Log in</button>
     </form>
-
+    
   </body>
 </html>

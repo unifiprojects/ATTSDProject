@@ -34,7 +34,7 @@ public class UserWebController {
 
 	private static final String MESSAGE = "message";
 
-	private static final String DISABLE_INPUT_TEXT_FLAG = "disableInputText";
+	private static final String DISABLE_INPUT_FLAG = "disableInput";
 
 	private static final int COUNT_LATEST_RELEASES = 4;
 
@@ -58,10 +58,10 @@ public class UserWebController {
 	public String login(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(MESSAGE, "You are already logged! Try to log out from homepage.");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
+			model.addAttribute(DISABLE_INPUT_FLAG, true);
 		} else {
 			model.addAttribute(MESSAGE, "");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
+			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
 		return "login";
 	}
@@ -89,10 +89,10 @@ public class UserWebController {
 	public String registration(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(MESSAGE, "You are already logged! Try to log out from homepage.");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, true);
+			model.addAttribute(DISABLE_INPUT_FLAG, true);
 		} else {
 			model.addAttribute(MESSAGE, "");
-			model.addAttribute(DISABLE_INPUT_TEXT_FLAG, false);
+			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
 		return "registration";
 	}
