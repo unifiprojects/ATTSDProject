@@ -48,7 +48,7 @@ public class UserWebController {
 			User user = (User) session.getAttribute("user");
 			model.addAttribute("username", user.getUsername());
 		}
-		model.addAttribute("latest_releases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
+		model.addAttribute("latestReleases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
 		return "index";
 	}
 

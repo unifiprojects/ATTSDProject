@@ -39,6 +39,8 @@ import com.maurosalani.project.attsd.service.UserService;
 @WebMvcTest(controllers = UserWebController.class)
 public class UserWebControllerTest {
 
+	private static final String LATEST_RELEASES = "latestReleases";
+
 	private static final String GAMES_LIST = "gamesList";
 
 	private static final String USERS_LIST = "usersList";
@@ -64,7 +66,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testAccessIndex_ShouldHaveLatestReleasesAttribute() throws Exception {
 		mvc.perform(get("/"))
-			.andExpect(model().attribute("latest_releases", equalTo(Collections.emptyList())));
+			.andExpect(model().attribute(LATEST_RELEASES, equalTo(Collections.emptyList())));
 	}
 	
 	@Test
@@ -74,7 +76,7 @@ public class UserWebControllerTest {
 		when(gameService.getLatestReleasesGames(anyInt())).thenReturn(asList(game1, game2));
 		
 		mvc.perform(get("/"))
-			.andExpect(model().attribute("latest_releases", equalTo(asList(game1, game2))));
+				.andExpect(model().attribute(LATEST_RELEASES, equalTo(asList(game1, game2))));
 	}
 
 	@Test

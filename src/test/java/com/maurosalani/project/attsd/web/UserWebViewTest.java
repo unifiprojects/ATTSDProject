@@ -69,13 +69,20 @@ public class UserWebViewTest {
 		String pattern = "dd-mm-yyyy";
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 		
-		HtmlTable table = page.getHtmlElementById("latest_releases");
+		HtmlTable table = page.getHtmlElementById("latestReleases");
 		assertThat(removeWindowsCR(table.asText()))
 			.isEqualTo( 
 				"Game1	Description1	" + dateFormat.format(new Date(1)) + "\n" + 
 				"Game2	Description2	" + dateFormat.format(new Date(2)) + "\n" + 
 				"Game3	Description3	" + dateFormat.format(new Date(3)) + "\n" + 
 				"Game4	Description4	" + dateFormat.format(new Date(4)));
+	}
+	
+	@Test
+	public void testHomePageWithNoLatestReleases() throws Exception {
+		HtmlPage page = webClient.getPage("/");
+		
+		assertTextPresent(page, "No latest releases...");
 	}
 	
 	private String removeWindowsCR(String s) {

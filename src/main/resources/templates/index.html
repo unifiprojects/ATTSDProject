@@ -20,14 +20,19 @@
     <a th:href="@{/registration}">Register</a>
   </div>
   <div>
-    <h1>Latest releases!</h1>
-    <table id="latest_releases">
-      <tr th:each="game : ${latest_releases}">
-        <td th:text="${game.name}"></td>
-        <td th:text="${game.description}"></td>
-        <td th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></td>       
-      </tr>
-    </table>
+    <div th:if="${latestReleases.empty}">
+      <h2>No latest releases...</h2>
+    </div>
+    <div th:unless="${latestReleases.empty}">
+      <h1>Latest releases!</h1>
+      <table id="latestReleases">
+        <tr th:each="game : ${latestReleases}">
+          <td th:text="${game.name}"></td>
+          <td th:text="${game.description}"></td>
+          <td th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></td>
+        </tr>
+      </table>
+    </div>
   </div>
 </body>
 </html>
