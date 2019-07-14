@@ -328,6 +328,16 @@ public class UserWebControllerTest {
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("profile404"));
 	}
+	
+	@Test
+	public void testGame_GameFound() throws Exception {
+		Game game = new Game(1L, "gamename", "gamedescription",new Date(1000));
+		when(gameService.getGamesByName("gamename")).thenReturn(game);
+		
+		mvc.perform(get("/game/gamename"))
+			.andExpect(model().attribute("game", game))
+			.andExpect(view().name("game"));
+	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
