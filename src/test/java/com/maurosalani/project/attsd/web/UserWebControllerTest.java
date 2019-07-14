@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -251,6 +252,18 @@ public class UserWebControllerTest {
 				.param("confirmPassword", "anotherPassword"))
 			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
 			.andExpect(model().attribute(MESSAGE, "Password and Confirm Password must match."))
+			.andExpect(view().name("registration"));
+	}
+	
+	@Test
+	public void testSave_PasswordOrUsernameAreInvalid() throws Exception {
+		when(userService.insertNewUser(new User(null, "", ""))).thenThrow(DataIntegrityViolationException.class);
+		mvc.perform(post("/save")
+				.param("username", "")
+				.param("password", "")
+				.param("confirmPassword", ""))
+			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+			.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
 			.andExpect(view().name("registration"));
 	}
 
