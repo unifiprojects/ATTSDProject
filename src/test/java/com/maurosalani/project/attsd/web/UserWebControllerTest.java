@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -359,6 +360,14 @@ public class UserWebControllerTest {
 		mvc.perform(requestToPerform.param("usernameToAdd", toAdd.getUsername()))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/profile/" + toAdd.getUsername()));
+	}
+	
+	@Test
+	public void testAddFollowedUserToUser_UserIsNotLogged() throws Exception {
+		mvc.perform(put("/addUser").param("usernameToAdd", "usernameToAdd"))
+				.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
+				.andExpect(model().attribute(MESSAGE, "Unauthorized Operation."))
+				.andExpect(view().name("unauthorized401"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
