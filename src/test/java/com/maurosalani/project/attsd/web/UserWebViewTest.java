@@ -125,7 +125,7 @@ public class UserWebViewTest {
 	}
 	
 	@Test
-	public void testLoginPage_ShouldContainTextFields() throws Exception {
+	public void testLoginPage_ShouldContainLoginForm() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
 		
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
@@ -162,6 +162,18 @@ public class UserWebViewTest {
 		assertThat(loginForm.getInputByName("username").isDisabled());
 		assertThat(loginForm.getInputByName("password").isDisabled());
 		assertThat(loginForm.getButtonByName("btn_submit").isDisabled());
+	}
+
+	@Test
+	public void testRegistrationPage_ShouldContainRegistrationForm() throws Exception {	
+		HtmlPage page = webClient.getPage("/registration");
+		
+		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
+		assertFormPresent(page, "registration_form");
+		assertInputPresent(page, "username");
+		assertInputPresent(page, "password");
+		assertInputPresent(page, "confirmPassword");
+		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
 
 	@Before

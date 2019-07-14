@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
+import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
 import com.maurosalani.project.attsd.exception.UnauthorizedOperationException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
+import com.maurosalani.project.attsd.exception.UsernameRequiredException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
@@ -98,9 +101,13 @@ public class UserWebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpSession session, User user) throws UsernameAlreadyExistingException {
-		User userSaved = userService.insertNewUser(user);
-		model.addAttribute("user", userSaved);
+	public String save(Model model, HttpSession session, RegistrationForm form)
+			throws UsernameAlreadyExistingException, UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
+
+		if (form.isValid()) {
+			User userSaved = userService.insertNewUser(new User(null, form.getUsername(), form.getPassword()));
+			model.addAttribute("user", userSaved);
+		}
 		return "registrationSuccess";
 	}
 

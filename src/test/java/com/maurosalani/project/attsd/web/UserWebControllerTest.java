@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -78,14 +77,14 @@ public class UserWebControllerTest {
 		when(gameService.getLatestReleasesGames(anyInt())).thenReturn(asList(game1, game2));
 		
 		mvc.perform(get("/"))
-				.andExpect(model().attribute(LATEST_RELEASES, equalTo(asList(game1, game2))));
+			.andExpect(model().attribute(LATEST_RELEASES, equalTo(asList(game1, game2))));
 	}
 
 	@Test
 	public void testAccessIndex_WhenUserNotLoggedIn() throws Exception {
 		mvc.perform(get("/"))
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attributeDoesNotExist("username"));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attributeDoesNotExist("username"));
 	}
 
 	@Test
@@ -94,14 +93,14 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/");
 
 		mvc.perform(requestToPerform)
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attributeExists("username"));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attributeExists("username"));
 	}
 
 	@Test
 	public void testAccessLogin() throws Exception {
 		mvc.perform(get("/login"))
-				.andExpect(status().is2xxSuccessful());
+			.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
@@ -110,17 +109,17 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/login");
 
 		mvc.perform(requestToPerform)
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
 	}
 
 	@Test
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
 		mvc.perform(get("/login"))
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE, ""))
+			.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
 	}
 
 	@Test
@@ -131,7 +130,7 @@ public class UserWebControllerTest {
 		mvc.perform(post("/verifyLogin")
 				.param("username", "username")
 				.param("password", "password"))
-				.andExpect(request().sessionAttribute("user", user)).andExpect(view().name("redirect:/"));
+			.andExpect(request().sessionAttribute("user", user)).andExpect(view().name("redirect:/"));
 	}
 
 	@Test
@@ -142,17 +141,17 @@ public class UserWebControllerTest {
 		mvc.perform(post("/verifyLogin")				
 				.param("username", "wrong_username")
 				.param("password", "wrong_password"))
-				.andExpect(status().isNotFound())
-				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-				.andExpect(request().sessionAttribute("user", equalTo(null)))
-				.andExpect(view().name("login"));
+			.andExpect(status().isNotFound())
+			.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("login"));
 	}
 
 	@Test
 	public void testLogoutUser_SessionDoesNotExist() throws Exception {
 		mvc.perform(get("/logout"))
-				.andExpect(request().sessionAttribute("user", equalTo(null)))
-				.andExpect(view().name("redirect:/"));
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
@@ -161,14 +160,14 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/logout");
 
 		mvc.perform(requestToPerform)
-				.andExpect(request().sessionAttribute("user", equalTo(null)))
-				.andExpect(view().name("redirect:/"));
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
 	public void testAccessRegistration() throws Exception {
 		mvc.perform(get("/registration"))
-				.andExpect(status().is2xxSuccessful());
+			.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
@@ -177,17 +176,17 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/registration");
 
 		mvc.perform(requestToPerform)
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-				.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
+			.andExpect(model().attribute(DISABLE_INPUT_FLAG, true));
 	}
 
 	@Test
 	public void testRegistration_UserIsNotLogged() throws Exception {
 		mvc.perform(get("/registration"))
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute(MESSAGE, ""))
-				.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute(MESSAGE, ""))
+			.andExpect(model().attribute(DISABLE_INPUT_FLAG, false));
 	}
 
 	@Test
@@ -198,10 +197,11 @@ public class UserWebControllerTest {
 
 		mvc.perform(post("/save")
 				.param("username", userToInsert.getUsername())
-				.param("password", userToInsert.getPassword()))
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(model().attribute("user", userSaved))
-				.andExpect(view().name("registrationSuccess"));
+				.param("password", userToInsert.getPassword())
+				.param("confirmPassword",userToInsert.getPassword()))
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(model().attribute("user", userSaved))
+			.andExpect(view().name("registrationSuccess"));
 	}
 
 	@Test
@@ -209,35 +209,49 @@ public class UserWebControllerTest {
 		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd");
 		when(userService.insertNewUser(userToInsert)).thenThrow(UsernameAlreadyExistingException.class);
 
-		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
-				userToInsert.getPassword()))
-				.andExpect(status().is(HttpStatus.CONFLICT.value()))
-				.andExpect(model().attribute(MESSAGE, "Username already existing. Please choose another one."))
-				.andExpect(view().name("registration"));
+		mvc.perform(post("/save")
+				.param("username", userToInsert.getUsername())
+				.param("password",userToInsert.getPassword())
+				.param("confirmPassword",userToInsert.getPassword()))
+			.andExpect(status().is(HttpStatus.CONFLICT.value()))
+			.andExpect(model().attribute(MESSAGE, "Username already existing. Please choose another one."))
+			.andExpect(view().name("registration"));
 	}
 
 	@Test
 	public void testSave_PasswordIsEmpty() throws Exception {
-		User userToInsert = new User(null, "usernameTest", null);
-		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 
-		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
-				userToInsert.getPassword()))
-				.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-				.andExpect(view().name("registration"));
+		mvc.perform(post("/save")
+				.param("username", "usernameTest")
+				.param("password", (String) null)
+				.param("confirmPassword", (String) null))
+			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+			.andExpect(model().attribute(MESSAGE, "Password is required."))
+			.andExpect(view().name("registration"));
 	}
 
 	@Test
 	public void testSave_UsernameIsEmpty() throws Exception {
-		User userToInsert = new User(null, null, "pwdTest");
-		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 
-		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
-				userToInsert.getPassword()))
-				.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-				.andExpect(view().name("registration"));
+		mvc.perform(post("/save")
+				.param("username", (String) null)
+				.param("password", "pwdTest")
+				.param("confirmPassword", "pwdTest"))
+			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+			.andExpect(model().attribute(MESSAGE, "Username is required."))
+			.andExpect(view().name("registration"));
+	}
+	
+	@Test
+	public void testSave_PasswordsDoNotMatch() throws Exception {
+		
+		mvc.perform(post("/save")
+				.param("username", "usernameTest")
+				.param("password", "password")
+				.param("confirmPassword", "anotherPassword"))
+			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+			.andExpect(model().attribute(MESSAGE, "Password and Confirm Password must match."))
+			.andExpect(view().name("registration"));
 	}
 
 	@Test
@@ -247,22 +261,22 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
 
 		mvc.perform(get("/search").param("content_search", content))
-				.andExpect(model().attribute(MESSAGE, "No element found."))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(MESSAGE, "No element found."))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
 	public void testSearch_ContentIsEmpty_ShouldShowError() throws Exception {
 		mvc.perform(get("/search").param("content_search", ""))
-				.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
 	public void testSearch_ContentIsOnlyWhitespaces_ShouldShowError() throws Exception {
 		mvc.perform(get("/search").param("content_search", "   "))
-				.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
@@ -287,9 +301,9 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
 
 		mvc.perform(get("/search").param("content_search", content))
-				.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
-				.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
@@ -301,9 +315,9 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
 
 		mvc.perform(get("/search").param("content_search", content))
-				.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
-				.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
+			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
@@ -316,9 +330,9 @@ public class UserWebControllerTest {
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
 
 		mvc.perform(get("/search").param("content_search", content))
-				.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
-				.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
-				.andExpect(view().name("search"));
+			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+			.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
+			.andExpect(view().name("search"));
 	}
 
 	@Test
@@ -327,8 +341,8 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsername("username")).thenReturn(user);
 
 		mvc.perform(get("/profile/username"))
-				.andExpect(model().attribute("user", user))
-				.andExpect(view().name("profile"));
+			.andExpect(model().attribute("user", user))
+			.andExpect(view().name("profile"));
 	}
 
 	@Test
@@ -336,10 +350,10 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
 
 		mvc.perform(get("/profile/wrong_username"))
-				.andExpect(status().isNotFound())
-				.andExpect(model().attribute(MESSAGE, "Profile not found."))
-				.andExpect(request().sessionAttribute("user", equalTo(null)))
-				.andExpect(view().name("profile404"));
+			.andExpect(status().isNotFound())
+			.andExpect(model().attribute(MESSAGE, "Profile not found."))
+			.andExpect(request().sessionAttribute("user", equalTo(null)))
+			.andExpect(view().name("profile404"));
 	}
 
 	@Test
@@ -348,8 +362,8 @@ public class UserWebControllerTest {
 		when(gameService.getGameByName("gamename")).thenReturn(game);
 
 		mvc.perform(get("/game/gamename"))
-				.andExpect(model().attribute("game", game))
-				.andExpect(view().name("game"));
+			.andExpect(model().attribute("game", game))
+			.andExpect(view().name("game"));
 	}
 
 	@Test
@@ -357,10 +371,10 @@ public class UserWebControllerTest {
 		when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
 
 		mvc.perform(get("/game/wrong_name"))
-				.andExpect(status().isNotFound())
-				.andExpect(model().attribute(MESSAGE, "Game not found."))
-				.andExpect(request().sessionAttribute("game", equalTo(null)))
-				.andExpect(view().name("game404"));
+			.andExpect(status().isNotFound())
+			.andExpect(model().attribute(MESSAGE, "Game not found."))
+			.andExpect(request().sessionAttribute("game", equalTo(null)))
+			.andExpect(view().name("game404"));
 	}
 	
 	@Test
@@ -376,16 +390,16 @@ public class UserWebControllerTest {
 		
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
 		mvc.perform(requestToPerform.param("usernameToAdd", toAdd.getUsername()))
-				.andExpect(status().is3xxRedirection())
-				.andExpect(view().name("redirect:/profile/" + toAdd.getUsername()));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/profile/" + toAdd.getUsername()));
 	}
 	
 	@Test
 	public void testAddFollowedUserToUser_UserIsNotLogged() throws Exception {
 		mvc.perform(put("/addUser").param("usernameToAdd", "usernameToAdd"))
-				.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
-				.andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
-				.andExpect(view().name("unauthorized401"));
+			.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
+			.andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
+			.andExpect(view().name("unauthorized401"));
 	}
 	
 	@Test
@@ -395,9 +409,9 @@ public class UserWebControllerTest {
 
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
 		mvc.perform(requestToPerform.param("usernameToAdd", "wrong_username"))
-				.andExpect(status().isNotFound())
-				.andExpect(model().attribute(MESSAGE, "Profile not found."))
-				.andExpect(view().name("profile404"));
+			.andExpect(status().isNotFound())
+			.andExpect(model().attribute(MESSAGE, "Profile not found."))
+			.andExpect(view().name("profile404"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
