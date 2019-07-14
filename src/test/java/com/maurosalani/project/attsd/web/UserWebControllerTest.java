@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.web;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,6 +41,8 @@ import com.maurosalani.project.attsd.service.UserService;
 @WebMvcTest(controllers = UserWebController.class)
 public class UserWebControllerTest {
 
+	private static final String LATEST_RELEASES = "latestReleases";
+
 	private static final String GAMES_LIST = "gamesList";
 
 	private static final String USERS_LIST = "usersList";
@@ -58,9 +61,24 @@ public class UserWebControllerTest {
 	private GameService gameService;
 
 	@Test
-	public void testStatus2XX() throws Exception {
+	public void testAccessIndex_ShouldReturnSuccess() throws Exception {
+		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void testAccessIndex_ShouldHaveLatestReleasesAttribute() throws Exception {
 		mvc.perform(get("/"))
-				.andExpect(status().is2xxSuccessful());
+			.andExpect(model().attribute(LATEST_RELEASES, equalTo(Collections.emptyList())));
+	}
+	
+	@Test
+	public void testAccessIndex_ShouldShowLatestReleasesGames() throws Exception {
+		Game game1 = new Game(1L, "Game1", "Description1", new Date(1));
+		Game game2 = new Game(2L, "Game2", "Description2", new Date(2));
+		when(gameService.getLatestReleasesGames(anyInt())).thenReturn(asList(game1, game2));
+		
+		mvc.perform(get("/"))
+				.andExpect(model().attribute(LATEST_RELEASES, equalTo(asList(game1, game2))));
 	}
 
 	@Test
@@ -121,7 +139,7 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password"))
 				.thenThrow(UserNotFoundException.class);
 
-		mvc.perform(post("/verifyLogin")
+		mvc.perform(post("/verifyLogin")				
 				.param("username", "wrong_username")
 				.param("password", "wrong_password"))
 				.andExpect(status().isNotFound())
