@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 
 @Service
@@ -15,7 +16,7 @@ public class GameService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public Game getGamesByName(String name) {
+	public Game getGameByName(String name) throws GameNotFoundException{
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

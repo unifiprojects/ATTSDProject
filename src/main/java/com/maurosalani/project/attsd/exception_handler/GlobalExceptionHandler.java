@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
@@ -44,6 +45,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		model.addAttribute(MESSAGE_MODEL, "Username or password invalid.");
 		response.setStatus(HttpStatus.NOT_FOUND.value());
 		return "login";
+	}
+	
+	@ExceptionHandler(GameNotFoundException.class)
+	public String handleGameNotFound(Model model, HttpServletResponse response) {
+		model.addAttribute(MESSAGE_MODEL, "Game not found.");
+		response.setStatus(HttpStatus.NOT_FOUND.value());
+		return "game404";
 	}
 
 }

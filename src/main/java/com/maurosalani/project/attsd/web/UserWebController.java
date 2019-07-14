@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
@@ -131,8 +132,8 @@ public class UserWebController {
 	}
 
 	@GetMapping("/game/{name}")
-	public String game(@PathVariable String name, Model model) throws UserNotFoundException {
-		Game game = gameService.getGamesByName(name);
+	public String game(@PathVariable String name, Model model) throws GameNotFoundException {
+		Game game = gameService.getGameByName(name);
 		model.addAttribute("game", game);
 		return "game";
 	}

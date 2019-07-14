@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
@@ -51,20 +52,21 @@ public class UserWebControllerTest {
 
 	@MockBean
 	private UserService userService;
-	
+
 	@MockBean
 	private GameService gameService;
 
 	@Test
 	public void testStatus2XX() throws Exception {
-		mvc.perform(get("/")).andExpect(status().is2xxSuccessful());
+		mvc.perform(get("/"))
+				.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
 	public void testAccessIndex_WhenUserNotLoggedIn() throws Exception {
 		mvc.perform(get("/"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attributeDoesNotExist("username"));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attributeDoesNotExist("username"));
 	}
 
 	@Test
@@ -73,13 +75,14 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/");
 
 		mvc.perform(requestToPerform)
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attributeExists("username"));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attributeExists("username"));
 	}
 
 	@Test
 	public void testAccessLogin() throws Exception {
-		mvc.perform(get("/login")).andExpect(status().is2xxSuccessful());
+		mvc.perform(get("/login"))
+				.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
@@ -88,17 +91,17 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/login");
 
 		mvc.perform(requestToPerform)
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
+				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
 	@Test
 	public void testAccessLogin_UserIsNotLoggedIn() throws Exception {
 		mvc.perform(get("/login"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE, ""))
-			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attribute(MESSAGE, ""))
+				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
 	@Test
@@ -108,44 +111,45 @@ public class UserWebControllerTest {
 
 		mvc.perform(post("/verifyLogin")
 				.param("username", "username")
-				.param("password", "password"))			
-			.andExpect(request().sessionAttribute("user", user))
-			.andExpect(view().name("redirect:/"));
+				.param("password", "password"))
+				.andExpect(request().sessionAttribute("user", user)).andExpect(view().name("redirect:/"));
 	}
 
 	@Test
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect() throws Exception {
-		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password")).thenThrow(UserNotFoundException.class);
+		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password"))
+				.thenThrow(UserNotFoundException.class);
 
 		mvc.perform(post("/verifyLogin")
 				.param("username", "wrong_username")
 				.param("password", "wrong_password"))
-			.andExpect(status().isNotFound())
-			.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-			.andExpect(request().sessionAttribute("user", equalTo(null)))
-			.andExpect(view().name("login"));
+				.andExpect(status().isNotFound())
+				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+				.andExpect(request().sessionAttribute("user", equalTo(null)))
+				.andExpect(view().name("login"));
 	}
 
 	@Test
 	public void testLogoutUser_SessionDoesNotExist() throws Exception {
 		mvc.perform(get("/logout"))
-			.andExpect(request().sessionAttribute("user", equalTo(null)))
-			.andExpect(view().name("redirect:/"));
+				.andExpect(request().sessionAttribute("user", equalTo(null)))
+				.andExpect(view().name("redirect:/"));
 	}
-	
+
 	@Test
 	public void testLogoutUser_SessionExists() throws Exception {
 		User user = new User(null, "username", "pwd");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/logout");
-		
+
 		mvc.perform(requestToPerform)
-			.andExpect(request().sessionAttribute("user", equalTo(null)))
-			.andExpect(view().name("redirect:/"));
+				.andExpect(request().sessionAttribute("user", equalTo(null)))
+				.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
 	public void testAccessRegistration() throws Exception {
-		mvc.perform(get("/registration")).andExpect(status().is2xxSuccessful());
+		mvc.perform(get("/registration"))
+				.andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
@@ -154,189 +158,189 @@ public class UserWebControllerTest {
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/registration");
 
 		mvc.perform(requestToPerform)
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
-			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attribute(MESSAGE, "You are already logged! Try to log out from homepage."))
+				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, true));
 	}
 
 	@Test
 	public void testRegistration_UserIsNotLogged() throws Exception {
 		mvc.perform(get("/registration"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute(MESSAGE, ""))
-			.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attribute(MESSAGE, ""))
+				.andExpect(model().attribute(DISABLE_INPUT_TEXT_FLAG, false));
 	}
 
 	@Test
-	public void testSave_SuccessAfterRegistration() throws Exception {		
+	public void testSave_SuccessAfterRegistration() throws Exception {
 		User userToInsert = new User(null, "usernameTest", "pwdTest");
 		User userSaved = new User(1L, "usernameTest", "pwdTest");
 		when(userService.insertNewUser(userToInsert)).thenReturn(userSaved);
-		
+
 		mvc.perform(post("/save")
 				.param("username", userToInsert.getUsername())
 				.param("password", userToInsert.getPassword()))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(model().attribute("user", userSaved))
-			.andExpect(view().name("registrationSuccess"));
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(model().attribute("user", userSaved))
+				.andExpect(view().name("registrationSuccess"));
 	}
-	
+
 	@Test
-	public void testSave_UsernameAlreadyUsed() throws Exception {		
+	public void testSave_UsernameAlreadyUsed() throws Exception {
 		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd");
 		when(userService.insertNewUser(userToInsert)).thenThrow(UsernameAlreadyExistingException.class);
-		
-		mvc.perform(post("/save")
-				.param("username", userToInsert.getUsername())
-				.param("password", userToInsert.getPassword()))
-			.andExpect(status().is(HttpStatus.CONFLICT.value()))
-			.andExpect(model().attribute(MESSAGE, "Username already existing. Please choose another one."))
-			.andExpect(view().name("registration"));
+
+		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
+				userToInsert.getPassword()))
+				.andExpect(status().is(HttpStatus.CONFLICT.value()))
+				.andExpect(model().attribute(MESSAGE, "Username already existing. Please choose another one."))
+				.andExpect(view().name("registration"));
 	}
-	
+
 	@Test
-	public void testSave_PasswordIsEmpty() throws Exception {		
+	public void testSave_PasswordIsEmpty() throws Exception {
 		User userToInsert = new User(null, "usernameTest", null);
 		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
-		
-		mvc.perform(post("/save")
-				.param("username", userToInsert.getUsername())
-				.param("password", userToInsert.getPassword()))
-		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-		.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-		.andExpect(view().name("registration"));
+
+		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
+				userToInsert.getPassword()))
+				.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+				.andExpect(view().name("registration"));
 	}
-	
+
 	@Test
-	public void testSave_UsernameIsEmpty() throws Exception {		
+	public void testSave_UsernameIsEmpty() throws Exception {
 		User userToInsert = new User(null, null, "pwdTest");
 		when(userService.insertNewUser(userToInsert)).thenThrow(DataIntegrityViolationException.class);
-		
-		mvc.perform(post("/save")
-				.param("username", userToInsert.getUsername())
-				.param("password", userToInsert.getPassword()))
-		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-		.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
-		.andExpect(view().name("registration"));
+
+		mvc.perform(post("/save").param("username", userToInsert.getUsername()).param("password",
+				userToInsert.getPassword())).andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+				.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
+				.andExpect(view().name("registration"));
 	}
-	
+
 	@Test
-	public void testSearch_ResultListsAreEmpty() throws Exception {		
+	public void testSearch_ResultListsAreEmpty() throws Exception {
 		String content = "content";
 		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
-		
-		mvc.perform(get("/search")
-				.param("content_search", content))
-			.andExpect(model().attribute(MESSAGE, "No element found."))
-			.andExpect(view().name("search"));
+
+		mvc.perform(get("/search").param("content_search", content))
+				.andExpect(model().attribute(MESSAGE, "No element found."))
+				.andExpect(view().name("search"));
 	}
-	
+
 	@Test
-	public void testSearch_ContentIsEmpty_ShouldShowError() throws Exception {		
-		mvc.perform(get("/search")
-				.param("content_search", ""))
-			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
-			.andExpect(view().name("search"));
+	public void testSearch_ContentIsEmpty_ShouldShowError() throws Exception {
+		mvc.perform(get("/search").param("content_search", ""))
+				.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
+				.andExpect(view().name("search"));
 	}
-	
+
 	@Test
-	public void testSearch_ContentIsOnlyWhitespaces_ShouldShowError() throws Exception {		
-		mvc.perform(get("/search")
-				.param("content_search", "   "))
-			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
-			.andExpect(view().name("search"));
+	public void testSearch_ContentIsOnlyWhitespaces_ShouldShowError() throws Exception {
+		mvc.perform(get("/search").param("content_search", "   "))
+				.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
+				.andExpect(view().name("search"));
 	}
-	
+
 	@Test
-	public void testSearch_ContentIsValid_ShouldBeTrimmed() throws Exception {		
+	public void testSearch_ContentIsValid_ShouldBeTrimmed() throws Exception {
 		String trimmedContent = new String(" someName ").trim();
 
-		mvc.perform(get("/search")
-				.param("content_search", " someName "));
-		
+		mvc.perform(get("/search").param("content_search", " someName "));
+
 		verify(userService).getUsersByUsernameLike(trimmedContent);
-		verify(gameService).getGamesByNameLike(trimmedContent);		
+		verify(gameService).getGamesByNameLike(trimmedContent);
 	}
-	
+
 	@Test
-	public void testSearch_ResultListsNotEmpty_ShouldShowUsersAndGames() throws Exception {		
+	public void testSearch_ResultListsNotEmpty_ShouldShowUsersAndGames() throws Exception {
 		String content = "content";
 		User user1 = new User(1L, "username1", "pwd1");
 		User user2 = new User(2L, "username2", "pwd2");
 		when(userService.getUsersByUsernameLike(content)).thenReturn(asList(user1, user2));
-		
+
 		Game game1 = new Game(1L, "name1", "description1", new Date(1000));
 		Game game2 = new Game(2L, "name2", "description2", new Date(2000));
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
-		
-		mvc.perform(get("/search")
-				.param("content_search", content))
-			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
-			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
-			.andExpect(view().name("search"));
+
+		mvc.perform(get("/search").param("content_search", content))
+				.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+				.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+				.andExpect(view().name("search"));
 	}
 
 	@Test
-	public void testSearch_UsersFoundListIsEmpty_ShouldShowOnlyGames() throws Exception {		
+	public void testSearch_UsersFoundListIsEmpty_ShouldShowOnlyGames() throws Exception {
 		String content = "content";
 		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
 		Game game1 = new Game(1L, "name1", "description1", new Date(1000));
 		Game game2 = new Game(2L, "name2", "description2", new Date(2000));
 		when(gameService.getGamesByNameLike(content)).thenReturn(asList(game1, game2));
-		
-		mvc.perform(get("/search")
-				.param("content_search", content))
-			.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
-			.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
-			.andExpect(view().name("search"));
+
+		mvc.perform(get("/search").param("content_search", content))
+				.andExpect(model().attribute(USERS_LIST, Collections.emptyList()))
+				.andExpect(model().attribute(GAMES_LIST, asList(game1, game2)))
+				.andExpect(view().name("search"));
 	}
-	
+
 	@Test
-	public void testSearch_GamesFoundListIsEmpty_ShouldShowOnlyUsers() throws Exception {		
+	public void testSearch_GamesFoundListIsEmpty_ShouldShowOnlyUsers() throws Exception {
 		String content = "content";
 		User user1 = new User(1L, "username1", "pwd1");
 		User user2 = new User(2L, "username2", "pwd2");
 		when(userService.getUsersByUsernameLike(content)).thenReturn(asList(user1, user2));
-		
+
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
-		
-		mvc.perform(get("/search")
-				.param("content_search", content))
-			.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
-			.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
-			.andExpect(view().name("search"));
+
+		mvc.perform(get("/search").param("content_search", content))
+				.andExpect(model().attribute(USERS_LIST, asList(user1, user2)))
+				.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
+				.andExpect(view().name("search"));
 	}
-		
+
 	@Test
 	public void testProfile_UserFound() throws Exception {
 		User user = new User(1L, "username", "password");
 		when(userService.getUserByUsername("username")).thenReturn(user);
-		
+
 		mvc.perform(get("/profile/username"))
-			.andExpect(model().attribute("user", user))
-			.andExpect(view().name("profile"));
+				.andExpect(model().attribute("user", user))
+				.andExpect(view().name("profile"));
 	}
-	
+
 	@Test
 	public void testProfile_ProfileNotFound() throws Exception {
 		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
 
 		mvc.perform(get("/profile/wrong_username"))
-			.andExpect(status().isNotFound())
-			.andExpect(model().attribute(MESSAGE, "Profile not found."))
-			.andExpect(request().sessionAttribute("user", equalTo(null)))
-			.andExpect(view().name("profile404"));
+				.andExpect(status().isNotFound())
+				.andExpect(model().attribute(MESSAGE, "Profile not found."))
+				.andExpect(request().sessionAttribute("user", equalTo(null)))
+				.andExpect(view().name("profile404"));
 	}
-	
+
 	@Test
 	public void testGame_GameFound() throws Exception {
-		Game game = new Game(1L, "gamename", "gamedescription",new Date(1000));
-		when(gameService.getGamesByName("gamename")).thenReturn(game);
-		
+		Game game = new Game(1L, "gamename", "gamedescription", new Date(1000));
+		when(gameService.getGameByName("gamename")).thenReturn(game);
+
 		mvc.perform(get("/game/gamename"))
-			.andExpect(model().attribute("game", game))
-			.andExpect(view().name("game"));
+				.andExpect(model().attribute("game", game))
+				.andExpect(view().name("game"));
+	}
+
+	@Test
+	public void testGame_GameNotFound() throws Exception {
+		when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
+
+		mvc.perform(get("/game/wrong_name"))
+				.andExpect(status().isNotFound())
+				.andExpect(model().attribute(MESSAGE, "Game not found."))
+				.andExpect(request().sessionAttribute("game", equalTo(null)))
+				.andExpect(view().name("game404"));
 	}
 
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
