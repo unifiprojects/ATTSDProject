@@ -10,12 +10,12 @@
     
     <form name="login_form" th:action="@{/verifyLogin}" method="post">
       <p>
-        Username: <input type="text" name = "input_username" autofocus="autofocus"/>
+        Username: <input type="text" name = "username" autofocus="autofocus"/>
       </p>
       <p>
-        Password: <input type="text" name = "input_password"/>
+        Password: <input type="text" name = "password"/>
       </p>
-      <button type="submit">Log in</button>
+      <button type="submit" name="btn_submit">Log in</button>
     </form>
 
   </body>

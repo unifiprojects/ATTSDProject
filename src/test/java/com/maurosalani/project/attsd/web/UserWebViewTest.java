@@ -4,6 +4,7 @@ import static com.gargoylesoftware.htmlunit.WebAssert.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
@@ -128,9 +130,20 @@ public class UserWebViewTest {
 		
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "login_form");
-		assertInputPresent(page, "input_username");
-		assertInputPresent(page, "input_password");
+		assertInputPresent(page, "username");
+		assertInputPresent(page, "password");
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
+	}
+	
+	@Test
+	public void testLoginPage_UserCredentialsAreReceived() throws Exception {		
+		HtmlPage page = webClient.getPage("/login");
+		final HtmlForm loginForm = page.getFormByName("login_form");
+		loginForm.getInputByName("username").setValueAttribute("username");
+		loginForm.getInputByName("password").setValueAttribute("pwd");
+		loginForm.getButtonByName("btn_submit").click();
+		
+		verify(userService).getUserByUsernameAndPassword("username", "pwd");
 	}
 
 	@Before
