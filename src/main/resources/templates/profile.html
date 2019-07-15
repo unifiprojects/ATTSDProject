@@ -1,10 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Profile</title>
 </head>
 <body>
+	<div>
+		Username: <label th:text="${user.username}"></label>
+	</div>
+	
+	<!-- Table of Followed list -->
+	<table id="userFollowed">
+		<thead>
+			<tr>
+				<th>
+					<h3>Users followed</h3>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:if="${user.followedUsers == null or user.followedUsers.empty}">
+				<td>No Users</td>
+			</tr>
+			<tr th:unless="${user.followedUsers == null or user.followedUsers.empty}"
+				th:each="followed : ${user.followedUsers}">
+				<td><a th:href="@{'/profile/' + ${followed.username}}"> <span
+						th:text="${followed.username}"></span>
+				</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+<!-- Table of Games list -->
+   <table id="games">
+     <thead>
+       <tr>
+         <th>
+           <h3>Games</h3>
+         </th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr th:if="${user.games == null or user.games.empty}">
+         <td>No Games</td>
+       </tr>
+       <tr th:unless="${user.games == null or user.games.empty}"
+         th:each="game : ${user.games}">
+         <td>
+           <a th:href="@{'/profile/' + ${game.name}}">
+             <span th:text="${game.name}"></span>
+           </a>
+         </td>
+       </tr>
+     </tbody>
+   </table>
+
+	<a th:href="@{/}">Homepage</a>	
 
 </body>
 </html>

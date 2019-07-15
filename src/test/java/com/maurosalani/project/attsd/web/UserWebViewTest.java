@@ -314,6 +314,8 @@ public class UserWebViewTest {
 		assertLinkPresentWithText(searchPage, "user2_nameTest");
 		assertLinkPresentWithText(searchPage, "game1_nameTest");
 		assertLinkPresentWithText(searchPage, "game2_nameTest");
+		
+		
 	}
 	
 	@Test
@@ -339,6 +341,47 @@ public class UserWebViewTest {
 		assertTitleEquals(page, "Profile not found");
 		assertTextPresent(page, "Profile not found.");
 		assertLinkPresentWithText(page, "Homepage");
+	}
+	
+	@Test
+	public void testProfile_ProfileFound_ShouldShowCorrectly() throws Exception {
+		User user1 = new User(1L, "user1_nameTest", "pwd");
+		User user2 = new User(2L, "user2_nameTest", "pwd");
+		Game game1 = new Game(1L, "game1_nameTest", "description", new Date(1));
+		Game game2 = new Game(2L, "game2_nameTest", "description", new Date(1));
+		
+		User user = new User(3L, "username", "pwd");
+		user.addFollowedUser(user1);
+		user.addFollowedUser(user2);
+		user.addGame(game1);
+		user.addGame(game2);
+		
+		when(userService.getUserByUsername("username")).thenReturn(user);
+		
+		HtmlPage page = webClient.getPage("/profile/username");
+		
+		assertTextPresent(page, "Username: " + user.getUsername());
+			
+			HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
+			assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo(
+					"Users followed\n" + 
+					" user1_nameTest\n" + 
+					"user2_nameTest"
+				);
+			HtmlTable tableGames = page.getHtmlElementById("games");
+			assertThat(removeWindowsCR(tableGames.asText())).isEqualTo( 
+					"Games\n" + 
+					" game1_nameTest\n" + 
+					"game2_nameTest"
+				);	
+			assertTextNotPresent(page, "No Users");
+			assertTextNotPresent(page, "No Games");  
+			assertLinkPresentWithText(page, "user1_nameTest");
+			assertLinkPresentWithText(page, "user2_nameTest");
+			assertLinkPresentWithText(page, "game1_nameTest");
+			assertLinkPresentWithText(page, "game2_nameTest");
+			
+			assertLinkPresentWithText(page, "Homepage");
 	}
 
 	@Before

@@ -140,10 +140,9 @@ public class UserWebController {
 			model.addAttribute("isLogged", false);
 			model.addAttribute("isMyProfile", false);
 		} else {
-			model.addAttribute("isLogged", true);
 			User loggedUser = (User) session.getAttribute("user");
 			boolean isMyProfile = loggedUser.getUsername().equals(user.getUsername());
-
+			model.addAttribute("isLogged", true);
 			model.addAttribute("isMyProfile", isMyProfile);
 		}
 		return "profile";
