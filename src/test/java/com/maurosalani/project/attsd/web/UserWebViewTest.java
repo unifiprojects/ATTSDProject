@@ -199,9 +199,12 @@ public class UserWebViewTest {
 		loginForm.getInputByName("username").setValueAttribute("username");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
-		loginForm.getButtonByName("btn_submit").click();
+		HtmlPage returnedPage = loginForm.getButtonByName("btn_submit").click();
 
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
+		assertTitleEquals(returnedPage, "Registration Success");
+		assertTextPresent(returnedPage, "Your registration has been successful!");
+		assertLinkPresentWithText(returnedPage, "Homepage");
 	}
 	
 	@Test
