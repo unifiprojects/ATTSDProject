@@ -9,9 +9,9 @@
   <div>
     <!-- search form -->
     <form name="search_form" th:action="@{/search}" method="get">
-      <input type="text" name="search_bar" id="search"
+      <input type="text" name="content_search"
         placeholder="Search users and games..." />
-      <button type="submit">Search</button>
+      <button type="submit" name="btn_submit">Search</button>
     </form>
   </div>
   <!-- Login/Registration section -->
@@ -31,7 +31,9 @@
       <a th:href="@{'/profile/' + ${username}}">
         <label th:text="${username}"> </label>
       </a>
-      <div><a th:href="@{/logout}">Logout</a></div>
+      <div>
+        <a th:href="@{/logout}">Logout</a>
+      </div>
     </div>
   </div>
   <!-- Latest releases -->

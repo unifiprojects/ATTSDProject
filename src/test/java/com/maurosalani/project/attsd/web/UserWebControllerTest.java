@@ -270,26 +270,30 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSearch_ResultListsAreEmpty_ShouldShowMessage() throws Exception {
+	public void testSearch_ResultListsAreEmpty() throws Exception {
 		String content = "content";
 		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
 
-		mvc.perform(get("/search").param("content_search", content))
-			.andExpect(model().attribute(MESSAGE, "No element found."))
+		mvc.perform(get("/search")
+				.param("content_search", content))
+			.andExpect(model().attribute(USERS_LIST, equalTo(Collections.emptyList())))
+			.andExpect(model().attribute(GAMES_LIST, equalTo(Collections.emptyList())))
 			.andExpect(view().name("search"));
 	}
 
 	@Test
 	public void testSearch_ContentIsEmpty_ShouldShowError() throws Exception {
-		mvc.perform(get("/search").param("content_search", ""))
+		mvc.perform(get("/search")
+				.param("content_search", ""))
 			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
 			.andExpect(view().name("search"));
 	}
 
 	@Test
 	public void testSearch_ContentIsOnlyWhitespaces_ShouldShowError() throws Exception {
-		mvc.perform(get("/search").param("content_search", "   "))
+		mvc.perform(get("/search")
+				.param("content_search", "   "))
 			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
 			.andExpect(view().name("search"));
 	}
@@ -442,14 +446,16 @@ public class UserWebControllerTest {
 	    when(userService.addGame(user, toAdd)).thenReturn(userReturned);
 	    
 	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
-	    mvc.perform(requestToPerform.param("nameToAdd", toAdd.getName()))
+	    mvc.perform(requestToPerform
+	    		.param("gameToAdd", toAdd.getName()))
 	        .andExpect(status().is3xxRedirection())
 	        .andExpect(view().name("redirect:/game/" + toAdd.getName()));
 	}
 	
 	@Test
 	public void testAddGameToUser_UserIsNotLogged() throws Exception {
-	    mvc.perform(put("/addGame").param("nameToAdd", "nameToAdd"))
+	    mvc.perform(put("/addGame")
+	    		.param("gameToAdd", "nameToAdd"))
 	        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
 	        .andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
 	        .andExpect(view().name("unauthorized401"));
@@ -461,7 +467,7 @@ public class UserWebControllerTest {
 	    when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
 
 	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
-	    mvc.perform(requestToPerform.param("nameToAdd", "wrong_name"))
+	    mvc.perform(requestToPerform.param("gameToAdd", "wrong_name"))
 	        .andExpect(status().isNotFound())
 	        .andExpect(model().attribute(MESSAGE, "Game not found."))
 	        .andExpect(view().name("game404"));
