@@ -117,15 +117,12 @@ public class UserWebController {
 		if (contentIsNotValid(content)) {
 			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
+			model.addAttribute(MESSAGE, "");
 			String trimmedContent = content.trim();
 			List<User> usersFound = userService.getUsersByUsernameLike(trimmedContent);
 			List<Game> gamesFound = gameService.getGamesByNameLike(trimmedContent);
-			if (usersFound.isEmpty() && gamesFound.isEmpty()) {
-				model.addAttribute(MESSAGE, "No element found.");
-			} else {
-				model.addAttribute(USERS_LIST, usersFound);
-				model.addAttribute(GAMES_LIST, gamesFound);
-			}
+			model.addAttribute(USERS_LIST, usersFound);
+			model.addAttribute(GAMES_LIST, gamesFound);
 		}
 		return "search";
 	}
@@ -161,7 +158,7 @@ public class UserWebController {
 	}
 
 	@PutMapping("/addGame")
-	public String addGameToUser(@RequestParam(name = "nameToAdd") String gameToAdd, Model model, HttpSession session)
+	public String addGameToUser(@RequestParam(name = "gameToAdd") String gameToAdd, Model model, HttpSession session)
 			throws GameNotFoundException, UnauthorizedOperationException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
