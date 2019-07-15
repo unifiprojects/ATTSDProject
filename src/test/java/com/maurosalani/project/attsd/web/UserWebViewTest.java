@@ -293,6 +293,21 @@ public class UserWebViewTest {
 		assertThat(pageAfterRegistration.getBody().getTextContent())
 				.contains("Password and Confirm Password must match.");
 	}
+	
+	@Test
+	public void testProfile_WhenProfileNotFound_ShouldShowProfile404() throws Exception {
+		when(userService.getUserByUsername("username_wrong")).thenThrow(UserNotFoundException.class);
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		HtmlPage page = webClient.getPage("/profile/username_wrong");
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		assertTitleEquals(page, "Profile not found");
+		assertTextPresent(page, "Profile not found.");
+		assertLinkPresentWithText(page, "Homepage");
+		
+	}
+	
 
 	@Before
 	/**
