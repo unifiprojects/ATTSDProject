@@ -219,6 +219,51 @@ public class UserWebViewTest {
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Username is required.");
 	}
 
+	@Test
+	public void testRegistration_WhenPasswordEmpty_ShouldShowMessage() throws Exception {
+		HtmlPage page = webClient.getPage("/registration");
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		final HtmlForm loginForm = page.getFormByName("registration_form");
+		loginForm.getInputByName("username").setValueAttribute("usernameTest");
+		loginForm.getInputByName("password").setValueAttribute("");
+		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		
+		assertTitleEquals(pageAfterRegistration, "Registration");
+		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
+	}
+	
+	@Test
+	public void testRegistration_WhenConfirmPasswordEmpty_ShouldShowMessage() throws Exception {
+		HtmlPage page = webClient.getPage("/registration");
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		final HtmlForm loginForm = page.getFormByName("registration_form");
+		loginForm.getInputByName("username").setValueAttribute("usernameTest");
+		loginForm.getInputByName("password").setValueAttribute("pwd");
+		loginForm.getInputByName("confirmPassword").setValueAttribute("");
+		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		
+		assertTitleEquals(pageAfterRegistration, "Registration");
+		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
+	}
+	
+	@Test
+	public void testRegistration_WhenPasswordsDoNotMatch_ShouldShowMessage() throws Exception {
+		HtmlPage page = webClient.getPage("/registration");
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		final HtmlForm loginForm = page.getFormByName("registration_form");
+		loginForm.getInputByName("username").setValueAttribute("usernameTest");
+		loginForm.getInputByName("password").setValueAttribute("pwd");
+		loginForm.getInputByName("confirmPassword").setValueAttribute("anotherPwd");
+		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		
+		assertTitleEquals(pageAfterRegistration, "Registration");
+		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password and Confirm Password must match.");
+	}
+
 	@Before
 	/**
 	 * Necessary to clear session

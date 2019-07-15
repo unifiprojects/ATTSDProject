@@ -43,11 +43,13 @@ public class RegistrationForm {
 		this.confirmPassword = confirmPassword;
 	}
 
-	public boolean isValid() throws UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
+	public boolean isValid()
+			throws UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
 		if (username == null || StringUtils.isWhitespace(username)) {
 			throw new UsernameRequiredException();
 		}
-		if (password == null || confirmPassword == null) {
+		if (password == null || confirmPassword == null || StringUtils.isWhitespace(password)
+				|| StringUtils.isWhitespace(confirmPassword)) {
 			throw new PasswordRequiredException();
 		}
 		if (!password.equals(confirmPassword)) {
