@@ -132,18 +132,20 @@ public class UserWebController {
 	}
 
 	@GetMapping("/profile/{username}")
-	public String profile(@PathVariable String username, Model model, HttpSession session) throws UserNotFoundException {
-		
+	public String profile(@PathVariable String username, Model model, HttpSession session)
+			throws UserNotFoundException {
 		User user = userService.getUserByUsername(username);
 		model.addAttribute("user", user);
-		
 		if (!isAlreadyLogged(session)) {
 			model.addAttribute("isLogged", false);
 			model.addAttribute("isMyProfile", false);
-		}
-		
-		
+		} else {
+			model.addAttribute("isLogged", true);
+			User loggedUser = (User) session.getAttribute("user");
+			boolean isMyProfile = loggedUser.getUsername().equals(user.getUsername());
 
+			model.addAttribute("isMyProfile", isMyProfile);
+		}
 		return "profile";
 	}
 

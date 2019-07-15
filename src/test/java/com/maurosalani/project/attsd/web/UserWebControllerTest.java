@@ -365,6 +365,19 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute("isMyProfile", false))
 			.andExpect(view().name("profile"));
 	}
+	
+	@Test
+	public void testProfile_UserLoggedRequestHisProfile() throws Exception {
+		User user = new User(1L, "usernameTest", "password");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/profile/usernameTest");
+		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
+
+		mvc.perform(requestToPerform)
+			.andExpect(model().attribute("user", user))
+			.andExpect(model().attribute("isLogged", true))
+			.andExpect(model().attribute("isMyProfile", true))
+			.andExpect(view().name("profile"));
+	}
 
 	@Test
 	public void testProfile_ProfileNotFound_ShouldRedirectToPage404() throws Exception {
