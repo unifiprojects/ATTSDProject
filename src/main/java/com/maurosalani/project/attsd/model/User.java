@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class User implements Serializable{
+public class User implements Serializable {
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class User implements Serializable{
 
 	private String username;
 	private String password;
-	
+
 	List<User> followedUsers;
 	List<User> followerUsers;
 	List<Game> games;
@@ -53,7 +53,19 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public List<User> getFollowedUsers() {
+		return followedUsers;
+	}
+
+	public List<User> getFollowerUsers() {
+		return followerUsers;
+	}
+
+	public List<Game> getGames() {
+		return games;
+	}
+
 	public void addFollowedUser(User user) {
 		if (this.followedUsers == null)
 			this.followedUsers = new LinkedList<>();
