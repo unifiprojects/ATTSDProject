@@ -8,8 +8,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -274,6 +276,8 @@ public class UserRestControllerTest {
 			put("/api/users/update/1").
 		then().
 			statusCode(401);
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
 	}
 	
 	@Test
@@ -374,6 +378,22 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
+	public void testDelete_LoginFail_shouldReturnUnauthorized() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, null, null);
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(false);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(401);
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
 	public void testDelete_WithEmptyIdInUrl()  {
 		User userCredentials = new User(null, "username", "password");
 		
@@ -385,6 +405,8 @@ public class UserRestControllerTest {
 		then().
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(userService);
 	}
 	
 
