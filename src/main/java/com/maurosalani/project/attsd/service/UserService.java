@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 
@@ -31,11 +32,15 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User updateUserById(Long id, User user) throws UserNotFoundException {
+	public User updateUserById(Long id, User user) throws UserNotFoundException, BadRequestException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public void deleteUserById(Long id) throws UserNotFoundException {
+	public void deleteUserById(Long id, User userCredentials) throws UserNotFoundException, BadRequestException  {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public boolean verifyLogin(String username, String password) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

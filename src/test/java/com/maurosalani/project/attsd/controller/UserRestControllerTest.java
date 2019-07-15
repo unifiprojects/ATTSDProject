@@ -8,8 +8,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.User;
@@ -239,14 +242,17 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdatePasswordOfUser() throws UserNotFoundException  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
-		when(userService.updateUserById(1L, requestBodyUser)).
+	public void testPut_UpdatePasswordOfUser_UserSuccessLogin() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).
+			thenReturn(true);
+		when(userService.updateUserById(1L, userReplacement)).
 			thenReturn(new User(1L, "testUsername", "new_password"));
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update/1").
 		then().
@@ -258,12 +264,30 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfUser_WithEmptyId()  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
+	public void testPut_UpdatePasswordOfUser_UserDoesNotProvideLogin_ShouldGetError() {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm(null, null, userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(false);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(401);
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
+	public void testPut_UpdateOfUser_WithEmptyIdInUrl()  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update").
 		then().
@@ -272,50 +296,118 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfUser_IdNotFound() throws UserNotFoundException  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
-		doThrow(UserNotFoundException.class).when(userService).updateUserById(1L,requestBodyUser);
+	public void testPut_UpdateOfUser_IdNotFound() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(true);
+		doThrow(UserNotFoundException.class).when(userService).updateUserById(1L, form.getUserToUpdate());
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update/1").
 		then().
 			statusCode(404).
 			statusLine(containsString("User Not Found"));
 	}
-
+	
 	@Test
-	public void testDelete_removeExistingUser() throws UserNotFoundException {
+	public void testPut_UpdateOfAnotherUser_ShouldGetBadRequestError() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "anotherUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("myUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(true);
+		doThrow(BadRequestException.class).when(userService).updateUserById(1L, form.getUserToUpdate());
+		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testDelete_removeExistingUser_UserLoginSuccess() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
 			delete("/api/users/delete/1").
 		then().
 			statusCode(204);
-
-		verify(userService, times(1)).deleteUserById(1L);
+		
+		verify(userService, times(1)).deleteUserById(1L, userCredentials);
 	}
 	
 	@Test
-	public void testDelete_removeNotExistingUser_shouldReturn404() throws UserNotFoundException {
-		doThrow(UserNotFoundException.class).when(userService).deleteUserById(anyLong());
+	public void testDelete_removeNotExistingUser_shouldReturn404() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		doThrow(UserNotFoundException.class).when(userService).deleteUserById(99L, userCredentials);
 		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
-			delete("/api/users/delete/1").
+			delete("/api/users/delete/99").
 		then().
 			statusCode(404).
 			statusLine(containsString("User Not Found"));
 	}
 	
 	@Test
-	public void testDelete_WithEmptyId()  {
+	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		doThrow(BadRequestException.class).when(userService).deleteUserById(1L, userCredentials);
+		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testDelete_LoginFail_shouldReturnUnauthorized() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, null, null);
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(false);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(401);
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
+	public void testDelete_WithEmptyIdInUrl()  {
+		User userCredentials = new User(null, "username", "password");
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
 			delete("/api/users/delete").
 		then().
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(userService);
 	}
+	
+
 }
