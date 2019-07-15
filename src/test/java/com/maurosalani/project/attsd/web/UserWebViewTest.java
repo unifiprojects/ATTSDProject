@@ -10,12 +10,14 @@ import static com.gargoylesoftware.htmlunit.WebAssert.assertTitleEquals;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import org.junit.Before;
@@ -312,6 +314,20 @@ public class UserWebViewTest {
 		assertLinkPresentWithText(searchPage, "user2_nameTest");
 		assertLinkPresentWithText(searchPage, "game1_nameTest");
 		assertLinkPresentWithText(searchPage, "game2_nameTest");
+	}
+	
+	@Test
+	public void testSearchBar_WhenNoResults_ShouldShowMessage() throws Exception {
+		when(userService.getUsersByUsernameLike(anyString())).thenReturn(Collections.emptyList());
+		when(gameService.getGamesByNameLike(anyString())).thenReturn(Collections.emptyList());
+		
+		HtmlPage page = webClient.getPage("/");
+		final HtmlForm searchForm = page.getFormByName("search_form");
+		searchForm.getInputByName("content_search").setValueAttribute("name_not_existing");
+		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
+		
+		assertTextPresent(searchPage, "No Users");
+		assertTextPresent(searchPage, "No Games");
 	}
 
 	@Before
