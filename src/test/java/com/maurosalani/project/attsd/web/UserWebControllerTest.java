@@ -68,7 +68,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testAccessIndex_ShouldHaveLatestReleasesAttribute() throws Exception {
 		mvc.perform(get("/"))
-			.andExpect(model().attribute(LATEST_RELEASES, equalTo(Collections.emptyList())));
+			.andExpect(model().attributeExists(LATEST_RELEASES));
 	}
 	
 	@Test
@@ -105,7 +105,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testAccessLogin_UserAlreadyLogged() throws Exception {
+	public void testAccessLogin_UserAlreadyLogged_ShouldShowWarningMessage() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/login");
 
@@ -124,18 +124,19 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testVerifyLoginUser_Success() throws Exception {
+	public void testVerifyLoginUser_Success_ShouldCreateSessionForUserAndRedirectToHome() throws Exception {
 		User user = new User(1L, "username", "password");
 		when(userService.getUserByUsernameAndPassword("username", "password")).thenReturn(user);
 
 		mvc.perform(post("/verifyLogin")
 				.param("username", "username")
 				.param("password", "password"))
-			.andExpect(request().sessionAttribute("user", user)).andExpect(view().name("redirect:/"));
+			.andExpect(request().sessionAttribute("user", user))
+			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
-	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect() throws Exception {
+	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect_ShouldBeUnauthorized() throws Exception {
 		when(userService.getUserByUsernameAndPassword("wrong_username", "wrong_password"))
 				.thenThrow(UserNotFoundException.class);
 
@@ -149,14 +150,14 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testLogoutUser_SessionDoesNotExist() throws Exception {
+	public void testLogoutUser_UserNotLoggedYet__ShouldVerifyNoSessionIsPresent() throws Exception {
 		mvc.perform(get("/logout"))
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
-	public void testLogoutUser_SessionExists() throws Exception {
+	public void testLogoutUser_UserIsLogged_SessionShouldBeRemoved() throws Exception {
 		User user = new User(null, "username", "pwd");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/logout");
 
@@ -172,7 +173,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testRegistration_UserAlreadyLogged() throws Exception {
+	public void testRegistration_UserAlreadyLogged_ShouldShowWarningMessageAndDisableInput() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/registration");
 
@@ -191,7 +192,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSave_SuccessAfterRegistration() throws Exception {
+	public void testSaveAfterRegistration_Success() throws Exception {
 		User userToInsert = new User(null, "usernameTest", "pwdTest");
 		User userSaved = new User(1L, "usernameTest", "pwdTest");
 		when(userService.insertNewUser(userToInsert)).thenReturn(userSaved);
@@ -206,7 +207,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSave_UsernameAlreadyUsed() throws Exception {
+	public void testSave_UsernameAlreadyUsed_ShouldShowErrorMessageAndStatusConflict() throws Exception {
 		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd");
 		when(userService.insertNewUser(userToInsert)).thenThrow(UsernameAlreadyExistingException.class);
 
@@ -220,7 +221,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSave_PasswordIsEmpty() throws Exception {
+	public void testSave_PasswordIsEmpty_ShouldBeBadRequest() throws Exception {
 
 		mvc.perform(post("/save")
 				.param("username", "usernameTest")
@@ -232,7 +233,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSave_UsernameIsEmpty() throws Exception {
+	public void testSave_UsernameIsEmpty_ShouldBeBadRequest() throws Exception {
 
 		mvc.perform(post("/save")
 				.param("username", (String) null)
@@ -244,7 +245,7 @@ public class UserWebControllerTest {
 	}
 	
 	@Test
-	public void testSave_PasswordsDoNotMatch() throws Exception {
+	public void testSave_PasswordsDoNotMatch_ShouldBeBadRequest() throws Exception {
 		
 		mvc.perform(post("/save")
 				.param("username", "usernameTest")
@@ -256,7 +257,7 @@ public class UserWebControllerTest {
 	}
 	
 	@Test
-	public void testSave_PasswordOrUsernameAreInvalid() throws Exception {
+	public void testSave_PasswordOrUsernameAreInvalid_ShouldBeBadRequest() throws Exception {
 		when(userService.insertNewUser(new User(null, "", ""))).thenThrow(DataIntegrityViolationException.class);
 		mvc.perform(post("/save")
 				.param("username", "")
@@ -268,7 +269,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testSearch_ResultListsAreEmpty() throws Exception {
+	public void testSearch_ResultListsAreEmpty_ShouldShowMessage() throws Exception {
 		String content = "content";
 		when(userService.getUsersByUsernameLike(content)).thenReturn(Collections.emptyList());
 		when(gameService.getGamesByNameLike(content)).thenReturn(Collections.emptyList());
@@ -350,16 +351,16 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testProfile_UserFound() throws Exception {
-		User user = new User(1L, "username", "password");
-		when(userService.getUserByUsername("username")).thenReturn(user);
+		User user = new User(1L, "usernameTest", "password");
+		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
-		mvc.perform(get("/profile/username"))
+		mvc.perform(get("/profile/usernameTest"))
 			.andExpect(model().attribute("user", user))
 			.andExpect(view().name("profile"));
 	}
 
 	@Test
-	public void testProfile_ProfileNotFound() throws Exception {
+	public void testProfile_ProfileNotFound_ShouldRedirectToPage404() throws Exception {
 		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
 
 		mvc.perform(get("/profile/wrong_username"))
@@ -371,16 +372,16 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testGame_GameFound() throws Exception {
-		Game game = new Game(1L, "gamename", "gamedescription", new Date(1000));
-		when(gameService.getGameByName("gamename")).thenReturn(game);
+		Game game = new Game(1L, "gamenameTest", "gamedescription", new Date(1000));
+		when(gameService.getGameByName("gamenameTest")).thenReturn(game);
 
-		mvc.perform(get("/game/gamename"))
+		mvc.perform(get("/game/gamenameTest"))
 			.andExpect(model().attribute("game", game))
 			.andExpect(view().name("game"));
 	}
 
 	@Test
-	public void testGame_GameNotFound() throws Exception {
+	public void testGame_GameNotFound_ShouldRedirectToPage404() throws Exception {
 		when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
 
 		mvc.perform(get("/game/wrong_name"))
@@ -391,37 +392,38 @@ public class UserWebControllerTest {
 	}
 	
 	@Test
-	public void testAddFollowedUserToUser_UserAddedSuccessfully() throws Exception {
-		User user = new User(1L,"username", "password");
-		User toAdd = new User(2L,"usernameToAdd", "passwordToAdd");
-		User userReturned = new User(1L,"username", "password");
-		userReturned.addFollowedUser(toAdd);
-		toAdd.addFollowerUser(userReturned);
+	public void testAddFollowedUser_FollowedAddedSuccessfully_ShouldRedirectToProfileOfFollowed() throws Exception {
+		User user = new User(1L, "username", "password");
+		User followedToAdd = new User(2L, "followedToAdd", "password");
+		user.addFollowedUser(followedToAdd);
+		followedToAdd.addFollowerUser(user);
 		
-		when(userService.getUserByUsername("usernameToAdd")).thenReturn(toAdd);
-		when(userService.addFollowedUser(user, toAdd)).thenReturn(userReturned);
+		when(userService.getUserByUsername("followedToAdd")).thenReturn(followedToAdd);
+		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(user);
 		
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
-		mvc.perform(requestToPerform.param("usernameToAdd", toAdd.getUsername()))
+		mvc.perform(requestToPerform.param("followedToAdd", followedToAdd.getUsername()))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(view().name("redirect:/profile/" + toAdd.getUsername()));
+			.andExpect(view().name("redirect:/profile/" + followedToAdd.getUsername()));
 	}
 	
 	@Test
-	public void testAddFollowedUserToUser_UserIsNotLogged() throws Exception {
-		mvc.perform(put("/addUser").param("usernameToAdd", "usernameToAdd"))
+	public void testAddFollowed_UserIsNotLogged_ShouldBeUnauthorized() throws Exception {
+		mvc.perform(put("/addUser")
+				.param("followedToAdd", "userNotExisting"))
 			.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
 			.andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
 			.andExpect(view().name("unauthorized401"));
 	}
 	
 	@Test
-	public void testAddFollowedUserToUser_UsernameInBodyNotFound() throws Exception {
+	public void testAddFollowedUser_FollowedUserDoesNotExist_StatusShouldBeNotFound() throws Exception {
 		User user = new User(1L,"username", "password");
 		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
 
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
-		mvc.perform(requestToPerform.param("usernameToAdd", "wrong_username"))
+		mvc.perform(requestToPerform
+				.param("followedToAdd", "wrong_username"))
 			.andExpect(status().isNotFound())
 			.andExpect(model().attribute(MESSAGE, "Profile not found."))
 			.andExpect(view().name("profile404"));

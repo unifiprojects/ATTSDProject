@@ -149,15 +149,15 @@ public class UserWebController {
 	}
 
 	@PutMapping("/addUser")
-	public String addFollowedUserToUser(@RequestParam(name = "usernameToAdd") String usernameToAdd, Model model,
+	public String addFollowedUserToUser(@RequestParam(name = "followedToAdd") String followedToAdd, Model model,
 			HttpSession session) throws UserNotFoundException, UnauthorizedOperationException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
 		User user = (User) session.getAttribute("user");
-		User toAdd = userService.getUserByUsername(usernameToAdd);
-		userService.addFollowedUser(user, toAdd);
-		return "redirect:/profile/" + toAdd.getUsername();
+		User followed = userService.getUserByUsername(followedToAdd);
+		userService.addFollowedUser(user, followed);
+		return "redirect:/profile/" + followed.getUsername();
 	}
 
 	@PutMapping("/addGame")
