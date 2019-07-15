@@ -101,8 +101,8 @@ public class UserWebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpSession session, RegistrationForm form)
-			throws UsernameAlreadyExistingException, UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
+	public String save(Model model, HttpSession session, RegistrationForm form) throws UsernameAlreadyExistingException,
+			UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
 
 		if (form.isValid()) {
 			User userSaved = userService.insertNewUser(new User(null, form.getUsername(), form.getPassword()));
@@ -158,6 +158,15 @@ public class UserWebController {
 		User toAdd = userService.getUserByUsername(usernameToAdd);
 		userService.addFollowedUser(user, toAdd);
 		return "redirect:/profile/" + toAdd.getUsername();
+	}
+
+	@PutMapping("/addGame")
+	public String addGameToUser(@RequestParam(name = "nameToAdd") String gameToAdd, Model model, HttpSession session)
+			throws GameNotFoundException {
+		User user = (User) session.getAttribute("user");
+		Game toAdd = gameService.getGameByName(gameToAdd);
+		userService.addGame(user, toAdd);
+		return "redirect:/game/" + toAdd.getName();
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
