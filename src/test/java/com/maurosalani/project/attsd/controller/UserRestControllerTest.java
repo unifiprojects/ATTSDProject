@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.User;
@@ -239,14 +240,17 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdatePasswordOfUser() throws UserNotFoundException  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
-		when(userService.updateUserById(1L, requestBodyUser)).
+	public void testPut_UpdatePasswordOfUser_UserSuccessLogin() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).
+			thenReturn(true);
+		when(userService.updateUserById(1L, userReplacement)).
 			thenReturn(new User(1L, "testUsername", "new_password"));
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update/1").
 		then().
@@ -258,12 +262,28 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfUser_WithEmptyId()  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
+	public void testPut_UpdatePasswordOfUser_UserDoesNotProvideLogin_ShouldGetError() {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm(null, null, userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(false);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(401);
+	}
+	
+	@Test
+	public void testPut_UpdateOfUser_WithEmptyIdInUrl()  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update").
 		then().
@@ -272,18 +292,37 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfUser_IdNotFound() throws UserNotFoundException  {
-		User requestBodyUser = new User(null, "testUsername", "new_password");
-		doThrow(UserNotFoundException.class).when(userService).updateUserById(1L,requestBodyUser);
+	public void testPut_UpdateOfUser_IdNotFound() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "testUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(true);
+		doThrow(UserNotFoundException.class).when(userService).updateUserById(1L, form.getUserToUpdate());
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyUser).
+			body(form).
 		when().
 			put("/api/users/update/1").
 		then().
 			statusCode(404).
 			statusLine(containsString("User Not Found"));
+	}
+	
+	@Test
+	public void testPut_UpdateOfAnotherUser_ShouldGetBadRequestError() throws UserNotFoundException, BadRequestException  {
+		User userReplacement = new User(null, "anotherUsername", "new_password");
+		UpdateUserForm form = new UpdateUserForm("myUsername", "password", userReplacement);
+		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(true);
+		doThrow(BadRequestException.class).when(userService).updateUserById(1L, form.getUserToUpdate());
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			put("/api/users/update/1").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
 	}
 
 	@Test
@@ -318,4 +357,6 @@ public class UserRestControllerTest {
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
 	}
+	
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maurosalani.project.attsd.exception.BadRequestException;
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
@@ -54,8 +55,11 @@ public class UserRestController {
 	}
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updateUser(@PathVariable Long id, @RequestBody User user) throws UserNotFoundException {
-		return userService.updateUserById(id, user);
+	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
+			throws UserNotFoundException, LoginFailedException, BadRequestException {
+		if (!userService.verifyLogin(form.getUsername(), form.getPassword()))
+			throw new LoginFailedException();
+		return userService.updateUserById(id, form.getUserToUpdate());
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
