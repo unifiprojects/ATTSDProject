@@ -426,13 +426,6 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(MESSAGE, "Profile not found."))
 			.andExpect(view().name("profile404"));
 	}
-
-	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
-		MockHttpSession session = new MockHttpSession();
-		session.setAttribute("user", user);
-		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.get(url).session(session);
-		return requestToPerform;
-	}
 	
 	@Test
 	public void testAddGameToUser_GameAddedSuccessfully() throws Exception {
@@ -459,10 +452,29 @@ public class UserWebControllerTest {
 	        .andExpect(view().name("unauthorized401"));
 	}
 	
+	 @Test
+	 public void testAddGameToUser_NameInBodyNotFound() throws Exception {
+	    User user = new User(1L,"username", "password");
+	    when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
+
+	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
+	    mvc.perform(requestToPerform.param("nameToAdd", "wrong_name"))
+	        .andExpect(status().isNotFound())
+	        .andExpect(model().attribute(MESSAGE, "Game not found."))
+	        .andExpect(view().name("game404"));
+	}
+	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPutRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
 		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.put(url).session(session);
+		return requestToPerform;
+	}
+	
+	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("user", user);
+		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.get(url).session(session);
 		return requestToPerform;
 	}
 }
