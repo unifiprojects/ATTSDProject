@@ -131,8 +131,10 @@ public class UserWebViewTest {
 
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "login_form");
-		assertInputPresent(page, "username");
-		assertInputPresent(page, "password");
+		final HtmlForm loginForm = page.getFormByName("login_form");
+		assertThat(loginForm.getInputByName("username").getDisabledAttribute()).isEqualTo("");
+		assertThat(loginForm.getInputByName("password").getDisabledAttribute()).isEqualTo("");
+		assertThat(loginForm.getButtonByName("btn_submit").getDisabledAttribute()).isEqualTo("");
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
 
@@ -186,9 +188,11 @@ public class UserWebViewTest {
 
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "registration_form");
-		assertInputPresent(page, "username");
-		assertInputPresent(page, "password");
-		assertInputPresent(page, "confirmPassword");
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		assertThat(registrationForm.getInputByName("username").getDisabledAttribute()).isEqualTo("");
+		assertThat(registrationForm.getInputByName("password").getDisabledAttribute()).isEqualTo("");
+		assertThat(registrationForm.getInputByName("confirmPassword").getDisabledAttribute()).isEqualTo("");
+		assertThat(registrationForm.getButtonByName("btn_submit").getDisabledAttribute()).isEqualTo("");
 		
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
