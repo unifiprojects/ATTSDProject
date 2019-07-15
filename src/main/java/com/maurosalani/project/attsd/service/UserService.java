@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 
 @Service
@@ -30,6 +31,10 @@ public class UserService {
 	}
 
 	public User addFollowedUser(User user, User toAdd) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public User addGame(User user, Game toAdd) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 

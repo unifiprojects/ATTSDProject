@@ -434,6 +434,23 @@ public class UserWebControllerTest {
 		return requestToPerform;
 	}
 	
+	@Test
+	public void testAddGameToUser_GameAddedSuccessfully() throws Exception {
+	    User user = new User(1L,"username", "password");
+	    Game toAdd = new Game(2L,"nameToAdd", "descriptionToAdd", new Date(1000));
+	    User userReturned = new User(1L,"username", "password");
+	    userReturned.addGame(toAdd);
+	    toAdd.addUser(userReturned);
+	    
+	    when(gameService.getGameByName("nameToAdd")).thenReturn(toAdd);
+	    when(userService.addGame(user, toAdd)).thenReturn(userReturned);
+	    
+	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
+	    mvc.perform(requestToPerform.param("nameToAdd", toAdd.getName()))
+	        .andExpect(status().is3xxRedirection())
+	        .andExpect(view().name("redirect:/game/" + toAdd.getName()));
+	}
+	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPutRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);

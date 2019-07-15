@@ -2,6 +2,8 @@ package com.maurosalani.project.attsd.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class Game implements Serializable {
@@ -16,6 +18,8 @@ public class Game implements Serializable {
 	private String name;
 	private String description;
 	private Date releaseDate;
+
+	List<User> users;
 
 	public Game() {
 
@@ -84,4 +88,9 @@ public class Game implements Serializable {
 				+ "]";
 	}
 
+	public void addUser(User user) {
+		if (this.users == null)
+			this.users = new LinkedList<>();
+		this.users.add(user);
+	}
 }
