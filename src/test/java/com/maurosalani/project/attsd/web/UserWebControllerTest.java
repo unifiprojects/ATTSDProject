@@ -355,12 +355,14 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testProfile_UserFound() throws Exception {
+	public void testProfile_NoUserLogged() throws Exception {
 		User user = new User(1L, "usernameTest", "password");
 		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
 		mvc.perform(get("/profile/usernameTest"))
 			.andExpect(model().attribute("user", user))
+			.andExpect(model().attribute("isLogged", false))
+			.andExpect(model().attribute("isMyProfile", false))
 			.andExpect(view().name("profile"));
 	}
 
