@@ -203,12 +203,15 @@ public class UserWebViewTest {
 
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 	}
+	
+	
 
 	@Before
 	/**
 	 * Necessary to clear session
 	 */
 	public void clearSessionOfWebClient() {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 		webClient.getCookieManager().clearCookies();
 	}
 
