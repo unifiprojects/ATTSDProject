@@ -336,14 +336,10 @@ public class UserWebViewTest {
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
 		HtmlPage page = webClient.getPage("/profile/username_wrong");
-		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
 		assertTitleEquals(page, "Profile not found");
 		assertTextPresent(page, "Profile not found.");
 		assertLinkPresentWithText(page, "Homepage");
-		
 	}
-	
 
 	@Before
 	/**
