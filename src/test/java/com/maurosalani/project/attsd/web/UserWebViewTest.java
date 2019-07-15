@@ -191,6 +191,18 @@ public class UserWebViewTest {
 		assertInputPresent(page, "confirmPassword");
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
+	
+	@Test
+	public void testRegistration_UserCredentialsAreReceivedCorrectly() throws Exception {
+		HtmlPage page = webClient.getPage("/registration");
+		final HtmlForm loginForm = page.getFormByName("registration_form");
+		loginForm.getInputByName("username").setValueAttribute("username");
+		loginForm.getInputByName("password").setValueAttribute("pwd");
+		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		loginForm.getButtonByName("btn_submit").click();
+
+		verify(userService).insertNewUser(new User(null, "username", "pwd"));
+	}
 
 	@Before
 	/**
