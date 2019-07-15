@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
@@ -123,31 +124,31 @@ public class UserWebViewTest {
 		assertLinkNotPresentWithText(page, "Log in");
 		assertLinkNotPresentWithText(page, "Register");
 	}
-	
+
 	@Test
 	public void testLoginPage_ShouldContainLoginForm() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
-		
+
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "login_form");
 		assertInputPresent(page, "username");
 		assertInputPresent(page, "password");
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
-	
+
 	@Test
-	public void testLoginPage_UserCredentialsAreReceived() throws Exception {		
+	public void testLoginPage_UserCredentialsAreReceived() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
 		final HtmlForm loginForm = page.getFormByName("login_form");
 		loginForm.getInputByName("username").setValueAttribute("username");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getButtonByName("btn_submit").click();
-		
+
 		verify(userService).getUserByUsernameAndPassword("username", "pwd");
 	}
-	
+
 	@Test
-	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {	
+	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {
 		User user = new User(1L, "username", "pwd");
 		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenReturn(user);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
@@ -155,7 +156,7 @@ public class UserWebViewTest {
 		requestSettings.getRequestParameters().add(new NameValuePair("username", user.getUsername()));
 		requestSettings.getRequestParameters().add(new NameValuePair("password", user.getPassword()));
 		webClient.getPage(requestSettings);
-		
+
 		HtmlPage page = webClient.getPage("/login");
 		final HtmlForm loginForm = page.getFormByName("login_form");
 		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
@@ -165,9 +166,24 @@ public class UserWebViewTest {
 	}
 
 	@Test
-	public void testRegistrationPage_ShouldContainRegistrationForm() throws Exception {	
+	public void testLoginPage_WhenUsernameOrPasswordNotCorrect_ShouldShowMessage() throws Exception {
+		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenThrow(UserNotFoundException.class);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", "username"));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", "pwd"));
+		// necessary because 401 would make the test fail, but is the correct status
+		// code to return
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		HtmlPage page = webClient.getPage(requestSettings);
+
+		assertTextPresent(page, "Invalid username or password.");
+	}
+
+	@Test
+	public void testRegistrationPage_ShouldContainRegistrationForm() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
-		
+
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "registration_form");
 		assertInputPresent(page, "username");

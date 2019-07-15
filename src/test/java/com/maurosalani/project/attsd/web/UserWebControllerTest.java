@@ -142,7 +142,7 @@ public class UserWebControllerTest {
 		mvc.perform(post("/verifyLogin")				
 				.param("username", "wrong_username")
 				.param("password", "wrong_password"))
-			.andExpect(status().isNotFound())
+			.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
 			.andExpect(model().attribute(MESSAGE, "Invalid username or password."))
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("login"));

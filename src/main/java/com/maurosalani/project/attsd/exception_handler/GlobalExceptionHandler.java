@@ -47,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(LoginFailedException.class)
 	public String handleLoginFailed(Model model, HttpServletResponse response) {
 		model.addAttribute(MESSAGE, "Invalid username or password.");
-		response.setStatus(HttpStatus.NOT_FOUND.value());
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		return "login";
 	}
 
