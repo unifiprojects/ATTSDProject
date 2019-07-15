@@ -258,11 +258,12 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testSave_PasswordOrUsernameAreInvalid_ShouldBeBadRequest() throws Exception {
-		when(userService.insertNewUser(new User(null, "", ""))).thenThrow(DataIntegrityViolationException.class);
+		when(userService.insertNewUser(new User(null, "some_unexpected_characters", "some_unexpected_characters"))).thenThrow(DataIntegrityViolationException.class);
+		
 		mvc.perform(post("/save")
-				.param("username", "")
-				.param("password", "")
-				.param("confirmPassword", ""))
+				.param("username", "some_unexpected_characters")
+				.param("password", "some_unexpected_characters")
+				.param("confirmPassword", "some_unexpected_characters"))
 			.andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
 			.andExpect(model().attribute(MESSAGE, "Username or password invalid."))
 			.andExpect(view().name("registration"));

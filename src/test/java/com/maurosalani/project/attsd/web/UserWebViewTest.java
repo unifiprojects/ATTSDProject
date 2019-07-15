@@ -204,7 +204,20 @@ public class UserWebViewTest {
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 	}
 	
-	
+	@Test
+	public void testRegistration_WhenUsernameEmpty_ShouldShowMessage() throws Exception {
+		HtmlPage page = webClient.getPage("/registration");
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		final HtmlForm loginForm = page.getFormByName("registration_form");
+		loginForm.getInputByName("username").setValueAttribute("");
+		loginForm.getInputByName("password").setValueAttribute("pwd");
+		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		
+		assertTitleEquals(pageAfterRegistration, "Registration");
+		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Username is required.");
+	}
 
 	@Before
 	/**

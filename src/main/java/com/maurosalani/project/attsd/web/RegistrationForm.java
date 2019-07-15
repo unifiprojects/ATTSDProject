@@ -1,5 +1,7 @@
 package com.maurosalani.project.attsd.web;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
 import com.maurosalani.project.attsd.exception.UsernameRequiredException;
@@ -42,7 +44,7 @@ public class RegistrationForm {
 	}
 
 	public boolean isValid() throws UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
-		if (username == null) {
+		if (username == null || StringUtils.isWhitespace(username)) {
 			throw new UsernameRequiredException();
 		}
 		if (password == null || confirmPassword == null) {
