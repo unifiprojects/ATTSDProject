@@ -451,6 +451,14 @@ public class UserWebControllerTest {
 	        .andExpect(view().name("redirect:/game/" + toAdd.getName()));
 	}
 	
+	@Test
+	public void testAddGameToUser_UserIsNotLogged() throws Exception {
+	    mvc.perform(put("/addGame").param("nameToAdd", "nameToAdd"))
+	        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
+	        .andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
+	        .andExpect(view().name("unauthorized401"));
+	}
+	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPutRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
