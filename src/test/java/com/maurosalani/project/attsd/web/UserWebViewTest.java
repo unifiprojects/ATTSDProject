@@ -160,9 +160,9 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/login");
 		final HtmlForm loginForm = page.getFormByName("login_form");
 		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
-		assertThat(loginForm.getInputByName("username").isDisabled());
-		assertThat(loginForm.getInputByName("password").isDisabled());
-		assertThat(loginForm.getButtonByName("btn_submit").isDisabled());
+		assertThat(loginForm.getInputByName("username").getDisabledAttribute()).isEqualTo("disabled");
+		assertThat(loginForm.getInputByName("password").getDisabledAttribute()).isEqualTo("disabled");
+		assertThat(loginForm.getButtonByName("btn_submit").getDisabledAttribute()).isEqualTo("disabled");
 	}
 
 	@Test
@@ -189,9 +189,31 @@ public class UserWebViewTest {
 		assertInputPresent(page, "username");
 		assertInputPresent(page, "password");
 		assertInputPresent(page, "confirmPassword");
+		
 		assertTextNotPresent(page, "You are already logged! Try to log out from homepage.");
 	}
-	
+
+	@Test
+	public void testRegistrationPage_WhenUserAldreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {
+		User user = new User(1L, "username", "pwd");
+		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenReturn(user);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", user.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", user.getPassword()));
+		webClient.getPage(requestSettings);
+
+		HtmlPage page = webClient.getPage("/registration");
+
+		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
+
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		assertThat(registrationForm.getInputByName("username").getDisabledAttribute()).isEqualTo("disabled");
+		assertThat(registrationForm.getInputByName("password").getDisabledAttribute()).isEqualTo("disabled");
+		assertThat(registrationForm.getInputByName("confirmPassword").getDisabledAttribute()).isEqualTo("disabled");
+		assertThat(registrationForm.getButtonByName("btn_submit").getDisabledAttribute()).isEqualTo("disabled");
+	}
+
 	@Test
 	public void testRegistration_UserCredentialsAreReceivedCorrectly() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
@@ -206,18 +228,18 @@ public class UserWebViewTest {
 		assertTextPresent(returnedPage, "Your registration has been successful!");
 		assertLinkPresentWithText(returnedPage, "Homepage");
 	}
-	
+
 	@Test
 	public void testRegistration_WhenUsernameEmpty_ShouldShowMessage() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		final HtmlForm loginForm = page.getFormByName("registration_form");
 		loginForm.getInputByName("username").setValueAttribute("");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
 		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
-		
+
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Username is required.");
 	}
@@ -226,45 +248,46 @@ public class UserWebViewTest {
 	public void testRegistration_WhenPasswordEmpty_ShouldShowMessage() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		final HtmlForm loginForm = page.getFormByName("registration_form");
 		loginForm.getInputByName("username").setValueAttribute("usernameTest");
 		loginForm.getInputByName("password").setValueAttribute("");
 		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
 		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
-		
+
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
 	}
-	
+
 	@Test
 	public void testRegistration_WhenConfirmPasswordEmpty_ShouldShowMessage() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		final HtmlForm loginForm = page.getFormByName("registration_form");
 		loginForm.getInputByName("username").setValueAttribute("usernameTest");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getInputByName("confirmPassword").setValueAttribute("");
 		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
-		
+
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
 	}
-	
+
 	@Test
 	public void testRegistration_WhenPasswordsDoNotMatch_ShouldShowMessage() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		final HtmlForm loginForm = page.getFormByName("registration_form");
 		loginForm.getInputByName("username").setValueAttribute("usernameTest");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getInputByName("confirmPassword").setValueAttribute("anotherPwd");
 		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
-		
+
 		assertTitleEquals(pageAfterRegistration, "Registration");
-		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password and Confirm Password must match.");
+		assertThat(pageAfterRegistration.getBody().getTextContent())
+				.contains("Password and Confirm Password must match.");
 	}
 
 	@Before
