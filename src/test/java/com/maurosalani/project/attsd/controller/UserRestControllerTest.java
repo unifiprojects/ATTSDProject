@@ -324,33 +324,62 @@ public class UserRestControllerTest {
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
 	}
-
+	
 	@Test
-	public void testDelete_removeExistingUser() throws UserNotFoundException {
+	public void testDelete_removeExistingUser_UserLoginSuccess() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
 			delete("/api/users/delete/1").
 		then().
 			statusCode(204);
-
-		verify(userService, times(1)).deleteUserById(1L);
+		
+		verify(userService, times(1)).deleteUserById(1L, userCredentials);
 	}
 	
 	@Test
-	public void testDelete_removeNotExistingUser_shouldReturn404() throws UserNotFoundException {
-		doThrow(UserNotFoundException.class).when(userService).deleteUserById(anyLong());
+	public void testDelete_removeNotExistingUser_shouldReturn404() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		doThrow(UserNotFoundException.class).when(userService).deleteUserById(99L, userCredentials);
 		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
-			delete("/api/users/delete/1").
+			delete("/api/users/delete/99").
 		then().
 			statusCode(404).
 			statusLine(containsString("User Not Found"));
 	}
 	
 	@Test
-	public void testDelete_WithEmptyId()  {
+	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws UserNotFoundException, BadRequestException {
+		User userCredentials = new User(null, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(true);
+		doThrow(BadRequestException.class).when(userService).deleteUserById(1L, userCredentials);
+		
 		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	}
+	
+	@Test
+	public void testDelete_WithEmptyIdInUrl()  {
+		User userCredentials = new User(null, "username", "password");
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
 		when().
 			delete("/api/users/delete").
 		then().

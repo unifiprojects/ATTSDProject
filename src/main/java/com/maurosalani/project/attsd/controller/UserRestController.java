@@ -62,9 +62,11 @@ public class UserRestController {
 		return userService.updateUserById(id, form.getUserToUpdate());
 	}
 
-	@DeleteMapping(path = "/delete/{id}")
-	public void deleteUser(@PathVariable Long id, HttpServletResponse response) throws UserNotFoundException {
-		userService.deleteUserById(id);
+	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public void deleteUser(@PathVariable Long id, @RequestBody User credentials, HttpServletResponse response) throws UserNotFoundException, LoginFailedException, BadRequestException {
+		if (!userService.verifyLogin(credentials.getUsername(), credentials.getPassword()))
+			throw new LoginFailedException();
+		userService.deleteUserById(id, credentials);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 
