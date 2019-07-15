@@ -162,7 +162,10 @@ public class UserWebController {
 
 	@PutMapping("/addGame")
 	public String addGameToUser(@RequestParam(name = "nameToAdd") String gameToAdd, Model model, HttpSession session)
-			throws GameNotFoundException {
+			throws GameNotFoundException, UnauthorizedOperationException {
+		if (!isAlreadyLogged(session)) {
+			throw new UnauthorizedOperationException();
+		}
 		User user = (User) session.getAttribute("user");
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		userService.addGame(user, toAdd);
