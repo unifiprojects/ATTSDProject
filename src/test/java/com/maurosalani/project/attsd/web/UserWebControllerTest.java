@@ -508,7 +508,7 @@ public class UserWebControllerTest {
 	    		.param("gameToAdd", toAdd.getName()))
 	          	.andExpect(status().is3xxRedirection())
 	          	.andExpect(view().name("redirect:/game/" + toAdd.getName()));
-	      
+	    
 	    assertThat(session.getAttribute("user")).isEqualTo(userResult);
 	}
 	
@@ -531,6 +531,16 @@ public class UserWebControllerTest {
 	        .andExpect(status().isNotFound())
 	        .andExpect(model().attribute(MESSAGE, "Game not found."))
 	        .andExpect(view().name("game404"));
+	}
+	
+	@Test
+	public void testChangePassword_UserIsNotLogged() throws Exception {
+	    mvc.perform(post("/changePassword")
+	    		.param("oldPassword", "oldPassword")
+				.param("newPassword", "newPassword"))
+	        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
+	        .andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
+	        .andExpect(view().name("unauthorized401"));
 	}
 	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPostRequest(User user, String url) {
