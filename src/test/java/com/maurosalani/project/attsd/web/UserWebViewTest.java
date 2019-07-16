@@ -409,6 +409,32 @@ public class UserWebViewTest {
 		assertThat(addToFollowedForm.getButtonByName("btn_add").getDisabledAttribute()).isEqualTo("");
 	}
 	
+	@Test
+	public void testProfile_WhenLoggedUserAccessHisProfile_ShouldShowChangePasswordButton() throws Exception {
+		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
+		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		webClient.getPage(requestSettings);
+
+		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
+		
+		HtmlPage page = webClient.getPage("/profile/usernameLogged");
+		
+		assertTextPresent(page, "Username: " + userLogged.getUsername());
+		assertTextPresent(page, "No Users");
+		assertTextPresent(page, "No Games");  
+		
+		assertLinkPresentWithText(page, "Homepage");
+		
+		final HtmlForm addToFollowedForm = page.getFormByName("changePassword_form");
+		assertThat(addToFollowedForm.getInputByName("oldPassword").getDisabledAttribute()).isEqualTo("");
+		assertThat(addToFollowedForm.getInputByName("newPassword").getDisabledAttribute()).isEqualTo("");
+		assertThat(addToFollowedForm.getButtonByName("btn_change").getDisabledAttribute()).isEqualTo("");
+	}
+	
 	@Before
 	/**
 	 * Necessary to clear session
