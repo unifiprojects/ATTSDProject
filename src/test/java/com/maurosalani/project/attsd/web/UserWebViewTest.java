@@ -380,11 +380,10 @@ public class UserWebViewTest {
 		assertLinkPresentWithText(page, "game1_nameTest");
 		assertLinkPresentWithText(page, "game2_nameTest");
 		assertLinkPresentWithText(page, "Homepage");
-		assertLinkNotPresentWithText(page, "Add to Friends");
 	}
 
 	@Test
-	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowChangePasswordButton() throws Exception {
+	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowAddToFollowedButton() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
 		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
@@ -404,7 +403,10 @@ public class UserWebViewTest {
 		assertTextPresent(page, "No Games");  
 		
 		assertLinkPresentWithText(page, "Homepage");
-		assertLinkPresentWithText(page, "Add to followed");
+		
+		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
+		assertThat(addToFollowedForm.getInputByName("username").getDisabledAttribute()).isEqualTo("");
+		assertThat(addToFollowedForm.getButtonByName("btn_add").getDisabledAttribute()).isEqualTo("");
 	}
 	
 	@Before
