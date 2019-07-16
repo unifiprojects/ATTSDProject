@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.NewPasswordErrorException;
 import com.maurosalani.project.attsd.exception.OldPasswordErrorException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
@@ -189,9 +190,12 @@ public class UserWebController {
 	@PostMapping("/changePassword")
 	public String changePassword(@RequestParam(name = "oldPassword") String oldPassword,
 			@RequestParam(name = "newPassword") String newPassword, Model model, HttpSession session)
-			throws UnauthorizedOperationException, OldPasswordErrorException {
+			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordErrorException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
+		}
+		if (StringUtils.isWhitespace(newPassword)) {
+			throw new NewPasswordErrorException();
 		}
 		User user = (User) session.getAttribute("user");
 		if (!user.getPassword().equals(oldPassword)) {

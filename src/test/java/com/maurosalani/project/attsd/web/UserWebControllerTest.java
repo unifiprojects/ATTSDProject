@@ -564,6 +564,27 @@ public class UserWebControllerTest {
 	    assertThat(session.getAttribute("user")).isEqualTo(user);
 	}
 	
+	@Test
+	public void testChangePassword_NewPasswordError() throws Exception {
+	    User user = new User(1L,"username", "oldPassword");
+	    User userResult = new User(1L,"username", "newPassword");
+	    
+	    when(userService.changePassword(user, "newPassword")).thenReturn(userResult);
+	    
+	    MockHttpSession session = new MockHttpSession();
+	    session.setAttribute("user", user);
+	    MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/changePassword").session(session);
+	    
+	    mvc.perform(requestToPerform
+	      .param("oldPassword", "oldPassword")
+	      .param("newPassword", ""))
+	      .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+	      .andExpect(model().attribute(MESSAGE, "New password is required."))
+	      .andExpect(view().name("passwordError"));
+	    
+	    assertThat(session.getAttribute("user")).isEqualTo(user);
+	}
+	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPostRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
