@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -435,7 +435,7 @@ public class UserWebControllerTest {
 		when(userService.getUserByUsername("followedToAdd")).thenReturn(followedToAdd);
 		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(user);
 		
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPatchRequest(user, "/addUser");
 		mvc.perform(requestToPerform.param("followedToAdd", followedToAdd.getUsername()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/profile/" + followedToAdd.getUsername()));
@@ -443,7 +443,7 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testAddFollowed_UserIsNotLogged_ShouldBeUnauthorized() throws Exception {
-		mvc.perform(put("/addUser")
+		mvc.perform(patch("/addUser")
 				.param("followedToAdd", "userNotExisting"))
 			.andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
 			.andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
@@ -455,7 +455,7 @@ public class UserWebControllerTest {
 		User user = new User(1L,"username", "password");
 		when(userService.getUserByUsername("wrong_username")).thenThrow(UserNotFoundException.class);
 
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addUser");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPatchRequest(user, "/addUser");
 		mvc.perform(requestToPerform
 				.param("followedToAdd", "wrong_username"))
 			.andExpect(status().isNotFound())
@@ -474,7 +474,7 @@ public class UserWebControllerTest {
 	    when(gameService.getGameByName("nameToAdd")).thenReturn(toAdd);
 	    when(userService.addGame(user, toAdd)).thenReturn(userReturned);
 	    
-	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
+	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPatchRequest(user, "/addGame");
 	    mvc.perform(requestToPerform
 	    		.param("gameToAdd", toAdd.getName()))
 	        .andExpect(status().is3xxRedirection())
@@ -483,7 +483,7 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testAddGameToUser_UserIsNotLogged() throws Exception {
-	    mvc.perform(put("/addGame")
+	    mvc.perform(patch("/addGame")
 	    		.param("gameToAdd", "nameToAdd"))
 	        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
 	        .andExpect(model().attribute(MESSAGE, "Unauthorized Operation. You are not logged in!"))
@@ -495,17 +495,17 @@ public class UserWebControllerTest {
 	    User user = new User(1L,"username", "password");
 	    when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
 
-	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPutRequest(user, "/addGame");
+	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPatchRequest(user, "/addGame");
 	    mvc.perform(requestToPerform.param("gameToAdd", "wrong_name"))
 	        .andExpect(status().isNotFound())
 	        .andExpect(model().attribute(MESSAGE, "Game not found."))
 	        .andExpect(view().name("game404"));
 	}
 	
-	private MockHttpServletRequestBuilder addUserToSessionAndReturnPutRequest(User user, String url) {
+	private MockHttpServletRequestBuilder addUserToSessionAndReturnPatchRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
-		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.put(url).session(session);
+		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.patch(url).session(session);
 		return requestToPerform;
 	}
 	

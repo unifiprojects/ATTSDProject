@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
@@ -155,7 +155,7 @@ public class UserWebController {
 		return "game";
 	}
 
-	@PutMapping("/addUser")
+	@PatchMapping("/addUser")
 	public String addFollowedUserToUser(@RequestParam(name = "followedToAdd") String followedToAdd, Model model,
 			HttpSession session) throws UserNotFoundException, UnauthorizedOperationException {
 		if (!isAlreadyLogged(session)) {
@@ -167,7 +167,7 @@ public class UserWebController {
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
-	@PutMapping("/addGame")
+	@PatchMapping("/addGame")
 	public String addGameToUser(@RequestParam(name = "gameToAdd") String gameToAdd, Model model, HttpSession session)
 			throws GameNotFoundException, UnauthorizedOperationException {
 		if (!isAlreadyLogged(session)) {
