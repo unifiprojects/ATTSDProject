@@ -8,6 +8,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -295,9 +297,9 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfAnotherUser_ShouldGetBadRequestError() throws Exception{
+	public void testPut_UpdateAnotherUser_ShouldGetBadRequestError() throws Exception{
 		User userReplacement = new User(null, "myUsername", "new_password");
-		User userToUpdate = new User(99L, "anotherUsername", "password");
+		User userToUpdate = new User(1L, "myUsername", "password");
 		UpdateUserForm form = new UpdateUserForm("myUsername", "password", userReplacement);
 		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(userToUpdate);
 		
@@ -305,12 +307,79 @@ public class UserRestControllerTest {
 			contentType(MediaType.APPLICATION_JSON_VALUE).
 			body(form).
 		when().
-			put("/api/users/update/1").
+			put("/api/users/update/99").
 		then().
 			statusCode(400).
 			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
 	}
 	
+	@Test
+	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
+		User userCredentials = new User(null, "username", "password");
+		User userToDelete = new User(1L, "username", "password");
+		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(userToDelete);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(204);
+		
+		verify(userService, times(1)).deleteUserById(1L);
+	}
 	
+	@Test
+	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws Exception{
+		User userCredentials = new User(null, "myUsername", "password");
+		User userToDelete = new User(1L, "myUsername", "password");
+		when(userService.verifyLogin("myUsername", "password")).thenReturn(userToDelete);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/99").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
+	public void testDelete_LoginFail_shouldReturnUnauthorized() throws Exception {
+		User userCredentials = new User(null, "wrong_username", "wrong_pwd");
+		when(userService.verifyLogin("wrong_username", "wrong_pwd")).thenThrow(LoginFailedException.class);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete/1").
+		then().
+			statusCode(401);
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
+	public void testDelete_WithEmptyIdInUrl()  {
+		User userCredentials = new User(null, "username", "password");
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(userCredentials).
+		when().
+			delete("/api/users/delete").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(userService);
+	}
 
 }
