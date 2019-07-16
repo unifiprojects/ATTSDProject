@@ -28,7 +28,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -54,7 +53,7 @@ public class UserWebViewTest {
 
 	private static final String WELCOME_PLEASE_LOGIN = "Welcome! Please Log in or Register";
 
-	private static final String WELCOME_BACK_USER = "Welcome back username";
+	private static final String WELCOME_BACK_USER = "Welcome back";
 
 	@Autowired
 	private WebClient webClient;
