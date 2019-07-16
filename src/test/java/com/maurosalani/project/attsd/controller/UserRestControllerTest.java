@@ -28,6 +28,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -324,15 +325,14 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testPatch_UpdatePassword_UserSuccessLogin() throws Exception {
-		User userReplacement = new User();
-		userReplacement.setPassword("newPassword");
+		String newPassword = "newPassword";
 		Credentials credentials = new Credentials("testUsername", "password");
 		User userToUpdate = new User(1L, "testUsername", "password");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, newPassword);
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-		when(userService.updatePasswordById(1L, form.getUserToUpdate().getPassword())).
+		when(userService.updatePasswordById(1L, form.getNewPassword())).
 			thenReturn(new User(1L, "testUsername", "newPassword"));
 
 		given().
@@ -350,11 +350,10 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testPatch_UpdateAnotherUser_ShouldGetBadRequest() throws Exception {
-		User userReplacement = new User();
-		userReplacement.setPassword("newPassword");
+		String newPassword = "newPassword";
 		Credentials credentials = new Credentials("myUsername", "myPassword");
 		User userToUpdate = new User(1L, "myUsername", "myPassword");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, newPassword);
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);

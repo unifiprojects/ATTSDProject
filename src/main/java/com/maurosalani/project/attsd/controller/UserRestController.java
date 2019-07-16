@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
@@ -67,14 +68,22 @@ public class UserRestController {
 	}
 
 	@PatchMapping(path = "/update/password/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
+	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdatePasswordUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		if (userLogged.getId() != id)
 			throw new BadRequestException();
-		return userService.updatePasswordById(id, form.getUserToUpdate().getPassword());
+		return userService.updatePasswordById(id, form.getNewPassword());
 	}
-
+	
+	/*@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User addFollowedUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
+			throws UserNotFoundException, LoginFailedException, BadRequestException {
+		User userLogged = userService.verifyLogin(form.getCredentials());
+		if (userLogged.getId() != id)
+			throw new BadRequestException();
+		return userService.updatePasswordById(id, form.getUserToUpdate().get);
+	}*/
 
 	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public void deleteUser(@PathVariable Long id, @RequestBody Credentials credentials, HttpServletResponse response)
