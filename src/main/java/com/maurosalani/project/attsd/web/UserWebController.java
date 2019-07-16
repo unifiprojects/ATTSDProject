@@ -7,13 +7,16 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.dto.RegistrationForm;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
@@ -71,14 +74,10 @@ public class UserWebController {
 		return "login";
 	}
 
-	@PostMapping("/verifyLogin")
-	public String verifyLoginUser(Model model, User user, HttpSession session) throws LoginFailedException {
-		User result;
-		try {
-			result = userService.getUserByUsernameAndPassword(user.getUsername(), user.getPassword());
-		} catch (UserNotFoundException e) {
-			throw new LoginFailedException();
-		}
+	@PostMapping(value = "/verifyLogin", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public String verifyLoginUser(Model model, @RequestBody Credentials credentials, HttpSession session)
+			throws LoginFailedException {
+		User result = userService.verifyLogin(credentials);
 		session.setAttribute("user", result);
 		return "redirect:/";
 	}
@@ -201,8 +200,8 @@ public class UserWebController {
 		if (!user.getPassword().equals(oldPassword)) {
 			throw new OldPasswordErrorException();
 		}
-	    User result = userService.changePassword(user, newPassword);
-	    session.setAttribute("user", result);
+		User result = userService.changePassword(user, newPassword);
+		session.setAttribute("user", result);
 		return "passwordChanged";
 	}
 

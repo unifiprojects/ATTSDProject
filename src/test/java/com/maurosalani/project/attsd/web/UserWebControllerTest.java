@@ -23,12 +23,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
@@ -126,14 +129,25 @@ public class UserWebControllerTest {
 	@Test
 	public void testVerifyLoginUser_Success_ShouldCreateSessionForUserAndRedirectToHome() throws Exception {
 		User user = new User(1L, "username", "password");
-		when(userService.getUserByUsernameAndPassword("username", "password")).thenReturn(user);
+		Credentials credentials = new Credentials("username", "password");
+		when(userService.verifyLogin(credentials)).thenReturn(user);
 
 		mvc.perform(post("/verifyLogin")
-				.param("username", "username")
-				.param("password", "password"))
+				.content(asJsonString(credentials))
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(request().sessionAttribute("user", user))
 			.andExpect(view().name("redirect:/"));
 	}
+	
+	public static String asJsonString(final Object obj) {
+	    try {
+	        final ObjectMapper mapper = new ObjectMapper();
+	        final String jsonContent = mapper.writeValueAsString(obj);
+	        return jsonContent;
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
+	} 
 
 	@Test
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect_ShouldBeUnauthorized() throws Exception {

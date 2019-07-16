@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
@@ -13,10 +15,6 @@ import com.maurosalani.project.attsd.model.User;
 public class UserService {
 
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
-
-	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
-	}
 
 	public User getUserByUsername(String username) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
@@ -39,6 +37,10 @@ public class UserService {
 	}
 
 	public User changePassword(User user, String newPassword) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public User verifyLogin(Credentials credentials) throws LoginFailedException{
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
