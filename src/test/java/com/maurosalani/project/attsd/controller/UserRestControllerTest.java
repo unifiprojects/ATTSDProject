@@ -337,7 +337,7 @@ public class UserRestControllerTest {
 			contentType(MediaType.APPLICATION_JSON_VALUE).
 			body(form).
 		when().
-			patch("/api/users/update/1").
+			patch("/api/users/update/password/1").
 		then().
 			statusCode(200).
 			body(
