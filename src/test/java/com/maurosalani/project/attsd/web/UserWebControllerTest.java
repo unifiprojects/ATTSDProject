@@ -1,6 +1,7 @@
 package com.maurosalani.project.attsd.web;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -447,16 +448,22 @@ public class UserWebControllerTest {
 	public void testAddFollowedUser_FollowedAddedSuccessfully_ShouldRedirectToProfileOfFollowed() throws Exception {
 		User user = new User(1L, "username", "password");
 		User followedToAdd = new User(2L, "followedToAdd", "password");
+		User userResult = new User(1L, "username", "password");
 		user.addFollowedUser(followedToAdd);
 		followedToAdd.addFollowerUser(user);
 		
 		when(userService.getUserByUsername("followedToAdd")).thenReturn(followedToAdd);
-		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(user);
+		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(userResult);
 		
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPostRequest(user, "/addUser");
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("user", user);
+		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/addUser").session(session);
+		
 		mvc.perform(requestToPerform.param("followedToAdd", followedToAdd.getUsername()))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/profile/" + followedToAdd.getUsername()));
+		
+		assertThat(session.getAttribute("user")).isEqualTo(userResult);
 	}
 	
 	@Test
