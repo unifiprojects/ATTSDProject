@@ -396,6 +396,30 @@ public class UserRestControllerTest {
 				"username", equalTo("testUsername"),
 				"password", equalTo("newPassword"));
 	}
+	
+	@Test
+	public void testPatch_AddFollowedUserToAnotherUser_ShouldGetBadRequest() throws Exception {
+		User followedToAdd = new User(null, "followed", "pwd");
+		Credentials credentials = new Credentials("myUsername", "myPwd");
+		User userToUpdate = new User(1L, "myUsername", "myPwd");
+		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addFollowedUser/99").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
 	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
 		Credentials credentials = new Credentials("testUsername", "password");
