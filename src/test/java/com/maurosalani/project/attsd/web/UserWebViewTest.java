@@ -308,14 +308,13 @@ public class UserWebViewTest {
 				" game1_nameTest\n" + 
 				"game2_nameTest"
 			);	
+		
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
 		assertLinkPresentWithText(searchPage, "user1_nameTest");
 		assertLinkPresentWithText(searchPage, "user2_nameTest");
 		assertLinkPresentWithText(searchPage, "game1_nameTest");
 		assertLinkPresentWithText(searchPage, "game2_nameTest");
-		
-		
 	}
 	
 	@Test
@@ -362,28 +361,52 @@ public class UserWebViewTest {
 		
 		assertTextPresent(page, "Username: " + user.getUsername());
 			
-			HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
-			assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo(
-					"Users followed\n" + 
-					" user1_nameTest\n" + 
-					"user2_nameTest"
-				);
-			HtmlTable tableGames = page.getHtmlElementById("games");
-			assertThat(removeWindowsCR(tableGames.asText())).isEqualTo( 
-					"Games\n" + 
-					" game1_nameTest\n" + 
-					"game2_nameTest"
-				);	
-			assertTextNotPresent(page, "No Users");
-			assertTextNotPresent(page, "No Games");  
-			assertLinkPresentWithText(page, "user1_nameTest");
-			assertLinkPresentWithText(page, "user2_nameTest");
-			assertLinkPresentWithText(page, "game1_nameTest");
-			assertLinkPresentWithText(page, "game2_nameTest");
-			
-			assertLinkPresentWithText(page, "Homepage");
+		HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
+		assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo(
+				"Users followed\n" + 
+				" user1_nameTest\n" + 
+				"user2_nameTest"
+			);
+		HtmlTable tableGames = page.getHtmlElementById("games");
+		assertThat(removeWindowsCR(tableGames.asText())).isEqualTo( 
+				"Games\n" + 
+				" game1_nameTest\n" + 
+				"game2_nameTest"
+			);	
+		assertTextNotPresent(page, "No Users");
+		assertTextNotPresent(page, "No Games");  
+		assertLinkPresentWithText(page, "user1_nameTest");
+		assertLinkPresentWithText(page, "user2_nameTest");
+		assertLinkPresentWithText(page, "game1_nameTest");
+		assertLinkPresentWithText(page, "game2_nameTest");
+		assertLinkPresentWithText(page, "Homepage");
+		assertLinkNotPresentWithText(page, "Add to Friends");
 	}
 
+	@Test
+	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowChangePasswordButton() throws Exception {
+		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
+		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		webClient.getPage(requestSettings);
+		
+		User user = new User(2L, "username", "pwd");
+
+		when(userService.getUserByUsername("username")).thenReturn(user);
+		
+		HtmlPage page = webClient.getPage("/profile/username");
+		
+		assertTextPresent(page, "Username: " + user.getUsername());
+		assertTextPresent(page, "No Users");
+		assertTextPresent(page, "No Games");  
+		
+		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Add to followed");
+	}
+	
 	@Before
 	/**
 	 * Necessary to clear session

@@ -57,5 +57,9 @@
 
 	<a th:href="@{/}">Homepage</a>	
 
+	<div th:if="${isLogged and not isMyProfile}">
+		<a th:href="@{/}">Add to followed</a>
+	</div>
+	
 </body>
 </html>
