@@ -354,7 +354,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPatch_UpdateAnotherUser_ShouldGetBadRequest() throws Exception {
+	public void testPatch_UpdatePasswordToAnotherUser_ShouldGetBadRequest() throws Exception {
 		String newPassword = "newPassword";
 		Credentials credentials = new Credentials("myUsername", "myPassword");
 		User userToUpdate = new User(1L, "myUsername", "myPassword");
@@ -449,6 +449,28 @@ public class UserRestControllerTest {
 				"username", equalTo("testUsername"),
 				"password", equalTo("pwd"),
 				"games", not(equalTo(null)));
+	}
+	
+	@Test
+	public void testPatch_AddGameLikedToAnotherUser_ShouldGetBadRequest() throws Exception {
+		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
+		Credentials credentials = new Credentials("myUsername", "myPwd");
+		User userToUpdate = new User(1L, "myUsername", "myPwd");
+		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(credentials, gameLiked);
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addGame/99").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+	
+		verifyNoMoreInteractions(ignoreStubs(userService));
 	}
 	
 	@Test
