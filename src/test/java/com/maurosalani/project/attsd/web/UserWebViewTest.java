@@ -503,6 +503,7 @@ public class UserWebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "New password is required.");
+		assertLinkPresentWithText(returnedPage, "Homepage");
 	}
 	
 	@Test
@@ -530,6 +531,7 @@ public class UserWebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "Old password do not match.");
+		assertLinkPresentWithText(returnedPage, "Homepage");
     }
 	
 	@Test
@@ -557,6 +559,7 @@ public class UserWebViewTest {
 		
 		assertTitleEquals(returnedPage, "Password changed");
 		assertTextPresent(returnedPage, "Password changed successfully.");
+		assertLinkPresentWithText(returnedPage, "Homepage");
     }
 
 	@Before

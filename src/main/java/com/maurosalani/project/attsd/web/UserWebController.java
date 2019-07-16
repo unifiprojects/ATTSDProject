@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.dto.RegistrationForm;
@@ -189,8 +190,7 @@ public class UserWebController {
 	}
 
 	@PostMapping("/changePassword")
-	public String changePassword(@RequestParam(name = "oldPassword") String oldPassword,
-			@RequestParam(name = "newPassword") String newPassword, Model model, HttpSession session)
+	public String changePassword(String oldPassword, String newPassword, Model model, HttpSession session)
 			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordErrorException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
