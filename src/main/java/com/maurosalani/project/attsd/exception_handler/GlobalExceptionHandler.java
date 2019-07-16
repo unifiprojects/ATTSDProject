@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.NewPasswordErrorException;
@@ -49,6 +50,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(LoginFailedException.class)
 	public String handleLoginFailed(Model model, HttpServletResponse response) {
 		model.addAttribute(MESSAGE, "Invalid username or password.");
+		model.addAttribute("credentials", new Credentials());
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		return "login";
 	}

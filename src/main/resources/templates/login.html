@@ -11,14 +11,13 @@
   <div th:unless="${message.empty}">
     <div th:text="${message}"></div>
   </div>
-  <form name="login_form" th:action="@{/verifyLogin}" method="post">
+  <form name="login_form" th:action="@{/verifyLogin}" th:object="${credentials}" method="post">
 
     <label for="username">Username:</label> 
-    <input type="text" name="username"
-      autofocus="autofocus" th:disabled="${disableInput}" /> 
+    <input type="text" autofocus="autofocus" th:field="*{username}" th:disabled="${disableInput}" /> 
       
     <label for="password">Password:</label>
-    <input type="text" name="password" th:disabled="${disableInput}" />
+    <input type="text" th:field="*{password}" th:disabled="${disableInput}" />
 
     <button type="submit" name="btn_submit"
       th:disabled="${disableInput}">Log in</button>

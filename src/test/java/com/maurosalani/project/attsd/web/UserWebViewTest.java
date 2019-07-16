@@ -28,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -35,6 +36,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
@@ -119,11 +122,12 @@ public class UserWebViewTest {
 	@Test
 	public void testHomePage_UserLoginWithSuccess() throws Exception {
 		User user = new User(1L, "username", "pwd");
-		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenReturn(user);
+		Credentials credentials = new Credentials("username", "pwd");
+		when(userService.verifyLogin(credentials)).thenReturn(user);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", user.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", user.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		HtmlPage page = webClient.getPage(requestSettings);
 
 		assertTextPresent(page, WELCOME_BACK_USER);
@@ -132,7 +136,7 @@ public class UserWebViewTest {
 		assertLinkNotPresentWithText(page, "Log in");
 		assertLinkNotPresentWithText(page, "Register");
 	}
-
+	
 	@Test
 	public void testLoginPage_ShouldContainLoginForm() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
@@ -153,18 +157,19 @@ public class UserWebViewTest {
 		loginForm.getInputByName("username").setValueAttribute("username");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getButtonByName("btn_submit").click();
-
-		verify(userService).getUserByUsernameAndPassword("username", "pwd");
+		
+		verify(userService).verifyLogin(new Credentials("username", "pwd"));
 	}
 
 	@Test
 	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {
 		User user = new User(1L, "username", "pwd");
-		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenReturn(user);
+		Credentials credentials = new Credentials("username", "pwd");
+		when(userService.verifyLogin(credentials)).thenReturn(user);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", user.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", user.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 
 		HtmlPage page = webClient.getPage("/login");
@@ -177,11 +182,12 @@ public class UserWebViewTest {
 
 	@Test
 	public void testLoginPage_WhenUsernameOrPasswordNotCorrect_ShouldShowMessage() throws Exception {
-		when(userService.getUserByUsernameAndPassword("username", "pwd")).thenThrow(UserNotFoundException.class);
+		Credentials credentials = new Credentials("username", "pwd");
+		when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", "username"));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", "pwd"));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		// necessary because 401 would make the test fail, but is the correct status
 		// code to return
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -370,11 +376,12 @@ public class UserWebViewTest {
 	@Test
 	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowAddToFollowedButton() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 
 		User user = new User(2L, "username", "pwd");
@@ -398,14 +405,14 @@ public class UserWebViewTest {
 	public void testProfile_WhenLoggedUserAccessFollowedProfile_ShouldShowNoButton() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
 		User userFollowed = new User(1L, "usernameFollowed", "pwdFollowed");
-
+		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
 		userLogged.addFollowedUser(userFollowed);
 
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 
 		when(userService.getUserByUsername("usernameFollowed")).thenReturn(userFollowed);
@@ -423,7 +430,8 @@ public class UserWebViewTest {
 	@Test
 	public void testProfile_WhenLoggedUserAccessHisProfile_ShouldShowChangePasswordButton() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
@@ -450,13 +458,13 @@ public class UserWebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressAddFollowed_ShouldRedirectToFollowedProfile() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
-
-		// Login with userLogged
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
+		
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 
 		User user = new User(2L, "username", "pwd");
@@ -466,7 +474,6 @@ public class UserWebViewTest {
 		when(userService.getUserByUsername("username")).thenReturn(user);
 		when(userService.addFollowedUser(userLogged, user)).thenReturn(userLoggedWithFollowed);
 
-		// Click on btn_add
 		HtmlPage page = webClient.getPage("/profile/username");
 		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
 		HtmlPage returnedPage = addToFollowedForm.getButtonByName("btn_add").click();
@@ -481,18 +488,16 @@ public class UserWebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressChangePassword_NewPasswordIsEmpty() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "oldPassword");
-	
-		// Login with userLogged
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "oldPassword")).thenReturn(userLogged);
+		Credentials credentials = new Credentials("usernameLogged", "oldPassword");
+
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
-	
-		// Click on btn_change
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
@@ -509,18 +514,16 @@ public class UserWebViewTest {
 	@Test
     public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "oldPassword");
-		
-		// Login with userLogged
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "oldPassword")).thenReturn(userLogged);
+		Credentials credentials = new Credentials("usernameLogged", "oldPassword");
+
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
-		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
-		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		webClient.getPage(requestSettings);
 		
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
-		
-		// Click on btn_change
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
@@ -537,9 +540,9 @@ public class UserWebViewTest {
 	@Test
     public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "oldPassword");
+		Credentials credentials = new Credentials("usernameLogged", "oldPassword");
 		
-		// Login with userLogged
-		when(userService.getUserByUsernameAndPassword("usernameLogged", "oldPassword")).thenReturn(userLogged);
+		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
@@ -547,8 +550,6 @@ public class UserWebViewTest {
 		webClient.getPage(requestSettings);
 		
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
-		
-		// Click on btn_change
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");

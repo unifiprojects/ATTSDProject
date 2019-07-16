@@ -7,13 +7,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.dto.Credentials;
@@ -71,11 +69,12 @@ public class UserWebController {
 			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
+		model.addAttribute("credentials", new Credentials());
 		return "login";
 	}
 
-	@PostMapping(value = "/verifyLogin", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public String verifyLoginUser(Model model, @RequestBody Credentials credentials, HttpSession session)
+	@PostMapping(value = "/verifyLogin")
+	public String verifyLoginUser(Model model, Credentials credentials, HttpSession session)
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute("user", result);
