@@ -139,11 +139,16 @@ public class UserWebController {
 		if (!isAlreadyLogged(session)) {
 			model.addAttribute("isLogged", false);
 			model.addAttribute("isMyProfile", false);
+			model.addAttribute("isAlreadyFollowed", false);
 		} else {
 			User loggedUser = (User) session.getAttribute("user");
 			boolean isMyProfile = loggedUser.getUsername().equals(user.getUsername());
+			boolean isAlreadyFollowed = false;
+			if (loggedUser.getFollowedUsers() != null)
+				isAlreadyFollowed = loggedUser.getFollowedUsers().contains(user);
 			model.addAttribute("isLogged", true);
 			model.addAttribute("isMyProfile", isMyProfile);
+			model.addAttribute("isAlreadyFollowed", isAlreadyFollowed);
 		}
 		return "profile";
 	}

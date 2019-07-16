@@ -353,7 +353,7 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute(GAMES_LIST, Collections.emptyList()))
 			.andExpect(view().name("search"));
 	}
-
+			
 	@Test
 	public void testProfile_NoUserLogged() throws Exception {
 		User user = new User(1L, "usernameTest", "password");
@@ -363,6 +363,7 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute("user", user))
 			.andExpect(model().attribute("isLogged", false))
 			.andExpect(model().attribute("isMyProfile", false))
+			.andExpect(model().attribute("isAlreadyFollowed", false))
 			.andExpect(view().name("profile"));
 	}
 	
@@ -376,6 +377,7 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute("user", user))
 			.andExpect(model().attribute("isLogged", true))
 			.andExpect(model().attribute("isMyProfile", true))
+			.andExpect(model().attribute("isAlreadyFollowed", false))
 			.andExpect(view().name("profile"));
 	}
 	
@@ -390,6 +392,23 @@ public class UserWebControllerTest {
 			.andExpect(model().attribute("user", anotherUser))
 			.andExpect(model().attribute("isLogged", true))
 			.andExpect(model().attribute("isMyProfile", false))
+			.andExpect(model().attribute("isAlreadyFollowed", false))
+			.andExpect(view().name("profile"));
+	}
+	
+	@Test
+	public void testProfile_UserLoggedRequestAlreadyFollowedProfile() throws Exception {
+		User user = new User(1L, "usernameTest", "password");
+		User anotherUser = new User(2L, "anotherUsername", "anotherPassword");
+		user.addFollowedUser(anotherUser);
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/profile/anotherUsername");
+		when(userService.getUserByUsername("anotherUsername")).thenReturn(anotherUser);
+
+		mvc.perform(requestToPerform)
+			.andExpect(model().attribute("user", anotherUser))
+			.andExpect(model().attribute("isLogged", true))
+			.andExpect(model().attribute("isMyProfile", false))
+			.andExpect(model().attribute("isAlreadyFollowed", true))
 			.andExpect(view().name("profile"));
 	}
 
