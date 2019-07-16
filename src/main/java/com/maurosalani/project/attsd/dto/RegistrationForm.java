@@ -1,4 +1,4 @@
-package com.maurosalani.project.attsd.web;
+package com.maurosalani.project.attsd.dto;
 
 import org.apache.commons.lang3.StringUtils;
 

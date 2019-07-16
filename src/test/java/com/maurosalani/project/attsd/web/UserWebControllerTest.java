@@ -91,7 +91,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testAccessIndex_UserLoggedIn() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/");
 
 		mvc.perform(requestToPerform)
 			.andExpect(status().is2xxSuccessful())
@@ -107,7 +107,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testAccessLogin_UserAlreadyLogged_ShouldShowWarningMessage() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/login");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/login");
 
 		mvc.perform(requestToPerform)
 			.andExpect(status().is2xxSuccessful())
@@ -159,7 +159,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testLogoutUser_UserIsLogged_SessionShouldBeRemoved() throws Exception {
 		User user = new User(null, "username", "pwd");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/logout");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/logout");
 
 		mvc.perform(requestToPerform)
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
@@ -175,7 +175,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testRegistration_UserAlreadyLogged_ShouldShowWarningMessageAndDisableInput() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/registration");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/registration");
 
 		mvc.perform(requestToPerform)
 			.andExpect(status().is2xxSuccessful())
@@ -370,7 +370,7 @@ public class UserWebControllerTest {
 	@Test
 	public void testProfile_UserLoggedRequestHisProfile() throws Exception {
 		User user = new User(1L, "usernameTest", "password");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/profile/usernameTest");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/profile/usernameTest");
 		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
 		mvc.perform(requestToPerform)
@@ -385,7 +385,7 @@ public class UserWebControllerTest {
 	public void testProfile_UserLoggedRequestAnotherProfile() throws Exception {
 		User user = new User(1L, "usernameTest", "password");
 		User anotherUser = new User(2L, "anotherUsername", "anotherPassword");
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/profile/anotherUsername");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/profile/anotherUsername");
 		when(userService.getUserByUsername("anotherUsername")).thenReturn(anotherUser);
 
 		mvc.perform(requestToPerform)
@@ -401,7 +401,7 @@ public class UserWebControllerTest {
 		User user = new User(1L, "usernameTest", "password");
 		User anotherUser = new User(2L, "anotherUsername", "anotherPassword");
 		user.addFollowedUser(anotherUser);
-		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnRequest(user, "/profile/anotherUsername");
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/profile/anotherUsername");
 		when(userService.getUserByUsername("anotherUsername")).thenReturn(anotherUser);
 
 		mvc.perform(requestToPerform)
@@ -440,7 +440,7 @@ public class UserWebControllerTest {
 		mvc.perform(get("/game/wrong_name"))
 			.andExpect(status().isNotFound())
 			.andExpect(model().attribute(MESSAGE, "Game not found."))
-			.andExpect(request().sessionAttribute("game", equalTo(null)))
+			.andExpect(model().attribute("game", equalTo(null)))
 			.andExpect(view().name("game404"));
 	}
 	
@@ -612,7 +612,7 @@ public class UserWebControllerTest {
 		return requestToPerform;
 	}
 	
-	private MockHttpServletRequestBuilder addUserToSessionAndReturnRequest(User user, String url) {
+	private MockHttpServletRequestBuilder addUserToSessionAndReturnGetRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
 		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.get(url).session(session);
