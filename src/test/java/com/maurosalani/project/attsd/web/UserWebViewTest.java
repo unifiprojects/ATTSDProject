@@ -503,6 +503,32 @@ public class UserWebViewTest {
 	
 		assertTextPresent(returnedPage, "New password is required.");
 	}
+	
+	@Test
+    public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
+		User userLogged = new User(1L, "usernameLogged", "oldPassword");
+		
+		// Login with userLogged
+		when(userService.getUserByUsernameAndPassword("usernameLogged", "oldPassword")).thenReturn(userLogged);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		webClient.getPage(requestSettings);
+		
+		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
+		
+		// Click on btn_change
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		
+		HtmlPage page = webClient.getPage("/profile/usernameLogged");
+		final HtmlForm addToFollowedForm = page.getFormByName("changePassword_form");
+		addToFollowedForm.getInputByName("oldPassword").setValueAttribute("oldPassword_wrong");
+		addToFollowedForm.getInputByName("newPassword").setValueAttribute("newPassword");
+		HtmlPage returnedPage = addToFollowedForm.getButtonByName("btn_change").click();
+		
+		assertTextPresent(returnedPage, "Old password do not match.");
+    }
 
 	@Before
 	/**
