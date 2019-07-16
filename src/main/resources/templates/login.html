@@ -12,15 +12,14 @@
     <div th:text="${message}"></div>
   </div>
   <form name="login_form" th:action="@{/verifyLogin}" method="post">
-    <p>
-      Username:
-      <input type="text" name="username" autofocus="autofocus"
-        th:disabled="${disableInput}" />
-    </p>
-    <p>
-      Password:
-      <input type="text" name="password" th:disabled="${disableInput}" />
-    </p>
+
+    <label for="username">Username:</label> 
+    <input type="text" name="username"
+      autofocus="autofocus" th:disabled="${disableInput}" /> 
+      
+    <label for="password">Password:</label>
+    <input type="text" name="password" th:disabled="${disableInput}" />
+
     <button type="submit" name="btn_submit"
       th:disabled="${disableInput}">Log in</button>
   </form>

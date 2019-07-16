@@ -18,18 +18,15 @@
   <div th:if="${username == null}">
     <!-- The user is not logged -->
     <div>
-      Welcome! Please
-      <a th:href="@{/login}">Log in</a>
-      or
-      <a th:href="@{/registration}">Register</a>
+      Welcome! Please <a th:href="@{/login}">Log in</a> or <a
+        th:href="@{/registration}">Register</a>
     </div>
   </div>
   <div th:unless="${username == null}">
     <!-- The user is logged -->
     <div>
-      Welcome back
-      <a th:href="@{'/profile/' + ${username}}">
-        <label th:text="${username}"> </label>
+      Welcome back <a th:href="@{'/profile/' + ${username}}"> <label
+        th:text="${username}"> </label>
       </a>
       <div>
         <a th:href="@{/logout}">Logout</a>
