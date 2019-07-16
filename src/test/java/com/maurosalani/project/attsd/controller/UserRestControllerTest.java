@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -244,9 +245,11 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateUser_UserSuccessLogin() throws Exception {
 		User userReplacement = new User(null, "testUsername", "new_password");
+		Credentials credentials = new Credentials("testUsername", "password");
 		User userToUpdate = new User(1L, "testUsername", "password");
-		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
-		when(userService.verifyLogin(form.getUsername(), form.getPassword())).
+		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		
+		when(userService.verifyLogin(form.getCredentials())).
 			thenReturn(userToUpdate);
 		when(userService.updateUserById(1L, userReplacement)).
 			thenReturn(new User(1L, "testUsername", "new_password"));
@@ -267,8 +270,8 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateOfUser_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
 		User userReplacement = new User(null, "testUsername", "new_password");
-		UpdateUserForm form = new UpdateUserForm(null, null, userReplacement);
-		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenThrow(LoginFailedException.class);
+		UpdateUserForm form = new UpdateUserForm(null, userReplacement);
+		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -284,7 +287,8 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateOfUser_WithEmptyIdInUrl()  {
 		User userReplacement = new User(null, "testUsername", "new_password");
-		UpdateUserForm form = new UpdateUserForm("testUsername", "password", userReplacement);
+		Credentials credentials = new Credentials("testUsername", "password");
+		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
@@ -299,9 +303,10 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateAnotherUser_ShouldGetBadRequestError() throws Exception{
 		User userReplacement = new User(null, "myUsername", "new_password");
+		Credentials credentials = new Credentials("testUsername", "password");
 		User userToUpdate = new User(1L, "myUsername", "password");
-		UpdateUserForm form = new UpdateUserForm("myUsername", "password", userReplacement);
-		when(userService.verifyLogin(form.getUsername(), form.getPassword())).thenReturn(userToUpdate);
+		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		when(userService.verifyLogin(form.getCredentials())).thenReturn(userToUpdate);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -316,14 +321,40 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
+	public void testPatch_UpdatePassword_UserSuccessLogin() throws Exception {
+		User userReplacement = new User();
+		userReplacement.setPassword("newPassword");
+		Credentials credentials = new Credentials("testUsername", "password");
+		User userToUpdate = new User(1L, "testUsername", "password");
+		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+		when(userService.updatePasswordById(1L, form.getUserToUpdate().getPassword())).
+			thenReturn(new User(1L, "testUsername", "newPassword"));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/1").
+		then().
+			statusCode(200).
+			body(
+				"id", equalTo(1),
+				"username", equalTo("testUsername"),
+				"password", equalTo("newPassword"));
+	}
+	
+	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
-		User userCredentials = new User(null, "username", "password");
+		Credentials credentials = new Credentials("testUsername", "password");
 		User userToDelete = new User(1L, "username", "password");
-		when(userService.verifyLogin(userCredentials.getUsername(), userCredentials.getPassword())).thenReturn(userToDelete);
+		when(userService.verifyLogin(credentials)).thenReturn(userToDelete);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(userCredentials).
+			body(credentials).
 		when().
 			delete("/api/users/delete/1").
 		then().
@@ -334,14 +365,15 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws Exception{
-		User userCredentials = new User(null, "myUsername", "password");
+		Credentials credentials = new Credentials("testUsername", "password");
 		User userToDelete = new User(1L, "myUsername", "password");
-		when(userService.verifyLogin("myUsername", "password")).thenReturn(userToDelete);
+		when(userService.verifyLogin(credentials)).thenReturn(userToDelete);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(userCredentials).
+			body(credentials).
 		when().
+			
 			delete("/api/users/delete/99").
 		then().
 			statusCode(400).
@@ -352,12 +384,12 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_LoginFail_shouldReturnUnauthorized() throws Exception {
-		User userCredentials = new User(null, "wrong_username", "wrong_pwd");
-		when(userService.verifyLogin("wrong_username", "wrong_pwd")).thenThrow(LoginFailedException.class);
+		Credentials credentials = new Credentials("testUsername", "password");
+		when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(userCredentials).
+			body(credentials).
 		when().
 			delete("/api/users/delete/1").
 		then().
@@ -368,11 +400,11 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_WithEmptyIdInUrl()  {
-		User userCredentials = new User(null, "username", "password");
+		Credentials credentials = new Credentials("testUsername", "password");
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(userCredentials).
+			body(credentials).
 		when().
 			delete("/api/users/delete").
 		then().

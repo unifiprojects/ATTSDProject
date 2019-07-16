@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.User;
@@ -36,11 +37,15 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public void deleteUserById(Long id) throws UserNotFoundException  {
+	public User updatePasswordById(Long id, String password) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User verifyLogin(String username, String password) throws LoginFailedException {
+	public void deleteUserById(Long id) throws UserNotFoundException {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public User verifyLogin(Credentials credentials) throws LoginFailedException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
