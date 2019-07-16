@@ -180,7 +180,8 @@ public class UserWebController {
 		}
 		User user = (User) session.getAttribute("user");
 		Game toAdd = gameService.getGameByName(gameToAdd);
-		userService.addGame(user, toAdd);
+		User result = userService.addGame(user, toAdd);
+		session.setAttribute("user", result);
 		return "redirect:/game/" + toAdd.getName();
 	}
 
