@@ -57,12 +57,16 @@
 
   <a th:href="@{/}">Homepage</a>
 
+
+
   <div th:if="${isLogged and not isMyProfile}">
-    <form name="addToFollowed_form" th:action="@{/addUser}"
-      method="post">
-      <input type="hidden" th:value="${user.username}" name="username" />
-      <button type="submit" name="btn_add">Add to followed</button>
-    </form>
+    <div th:unless="${isAlreadyFollowed}">
+      <form name="addToFollowed_form" th:action="@{/addUser}"
+        method="post">
+        <input type="hidden" th:value="${user.username}" name="username" />
+        <button type="submit" name="btn_add">Add to followed</button>
+      </form>
+    </div>
   </div>
 
   <div th:if="${isLogged and isMyProfile}">

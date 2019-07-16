@@ -410,6 +410,32 @@ public class UserWebViewTest {
 	}
 	
 	@Test
+	public void testProfile_WhenLoggedUserAccessFollowedProfile_ShouldShowNoButton() throws Exception {
+		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
+		User userFollowed = new User(1L, "usernameFollowed", "pwdFollowed");
+		
+		userLogged.addFollowedUser(userFollowed);
+		
+		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("username", userLogged.getUsername()));
+		requestSettings.getRequestParameters().add(new NameValuePair("password", userLogged.getPassword()));
+		webClient.getPage(requestSettings);
+
+		when(userService.getUserByUsername("usernameFollowed")).thenReturn(userFollowed);
+		
+		HtmlPage page = webClient.getPage("/profile/usernameFollowed");
+		
+		assertTextPresent(page, "Username: " + userFollowed.getUsername());
+		assertTextPresent(page, "No Users");
+		assertTextPresent(page, "No Games");  
+		
+		assertLinkPresentWithText(page, "Homepage");
+		assertTextNotPresent(page, "Add to followed");
+	}
+	
+	@Test
 	public void testProfile_WhenLoggedUserAccessHisProfile_ShouldShowChangePasswordButton() throws Exception {
 		User userLogged = new User(1L, "usernameLogged", "pwdLogged");
 		when(userService.getUserByUsernameAndPassword("usernameLogged", "pwdLogged")).thenReturn(userLogged);
@@ -428,6 +454,7 @@ public class UserWebViewTest {
 		assertTextPresent(page, "No Games");  
 		
 		assertLinkPresentWithText(page, "Homepage");
+		assertTextNotPresent(page, "Add to followed");
 		
 		final HtmlForm addToFollowedForm = page.getFormByName("changePassword_form");
 		assertThat(addToFollowedForm.getInputByName("oldPassword").getDisabledAttribute()).isEqualTo("");
