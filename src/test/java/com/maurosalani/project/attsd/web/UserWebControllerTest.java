@@ -543,6 +543,27 @@ public class UserWebControllerTest {
 	        .andExpect(view().name("unauthorized401"));
 	}
 	
+	@Test
+	public void testChangePassword_OldPasswordError() throws Exception {
+	    User user = new User(1L,"username", "oldPassword");
+	    User userResult = new User(1L,"username", "newPassword");
+	    
+	    when(userService.changePassword(user, "newPassword")).thenReturn(userResult);
+	    
+	    MockHttpSession session = new MockHttpSession();
+	    session.setAttribute("user", user);
+	    MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/changePassword").session(session);
+	    
+	    mvc.perform(requestToPerform
+	      .param("oldPassword", "oldPassword_wrong")
+	      .param("newPassword", "newPassword"))
+	      .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+	      .andExpect(model().attribute(MESSAGE, "Old password do not match."))
+	      .andExpect(view().name("passwordError"));
+	    
+	    assertThat(session.getAttribute("user")).isEqualTo(user);
+	}
+	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPostRequest(User user, String url) {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);

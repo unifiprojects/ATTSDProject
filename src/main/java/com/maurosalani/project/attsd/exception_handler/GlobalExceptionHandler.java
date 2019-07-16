@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.OldPasswordErrorException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
 import com.maurosalani.project.attsd.exception.UnauthorizedOperationException;
@@ -85,5 +86,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		model.addAttribute(MESSAGE, "Username is required.");
 		return "registration";
 	}
-
+	
+	@ExceptionHandler(OldPasswordErrorException.class)
+	public String handleOldPasswordException(Model model, HttpServletResponse response) {
+		response.setStatus(HttpStatus.BAD_REQUEST.value());
+		model.addAttribute(MESSAGE, "Old password do not match.");
+		return "passwordError";
+	}
+	
 }
