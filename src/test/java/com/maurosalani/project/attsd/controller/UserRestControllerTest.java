@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.ignoreStubs;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +31,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
+import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
 
@@ -378,12 +382,11 @@ public class UserRestControllerTest {
 		User userToUpdate = new User(1L, "testUsername", "pwd");
 		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
 		
-		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
 		when(userService.updateAddFollowedUserById(1L, form.getFollowedToAdd())).
-			thenReturn(new User(1L, "testUsername", "newPassword"));
-
+			thenReturn(new User(1L, "testUsername", "pwd", asList(followedToAdd), null, null));
+		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
 			body(form).
@@ -392,9 +395,10 @@ public class UserRestControllerTest {
 		then().
 			statusCode(200).
 			body(
-				"id", equalTo(1),
-				"username", equalTo("testUsername"),
-				"password", equalTo("newPassword"));
+					"id", equalTo(1),
+					"username", equalTo("testUsername"),
+					"password", equalTo("pwd"),
+					"followedUsers", not(equalTo(null)));
 	}
 	
 	@Test
@@ -407,7 +411,7 @@ public class UserRestControllerTest {
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-
+		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
 			body(form).
@@ -418,6 +422,33 @@ public class UserRestControllerTest {
 			statusLine(containsString("Bad Request"));
 		
 		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
+	public void testPatch_AddGameLiked_UserSuccessLogin() throws Exception {
+		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
+		Credentials credentials = new Credentials("testUsername", "pwd");
+		User userToUpdate = new User(1L, "testUsername", "pwd");
+		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(credentials, gameLiked);
+		
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+		when(userService.updateAddGameLikedById(1L, form.getGameLiked())).
+			thenReturn(new User(1L, "testUsername", "pwd", null, null, asList(gameLiked)));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addGame/1").
+		then().
+			statusCode(200).
+			body(
+				"id", equalTo(1),
+				"username", equalTo("testUsername"),
+				"password", equalTo("pwd"),
+				"games", not(equalTo(null)));
 	}
 	
 	@Test

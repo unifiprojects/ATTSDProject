@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 
 @Service
@@ -50,6 +51,10 @@ public class UserService {
 	}
 
 	public User updateAddFollowedUserById(Long id, User followedToAdd) {
+		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+	}
+
+	public User updateAddGameLikedById(Long id, Game gameLiked) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
