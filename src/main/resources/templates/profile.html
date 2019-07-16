@@ -60,28 +60,18 @@
 	<div th:if="${isLogged and not isMyProfile}">
 		<form name="addToFollowed_form" th:action="@{/addUser}" method="post">
 			<input type="hidden" th:value="${user.username}" name="username" />
-			<p>
-				<button type="submit" name="btn_add">Add to followed</button>
-			</p>
+			<button type="submit" name="btn_add">Add to followed</button>
 		</form>
 	</div>
 	
 	<div th:if="${isLogged and isMyProfile}">	
 		<form name="changePassword_form" th:action="@{/changePassword}" method="post">
-			<p>
-				Change password: 
-			</p>
-			<p>
-				Old password:
-				<input type="text" name="oldPassword" />
-			</p>
-			<p>
-				New password
-				<input type="text" name="newPassword"/>
-			</p>
-			<p>
-				<button type="submit" name="btn_change">Change password</button>
-			</p>
+			<p>Change password:</p>
+			<label for="oldPassword">Old password:</label>
+			<input type="text" name="oldPassword" />
+			<label for="newPassword">New password:</label>
+			<input type="text" name="newPassword"/>
+			<button type="submit" name="btn_change">Change password</button>
 		</form>
 	</div>
 	
