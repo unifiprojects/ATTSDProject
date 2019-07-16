@@ -303,10 +303,12 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateAnotherUser_ShouldGetBadRequestError() throws Exception{
 		User userReplacement = new User(null, "myUsername", "new_password");
-		Credentials credentials = new Credentials("testUsername", "password");
-		User userToUpdate = new User(1L, "myUsername", "password");
+		Credentials credentials = new Credentials("myUsername", "myPassword");
+		User userToUpdate = new User(1L, "myUsername", "myPassword");
 		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
-		when(userService.verifyLogin(form.getCredentials())).thenReturn(userToUpdate);
+		
+		when(userService.verifyLogin(form.getCredentials())).
+			thenReturn(userToUpdate);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -347,6 +349,29 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
+	public void testPatch_UpdateAnotherUser_ShouldGetBadRequest() throws Exception {
+		User userReplacement = new User();
+		userReplacement.setPassword("newPassword");
+		Credentials credentials = new Credentials("myUsername", "myPassword");
+		User userToUpdate = new User(1L, "myUsername", "myPassword");
+		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/password/99").
+		then().
+			statusCode(400).
+			statusLine(containsString("Bad Request"));
+		
+		verifyNoMoreInteractions(ignoreStubs(userService));
+	}
+	
+	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
 		Credentials credentials = new Credentials("testUsername", "password");
 		User userToDelete = new User(1L, "username", "password");
@@ -365,9 +390,10 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws Exception{
-		Credentials credentials = new Credentials("testUsername", "password");
-		User userToDelete = new User(1L, "myUsername", "password");
-		when(userService.verifyLogin(credentials)).thenReturn(userToDelete);
+		Credentials credentials = new Credentials("myUsername", "myPassword");
+		User userToDelete = new User(1L, "myUsername", "myPassword");
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToDelete);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).

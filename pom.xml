@@ -250,6 +250,7 @@
                 <exclude>**/service/*</exclude>
                 <exclude>**/exception/*</exclude>
                 <exclude>**/exception_handler/*</exclude>
+                <exclude>**/dto/*</exclude>
               </excludes>
             </configuration>
           </plugin>
