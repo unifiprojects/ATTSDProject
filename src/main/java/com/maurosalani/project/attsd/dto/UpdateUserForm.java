@@ -1,4 +1,4 @@
-package com.maurosalani.project.attsd.controller;
+package com.maurosalani.project.attsd.dto;
 
 import com.maurosalani.project.attsd.model.User;
 

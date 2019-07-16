@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -57,16 +58,18 @@ public class UserRestController {
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
-		if (!userService.verifyLogin(form.getUsername(), form.getPassword()))
-			throw new LoginFailedException();
+		User userLogged = userService.verifyLogin(form.getUsername(), form.getPassword());
+		if(userLogged.getId() != id)
+			throw new BadRequestException();
 		return userService.updateUserById(id, form.getUserToUpdate());
 	}
 
 	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public void deleteUser(@PathVariable Long id, @RequestBody User credentials, HttpServletResponse response) throws UserNotFoundException, LoginFailedException, BadRequestException {
-		if (!userService.verifyLogin(credentials.getUsername(), credentials.getPassword()))
-			throw new LoginFailedException();
-		userService.deleteUserById(id, credentials);
+		User userLogged = userService.verifyLogin(credentials.getUsername(), credentials.getPassword());
+		if(userLogged.getId() != id)
+			throw new BadRequestException();
+		userService.deleteUserById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 

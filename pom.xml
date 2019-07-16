@@ -134,6 +134,7 @@
             <excludes>
               <exclude>**/*Application.*</exclude>
               <exclude>**/model/*</exclude>
+              <exclude>**/dto/*</exclude>
             </excludes>
           </configuration>
           <executions>
