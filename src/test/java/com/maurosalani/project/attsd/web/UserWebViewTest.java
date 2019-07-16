@@ -208,11 +208,11 @@ public class UserWebViewTest {
 	@Test
 	public void testRegistration_UserCredentialsAreReceivedCorrectly() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
-		final HtmlForm loginForm = page.getFormByName("registration_form");
-		loginForm.getInputByName("username").setValueAttribute("username");
-		loginForm.getInputByName("password").setValueAttribute("pwd");
-		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
-		HtmlPage returnedPage = loginForm.getButtonByName("btn_submit").click();
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		registrationForm.getInputByName("username").setValueAttribute("username");
+		registrationForm.getInputByName("password").setValueAttribute("pwd");
+		registrationForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		HtmlPage returnedPage = registrationForm.getButtonByName("btn_submit").click();
 
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 		assertTitleEquals(returnedPage, "Registration Success");
@@ -225,11 +225,11 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
-		final HtmlForm loginForm = page.getFormByName("registration_form");
-		loginForm.getInputByName("username").setValueAttribute("");
-		loginForm.getInputByName("password").setValueAttribute("pwd");
-		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
-		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		registrationForm.getInputByName("username").setValueAttribute("");
+		registrationForm.getInputByName("password").setValueAttribute("pwd");
+		registrationForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		HtmlPage pageAfterRegistration = registrationForm.getButtonByName("btn_submit").click();
 
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Username is required.");
@@ -240,11 +240,11 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
-		final HtmlForm loginForm = page.getFormByName("registration_form");
-		loginForm.getInputByName("username").setValueAttribute("usernameTest");
-		loginForm.getInputByName("password").setValueAttribute("");
-		loginForm.getInputByName("confirmPassword").setValueAttribute("pwd");
-		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		registrationForm.getInputByName("username").setValueAttribute("usernameTest");
+		registrationForm.getInputByName("password").setValueAttribute("");
+		registrationForm.getInputByName("confirmPassword").setValueAttribute("pwd");
+		HtmlPage pageAfterRegistration = registrationForm.getButtonByName("btn_submit").click();
 
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
@@ -255,11 +255,11 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
-		final HtmlForm loginForm = page.getFormByName("registration_form");
-		loginForm.getInputByName("username").setValueAttribute("usernameTest");
-		loginForm.getInputByName("password").setValueAttribute("pwd");
-		loginForm.getInputByName("confirmPassword").setValueAttribute("");
-		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		registrationForm.getInputByName("username").setValueAttribute("usernameTest");
+		registrationForm.getInputByName("password").setValueAttribute("pwd");
+		registrationForm.getInputByName("confirmPassword").setValueAttribute("");
+		HtmlPage pageAfterRegistration = registrationForm.getButtonByName("btn_submit").click();
 
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent()).contains("Password is required.");
@@ -270,11 +270,11 @@ public class UserWebViewTest {
 		HtmlPage page = webClient.getPage("/registration");
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 
-		final HtmlForm loginForm = page.getFormByName("registration_form");
-		loginForm.getInputByName("username").setValueAttribute("usernameTest");
-		loginForm.getInputByName("password").setValueAttribute("pwd");
-		loginForm.getInputByName("confirmPassword").setValueAttribute("anotherPwd");
-		HtmlPage pageAfterRegistration = loginForm.getButtonByName("btn_submit").click();
+		final HtmlForm registrationForm = page.getFormByName("registration_form");
+		registrationForm.getInputByName("username").setValueAttribute("usernameTest");
+		registrationForm.getInputByName("password").setValueAttribute("pwd");
+		registrationForm.getInputByName("confirmPassword").setValueAttribute("anotherPwd");
+		HtmlPage pageAfterRegistration = registrationForm.getButtonByName("btn_submit").click();
 
 		assertTitleEquals(pageAfterRegistration, "Registration");
 		assertThat(pageAfterRegistration.getBody().getTextContent())
