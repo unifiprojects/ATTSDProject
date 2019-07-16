@@ -449,8 +449,8 @@ public class UserWebControllerTest {
 		User user = new User(1L, "username", "password");
 		User followedToAdd = new User(2L, "followedToAdd", "password");
 		User userResult = new User(1L, "username", "password");
-		user.addFollowedUser(followedToAdd);
-		followedToAdd.addFollowerUser(user);
+		userResult.addFollowedUser(followedToAdd);
+		followedToAdd.addFollowerUser(userResult);
 		
 		when(userService.getUserByUsername("followedToAdd")).thenReturn(followedToAdd);
 		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(userResult);
@@ -490,20 +490,26 @@ public class UserWebControllerTest {
 	
 	@Test
 	public void testAddGameToUser_GameAddedSuccessfully() throws Exception {
-	    User user = new User(1L,"username", "password");
-	    Game toAdd = new Game(2L,"nameToAdd", "descriptionToAdd", new Date(1000));
-	    User userReturned = new User(1L,"username", "password");
-	    userReturned.addGame(toAdd);
-	    toAdd.addUser(userReturned);
+		User user = new User(1L,"username", "password");
+		Game toAdd = new Game(2L,"nameToAdd", "descriptionToAdd", new Date(1000));
+  
+		User userResult = new User(1L,"username", "password");
+		userResult.addGame(toAdd);
+		toAdd.addUser(userResult);
+  
+		when(gameService.getGameByName("nameToAdd")).thenReturn(toAdd);
+		when(userService.addGame(user, toAdd)).thenReturn(userResult);
+  
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("user", user);
+		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/addGame").session(session);
 	    
-	    when(gameService.getGameByName("nameToAdd")).thenReturn(toAdd);
-	    when(userService.addGame(user, toAdd)).thenReturn(userReturned);
-	    
-	    MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnPostRequest(user, "/addGame");
 	    mvc.perform(requestToPerform
 	    		.param("gameToAdd", toAdd.getName()))
-	        .andExpect(status().is3xxRedirection())
-	        .andExpect(view().name("redirect:/game/" + toAdd.getName()));
+	          	.andExpect(status().is3xxRedirection())
+	          	.andExpect(view().name("redirect:/game/" + toAdd.getName()));
+	      
+	    assertThat(session.getAttribute("user")).isEqualTo(userResult);
 	}
 	
 	@Test
