@@ -28,6 +28,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
@@ -369,7 +370,32 @@ public class UserRestControllerTest {
 		
 		verifyNoMoreInteractions(ignoreStubs(userService));
 	}
-	
+
+	@Test
+	public void testPatch_AddFollowedUser_UserSuccessLogin() throws Exception {
+		User followedToAdd = new User(null, "followed", "pwd");
+		Credentials credentials = new Credentials("testUsername", "pwd");
+		User userToUpdate = new User(1L, "testUsername", "pwd");
+		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		
+		
+		when(userService.verifyLogin(credentials)).
+			thenReturn(userToUpdate);
+		when(userService.updateAddFollowedUserById(1L, form.getFollowedToAdd())).
+			thenReturn(new User(1L, "testUsername", "newPassword"));
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addFollowedUser/1").
+		then().
+			statusCode(200).
+			body(
+				"id", equalTo(1),
+				"username", equalTo("testUsername"),
+				"password", equalTo("newPassword"));
+	}
 	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
 		Credentials credentials = new Credentials("testUsername", "password");

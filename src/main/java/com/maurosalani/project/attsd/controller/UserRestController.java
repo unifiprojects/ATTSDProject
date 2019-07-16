@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.BadRequestException;
@@ -62,8 +63,7 @@ public class UserRestController {
 	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
-		if (userLogged.getId() != id)
-			throw new BadRequestException();
+		checkRequestCorrectness(id, userLogged);
 		return userService.updateUserById(id, form.getUserToUpdate());
 	}
 
@@ -71,26 +71,23 @@ public class UserRestController {
 	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdatePasswordUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
-		if (userLogged.getId() != id)
-			throw new BadRequestException();
+		checkRequestCorrectness(id, userLogged);
 		return userService.updatePasswordById(id, form.getNewPassword());
 	}
-	
-	/*@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User addFollowedUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
+
+	@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public User addFollowedUser(@PathVariable Long id, @RequestBody UpdateAddFollowedUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
-		if (userLogged.getId() != id)
-			throw new BadRequestException();
-		return userService.updatePasswordById(id, form.getUserToUpdate().get);
-	}*/
+		checkRequestCorrectness(id, userLogged);
+		return userService.updateAddFollowedUserById(id, form.getFollowedToAdd());
+	}
 
 	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public void deleteUser(@PathVariable Long id, @RequestBody Credentials credentials, HttpServletResponse response)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(credentials);
-		if (userLogged.getId() != id)
-			throw new BadRequestException();
+		checkRequestCorrectness(id, userLogged);
 		userService.deleteUserById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
@@ -118,6 +115,11 @@ public class UserRestController {
 	@DeleteMapping(path = "/delete")
 	public void deleteUserWithNoId() throws BadRequestException {
 		throw new BadRequestException();
+	}
+
+	private void checkRequestCorrectness(Long id, User userLogged) throws BadRequestException {
+		if (userLogged.getId() != id)
+			throw new BadRequestException();
 	}
 
 }
