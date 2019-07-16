@@ -201,6 +201,8 @@ public class UserWebController {
 		if (!user.getPassword().equals(oldPassword)) {
 			throw new OldPasswordErrorException();
 		}
+	    User result = userService.changePassword(user, newPassword);
+	    session.setAttribute("user", result);
 		return "passwordChanged";
 	}
 
