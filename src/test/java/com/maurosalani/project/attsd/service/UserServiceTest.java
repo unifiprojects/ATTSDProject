@@ -27,10 +27,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,6 +40,9 @@ public class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+	
+	@Mock
+	private GameRepository gameRepository;
 
 	@InjectMocks
 	private UserService userService;
@@ -310,6 +315,15 @@ public class UserServiceTest {
 		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.addGame(user, game));
 	}
+	
+	@Test
+	public void testAddGameToGamesList_GameNotFound_ShouldThrowException() {
+		User user = new User(1L, "username", "pwd");
+		Game game = new Game(2L, "game name", "game description", new Date(1000));
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(gameRepository.findById(game.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> userService.addGame(user, game));
+	}
 
 	@Test
 	public void testAddGameToGamesList_ShouldReturnModifiedUser() throws Exception {
@@ -319,6 +333,7 @@ public class UserServiceTest {
 		resulted.addGame(game);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
 		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
 		
 		User saved = userService.addGame(user, game);
 		assertThat(saved).isEqualTo(resulted);
