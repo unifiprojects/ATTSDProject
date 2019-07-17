@@ -24,7 +24,7 @@ public class UserService {
 
 	@Autowired
 	private GameRepository gameRepository;
-	
+
 	public UserService(UserRepository userRepository, GameRepository gameRepository) {
 		this.userRepository = userRepository;
 		this.gameRepository = gameRepository;
@@ -59,7 +59,7 @@ public class UserService {
 		if (user == null)
 			throw new IllegalArgumentException();
 		checkIfUsernameAlreadyExists(user);
-		
+
 		user.setId(null);
 		try {
 			return userRepository.save(user);
@@ -69,7 +69,7 @@ public class UserService {
 	}
 
 	private void checkIfUsernameAlreadyExists(User user) throws UsernameAlreadyExistingException {
-		if(userRepository.findByUsername(user.getUsername()).isPresent())
+		if (userRepository.findByUsername(user.getUsername()).isPresent())
 			throw new UsernameAlreadyExistingException("Username already existing.");
 	}
 
@@ -94,19 +94,20 @@ public class UserService {
 
 	private void checkExistanceOfUser(Long id) throws UserNotFoundException {
 		userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-		}
-	
+	}
+
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
-		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));;	
+		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
+		;
 	}
 
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
 		if (user == null || followedToAdd == null)
 			throw new IllegalArgumentException();
-		
+
 		checkExistanceOfUser(user.getId());
 		checkExistanceOfUser(followedToAdd.getId());
-		
+
 		user.addFollowedUser(followedToAdd);
 		followedToAdd.addFollowerUser(user);
 
@@ -116,13 +117,20 @@ public class UserService {
 	public User addGame(User user, Game gameToAdd) throws UserNotFoundException, GameNotFoundException {
 		if (user == null || gameToAdd == null)
 			throw new IllegalArgumentException();
-		
+
 		checkExistanceOfUser(user.getId());
 		checkExistanceOfGame(gameToAdd.getId());
-		
+
 		user.addGame(gameToAdd);
 		gameToAdd.addUser(user);
 
+		return userRepository.save(user);
+	}
+
+	public User changePassword(User user, String newPassord) {
+
+		user.setPassword(newPassord);
+		
 		return userRepository.save(user);
 	}
 
