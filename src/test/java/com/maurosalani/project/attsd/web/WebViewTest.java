@@ -521,6 +521,20 @@ public class WebViewTest {
     }
 	
 	@Test
+	public void testProfile_ChangePasswordWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/changePassword"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("oldPassword", "oldPassword"));
+		requestSettings.getRequestParameters().add(new NameValuePair("newPassword", "newPassword"));
+	
+		HtmlPage page = webClient.getPage(requestSettings);
+		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
+		assertLinkPresentWithText(page, "Homepage");
+	}
+	
+	@Test
     public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwd");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
