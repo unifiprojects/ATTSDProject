@@ -547,6 +547,7 @@ public class WebViewTest {
 		webClient.getPage(requestToLogin);
 		
 		Game game = new Game(1L, "game_nameTest", "description", new Date(1));		
+		game.addUser(new User(1L, credentials.getUsername(),credentials.getPassword()));
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
