@@ -626,6 +626,19 @@ public class WebViewTest {
 		assertTextPresent(page, "Game not found.");
 		assertLinkPresentWithText(page, "Homepage");
 	}
+	
+	@Test
+	public void testProfileGame_AddGameWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/addGame"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("gameToAdd", "gameToAdd"));
+	
+		HtmlPage page = webClient.getPage(requestSettings);
+		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
+		assertLinkPresentWithText(page, "Homepage");
+	}
 
 	private WebRequest createWebRequestToLogin(Credentials credentials, boolean loginShouldSuccess) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
 		if(loginShouldSuccess)
