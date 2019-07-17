@@ -1,12 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
-import static com.gargoylesoftware.htmlunit.WebAssert.assertFormPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertInputPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkNotPresentWithText;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkPresentWithText;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTextNotPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTextPresent;
-import static com.gargoylesoftware.htmlunit.WebAssert.assertTitleEquals;
+import static com.gargoylesoftware.htmlunit.WebAssert.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -544,6 +538,21 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 		assertThat(page.getFormByName("like_form").getButtonByName("btn_like"));
+	}
+	
+	@Test
+	public void testProfileGame_LoggedUserAlreadyLikeThisGame_ShouldNotSeeButton() throws Exception {
+		Credentials credentials = new Credentials("username", "pwd");
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
+		webClient.getPage(requestToLogin);
+		
+		Game game = new Game(1L, "game_nameTest", "description", new Date(1));		
+		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
+
+		HtmlPage page = webClient.getPage("/game/game_nameTest");
+		HtmlPage pageGameAfterUserPutLike = page.getFormByName("like_form").getButtonByName("btn_like").click();
+		
+		assertFormNotPresent(pageGameAfterUserPutLike, "like_form");
 	}
 
 	private WebRequest createWebRequestToLogin(Credentials credentials, boolean loginShouldSuccess) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
