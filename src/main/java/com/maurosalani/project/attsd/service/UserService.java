@@ -93,7 +93,9 @@ public class UserService {
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
 		if (user == null || followedToAdd == null)
 			throw new IllegalArgumentException();
-				
+		
+		checkExistanceOfUser(user.getId());
+		
 		user.addFollowedUser(followedToAdd);
 		followedToAdd.addFollowerUser(user);
 
