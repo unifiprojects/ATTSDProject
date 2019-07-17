@@ -6,6 +6,14 @@
 </head>
 <body>
   <h1 id="nameOfGame" th:text="${game.name}"></h1>
+  <div th:if="${isLogged}">
+    <div th:if="${!isAlreadyLiked}">
+      <form name="like_form" th:action="@{/addGame}" method="post">
+        <input type="hidden" th:value="${game.name}" name="gameToAdd" />
+        <button type="submit" name="btn_like">Like</button>
+      </form>
+    </div>
+  </div>
   <div>
     Release Date:
     <div id="releaseDate"

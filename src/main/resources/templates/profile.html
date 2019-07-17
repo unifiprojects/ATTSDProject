@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Profile</title>
+<title th:text=${user.username}></title>
 </head>
 <body>
   <div>
@@ -59,7 +59,7 @@
   </table>
   <a th:href="@{/}">Homepage</a>
   <div th:if="${isLogged and not isMyProfile}">
-    <div th:unless="${isAlreadyFollowed}">
+    <div th:if="${!isAlreadyFollowed}">
       <form name="addToFollowed_form" th:action="@{/addUser}"
         method="post">
         <input type="hidden" th:value="${user.username}"

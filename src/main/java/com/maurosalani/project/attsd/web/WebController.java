@@ -158,9 +158,20 @@ public class WebController {
 	}
 
 	@GetMapping("/game/{name}")
-	public String game(@PathVariable String name, Model model) throws GameNotFoundException {
+	public String game(@PathVariable String name, HttpSession session, Model model) throws GameNotFoundException {
 		Game game = gameService.getGameByName(name);
 		model.addAttribute("game", game);
+		if (!isAlreadyLogged(session)) {
+			model.addAttribute("isLogged", false);
+			model.addAttribute("isAlreadyLiked", false);
+		} else {
+			User loggedUser = (User) session.getAttribute("user");
+			boolean isAlreadyLiked = false;
+			if(game.getUsers() != null)
+				isAlreadyLiked = game.getUsers().contains(loggedUser);
+			model.addAttribute("isLogged", true);
+			model.addAttribute("isAlreadyLiked", isAlreadyLiked);
+		}
 		return "game";
 	}
 
