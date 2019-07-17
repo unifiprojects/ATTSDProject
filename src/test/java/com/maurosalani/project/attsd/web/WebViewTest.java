@@ -528,6 +528,36 @@ public class WebViewTest {
     }
 	
 	@Test
+	public void testProfileGame_ProfileGameFound_ShouldShowCorrectly() throws Exception {
+		Game game = new Game(1L, "game_nameTest", "description", new Date(1));
+		User user1 = new User(1L, "user1_nameTest", "pwd");
+		User user2 = new User(2L, "user2_nameTest", "pwd");
+		game.addUser(user1);
+		game.addUser(user2);
+		
+		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
+		HtmlPage page = webClient.getPage("/game/game_nameTest");
+
+		HtmlTable tableUsers = page.getHtmlElementById("usersFans");
+		assertThat(removeWindowsCR(tableUsers.asText()))
+				.isEqualTo( 
+						"user1_nameTest\n" +
+						"user2_nameTest");
+		
+		String pattern = "dd-mm-yyyy";
+		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+
+		assertTitleEquals(page, game.getName());
+		assertThat(page.getElementById("nameOfGame").getTextContent()).isEqualTo(game.getName());
+		assertThat(page.getElementById("releaseDate").getTextContent()).isEqualTo(dateFormat.format(new Date(1)));
+		assertThat(page.getElementById("description").getTextContent()).isEqualTo(game.getDescription());
+		assertTextNotPresent(page, "No users like this game yet...");
+		assertLinkPresentWithText(page, "user1_nameTest");
+		assertLinkPresentWithText(page, "user2_nameTest");
+		assertLinkPresentWithText(page, "Homepage");
+	}
+	
+	@Test
 	public void testProfileGame_LoggedUserShouldSeeLikeButton() throws Exception {
 		Credentials credentials = new Credentials("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
