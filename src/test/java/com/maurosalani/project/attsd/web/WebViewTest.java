@@ -337,6 +337,19 @@ public class WebViewTest {
 		assertTextPresent(page, "Profile not found.");
 		assertLinkPresentWithText(page, "Homepage");
 	}
+	
+	@Test
+	public void testProfile_AddUserWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		WebRequest requestSettings = new WebRequest(new URL("http://localhost/addUser"), HttpMethod.POST);
+		requestSettings.setRequestParameters(new ArrayList<>());
+		requestSettings.getRequestParameters().add(new NameValuePair("followedToAdd", "followedToAdd"));
+	
+		HtmlPage page = webClient.getPage(requestSettings);
+		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
+		assertLinkPresentWithText(page, "Homepage");
+	}
 
 	@Test
 	public void testProfile_ProfileFound_ShouldShowCorrectly() throws Exception {
