@@ -156,27 +156,26 @@ public class UserServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.insertNewUser(null));
 		verifyNoMoreInteractions(userRepository);
 	}
-	
+
 	@Test
 	public void testInsertNewUser_UsernameAndPasswordAreNull_ShouldThrowException() {
-		User userToInsert = new User(null, null, null); 
+		User userToInsert = new User(null, null, null);
 		when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
 		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
-		
-		assertThatExceptionOfType(DataIntegrityViolationException.class).
-			isThrownBy(() -> userService.insertNewUser(userToInsert)).
-			withMessage("Username or password are invalid.");
+
+		assertThatExceptionOfType(DataIntegrityViolationException.class)
+				.isThrownBy(() -> userService.insertNewUser(userToInsert))
+				.withMessage("Username or password are invalid.");
 	}
 
 	@Test
 	public void testInsertNewUser_UsernameAlreadyExists_ShouldThrowException() {
-		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd"); 
-		User userAlreadyExisting = new User(1L, "usernameAlreadyExisting", "anotherPwd"); 
+		User userToInsert = new User(null, "usernameAlreadyExisting", "pwd");
+		User userAlreadyExisting = new User(1L, "usernameAlreadyExisting", "anotherPwd");
 		when(userRepository.findByUsername("usernameAlreadyExisting")).thenReturn(Optional.of(userAlreadyExisting));
-		
-		assertThatExceptionOfType(UsernameAlreadyExistingException.class).
-			isThrownBy(() -> userService.insertNewUser(userToInsert)).
-			withMessage("Username already existing.");
+
+		assertThatExceptionOfType(UsernameAlreadyExistingException.class)
+				.isThrownBy(() -> userService.insertNewUser(userToInsert)).withMessage("Username already existing.");
 		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
@@ -254,12 +253,24 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testAddUserToFollowedUsersList_ShouldReturnModifiedUser() {
+	public void testAddUserToFollowedUsersList_UserNotExist_ShouldThrowException() {
+		User user1 = new User(1L, "username1", "pwd1");
+		User user2 = new User(2L, "username2", "pwd2");
+
+		when(userRepository.findById(user1.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class)
+				.isThrownBy(() -> userService.addFollowedUser(user1, user2));
+	}
+
+	@Test
+	public void testAddUserToFollowedUsersList_ShouldReturnModifiedUser() throws Exception {
 		User user1 = spy(new User(1L, "username", "pwd"));
 		User user2 = spy(new User(2L, "username", "pwd"));
 		User resulted = new User(1L, "username", "pwd");
 		resulted.addFollowedUser(user2);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
+		when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+
 
 		User saved = userService.addFollowedUser(user1, user2);
 		assertThat(saved).isEqualTo(resulted);
