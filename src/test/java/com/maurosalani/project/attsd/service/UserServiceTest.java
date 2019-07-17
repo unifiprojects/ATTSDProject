@@ -362,4 +362,10 @@ public class UserServiceTest {
 		String newPassword = "newPwd";
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(null, newPassword));
 	}
+	
+	@Test
+	public void testChangePassword_PasswordIsNull_ShouldThrowException() throws Exception {
+		User user = new User(1L, "username", "pwd");
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(user, null));
+	}
 }
