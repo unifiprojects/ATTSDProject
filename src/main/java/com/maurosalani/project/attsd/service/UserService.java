@@ -128,7 +128,9 @@ public class UserService {
 	}
 
 	public User changePassword(User user, String newPassord) {
-
+		if(user == null)
+			throw new IllegalArgumentException();
+		
 		user.setPassword(newPassord);
 		
 		return userRepository.save(user);

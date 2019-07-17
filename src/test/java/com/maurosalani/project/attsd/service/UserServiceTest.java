@@ -348,7 +348,6 @@ public class UserServiceTest {
 		User user = spy(new User(1L, "username", "pwd"));
 		String newPassword = "newPwd";
 		User resulted = new User(1L, "username", "newPwd");
-
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
 		
 		User saved = userService.changePassword(user, newPassword);
@@ -356,5 +355,11 @@ public class UserServiceTest {
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setPassword(newPassword);
 		inOrder.verify(userRepository).save(user);
+	}
+	
+	@Test
+	public void testChangePassword_UserIsNull_ShouldThrowException() throws Exception {
+		String newPassword = "newPwd";
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(null, newPassword));
 	}
 }
