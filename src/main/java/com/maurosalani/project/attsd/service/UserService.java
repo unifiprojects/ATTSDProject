@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
 @Service
@@ -20,8 +22,12 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public UserService(UserRepository userRepository) {
+	@Autowired
+	private GameRepository gameRepository;
+	
+	public UserService(UserRepository userRepository, GameRepository gameRepository) {
 		this.userRepository = userRepository;
+		this.gameRepository = gameRepository;
 	}
 
 	public List<User> getAllUsers() {
@@ -87,7 +93,11 @@ public class UserService {
 	}
 
 	private void checkExistanceOfUser(Long id) throws UserNotFoundException {
-		getUserById(id);
+		userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+		}
+	
+	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
+		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));;	
 	}
 
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
@@ -103,11 +113,12 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public User addGame(User user, Game gameToAdd) throws UserNotFoundException {
+	public User addGame(User user, Game gameToAdd) throws UserNotFoundException, GameNotFoundException {
 		if (user == null || gameToAdd == null)
 			throw new IllegalArgumentException();
 		
 		checkExistanceOfUser(user.getId());
+		checkExistanceOfGame(gameToAdd.getId());
 		
 		user.addGame(gameToAdd);
 		gameToAdd.addUser(user);
