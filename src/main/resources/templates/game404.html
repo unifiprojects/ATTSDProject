@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Game not found.</title>
+<title>Game not found</title>
 </head>
 <body>
-
+  <p>Game not found.</p>
+  <div>
+    Return to <a th:href="@{/}">Homepage</a>
+  </div>
 </body>
 </html>

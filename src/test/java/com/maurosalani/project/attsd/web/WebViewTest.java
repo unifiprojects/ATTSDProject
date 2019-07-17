@@ -32,6 +32,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
@@ -568,6 +569,7 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 		assertThat(page.getFormByName("like_form").getButtonByName("btn_like"));
+		assertLinkPresentWithText(page, "Homepage");
 	}
 	
 	@Test
@@ -584,6 +586,18 @@ public class WebViewTest {
 		HtmlPage pageGameAfterUserPutLike = page.getFormByName("like_form").getButtonByName("btn_like").click();
 		
 		assertFormNotPresent(pageGameAfterUserPutLike, "like_form");
+		assertLinkPresentWithText(page, "Homepage");
+	}
+	
+	@Test
+	public void testProfileGame_WhenProfileNotFound_ShouldShowGame404() throws Exception {
+		when(gameService.getGameByName("name_wrong")).thenThrow(GameNotFoundException.class);
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+
+		HtmlPage page = webClient.getPage("/game/name_wrong");
+		assertTitleEquals(page, "Game not found");
+		assertTextPresent(page, "Game not found.");
+		assertLinkPresentWithText(page, "Homepage");
 	}
 
 	private WebRequest createWebRequestToLogin(Credentials credentials, boolean loginShouldSuccess) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
