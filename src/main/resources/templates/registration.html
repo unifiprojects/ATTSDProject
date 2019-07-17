@@ -14,17 +14,17 @@
     <div th:text="${message}"></div>
   </div>
 
-  <form name="registration_form" th:action="@{/save}" method="post">
+  <form name="registration_form" th:action="@{/save}" th:object="${registrationForm}" method="post">
 
     <label for="username">Username:</label> 
-    <input type="text" name="username"
+    <input type="text" th:field="*{username}"
       autofocus="autofocus" th:disabled="${disableInput}" /> 
       
     <label for="password">Password:</label>
-    <input type="text" name="password" th:disabled="${disableInput}" />
+    <input type="text" th:field="*{password}" name="password" th:disabled="${disableInput}" />
 
     <label for="confirmPassword">Confirm Password:</label> 
-    <input type="text"
+    <input type="text" th:field="*{confirmPassword}"
       name="confirmPassword" th:disabled="${disableInput}" />
 
     <button type="submit" name="btn_submit"

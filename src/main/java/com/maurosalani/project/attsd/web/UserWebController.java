@@ -97,6 +97,7 @@ public class UserWebController {
 			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 

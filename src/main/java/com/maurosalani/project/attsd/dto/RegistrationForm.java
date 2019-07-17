@@ -12,6 +12,9 @@ public class RegistrationForm {
 	private String password;
 	private String confirmPassword;
 
+	public RegistrationForm() {
+	}
+
 	public RegistrationForm(String username, String password, String confirmPassword) {
 		super();
 		this.username = username;

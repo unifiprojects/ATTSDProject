@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.RegistrationForm;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.NewPasswordErrorException;
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public String handleUsernameAlreadyExisting(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.CONFLICT.value());
 		model.addAttribute(MESSAGE, "Username already existing. Please choose another one.");
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 
@@ -37,6 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public String handleDataIntegrityViolation(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Username or password invalid.");
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 
@@ -73,6 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public String handleRegistrationPasswordNotValid(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Password and Confirm Password must match.");
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 
@@ -80,6 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public String handlePasswordRequired(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Password is required.");
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 
@@ -87,6 +92,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public String handleUsernameRequired(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Username is required.");
+		model.addAttribute("registrationForm", new RegistrationForm());
 		return "registration";
 	}
 
