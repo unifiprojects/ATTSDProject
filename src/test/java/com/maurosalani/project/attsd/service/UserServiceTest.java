@@ -349,6 +349,7 @@ public class UserServiceTest {
 		String newPassword = "newPwd";
 		User resulted = new User(1L, "username", "newPwd");
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 		
 		User saved = userService.changePassword(user, newPassword);
 		assertThat(saved).isEqualTo(resulted);
@@ -367,5 +368,20 @@ public class UserServiceTest {
 	public void testChangePassword_PasswordIsNull_ShouldThrowException() throws Exception {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(user, null));
+	}
+	
+	@Test
+	public void testChangePassword_PasswordIsEmpty_ShouldThrowException() throws Exception {
+		String newPassword = "  ";
+		User user = new User(1L, "username", "pwd");
+		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(user, newPassword));
+	}
+	
+	@Test
+	public void testChangePassword_UserNotFound_ShouldThrowException() throws Exception {
+		User user = new User(1L, "username", "pwd");
+		String newPassword = "newPasssword";
+		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.changePassword(user, newPassword));
 	}
 }

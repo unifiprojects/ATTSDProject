@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
+
 
 @Service
 public class UserService {
@@ -127,12 +129,12 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public User changePassword(User user, String newPassord) {
-		if(user == null || newPassord == null)
+	public User changePassword(User user, String newPassword) throws UserNotFoundException {
+		if(user == null || newPassword == null || StringUtils.isWhitespace(newPassword))
 			throw new IllegalArgumentException();
 		
-		user.setPassword(newPassord);
-		
+		checkExistanceOfUser(user.getId());
+		user.setPassword(newPassword);
 		return userRepository.save(user);
 	}
 
