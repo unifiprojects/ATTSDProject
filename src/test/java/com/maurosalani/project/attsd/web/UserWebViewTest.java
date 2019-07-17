@@ -506,7 +506,7 @@ public class UserWebViewTest {
 		HtmlPage returnedPage = changePasswordForm.getButtonByName("btn_change").click();
 
 		assertTitleEquals(returnedPage, "Password error");
-		assertTextPresent(returnedPage, "New password is required.");
+		assertTextPresent(returnedPage, "Password is required.");
 		assertLinkPresentWithText(returnedPage, "Homepage");
 	}
 	

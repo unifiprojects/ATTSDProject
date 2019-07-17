@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.maurosalani.project.attsd.dto.ChangePasswordForm;
 import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.dto.RegistrationForm;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
-import com.maurosalani.project.attsd.exception.NewPasswordErrorException;
+import com.maurosalani.project.attsd.exception.NewPasswordRequiredException;
 import com.maurosalani.project.attsd.exception.OldPasswordErrorException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
@@ -150,6 +151,8 @@ public class UserWebController {
 			model.addAttribute("isLogged", true);
 			model.addAttribute("isMyProfile", isMyProfile);
 			model.addAttribute("isAlreadyFollowed", isAlreadyFollowed);
+			if(isMyProfile)
+				model.addAttribute("changePasswordForm", new ChangePasswordForm());
 		}
 		return "profile";
 	}
@@ -188,19 +191,19 @@ public class UserWebController {
 	}
 
 	@PostMapping("/changePassword")
-	public String changePassword(String oldPassword, String newPassword, Model model, HttpSession session)
-			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordErrorException {
+	public String changePassword(ChangePasswordForm form, Model model, HttpSession session)
+			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
-		if (StringUtils.isWhitespace(newPassword)) {
-			throw new NewPasswordErrorException();
-		}
 		User user = (User) session.getAttribute("user");
-		if (!user.getPassword().equals(oldPassword)) {
+		if (!user.getPassword().equals(form.getOldPassword())) {
 			throw new OldPasswordErrorException();
 		}
-		User result = userService.changePassword(user, newPassword);
+		if (StringUtils.isWhitespace(form.getNewPassword())) {
+			throw new NewPasswordRequiredException();
+		}
+		User result = userService.changePassword(user, form.getNewPassword());
 		session.setAttribute("user", result);
 		return "passwordChanged";
 	}

@@ -4,7 +4,9 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -589,24 +591,22 @@ public class UserWebControllerTest {
 	}
 	
 	@Test
-	public void testChangePassword_NewPasswordError() throws Exception {
+	public void testChangePassword_NewPasswordMissing_ShouldGetError() throws Exception {
 	    User user = new User(1L,"username", "oldPassword");
-	    User userResult = new User(1L,"username", "newPassword");
-	    
-	    when(userService.changePassword(user, "newPassword")).thenReturn(userResult);
 	    
 	    MockHttpSession session = new MockHttpSession();
 	    session.setAttribute("user", user);
 	    MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/changePassword").session(session);
 	    
 	    mvc.perform(requestToPerform
-	      .param("oldPassword", "oldPassword")
-	      .param("newPassword", ""))
+		      .param("oldPassword", "oldPassword")
+		      .param("newPassword", ""))
 	      .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
-	      .andExpect(model().attribute(MESSAGE, "New password is required."))
+	      .andExpect(model().attribute(MESSAGE, "Password is required."))
 	      .andExpect(view().name("passwordError"));
 	    
 	    assertThat(session.getAttribute("user")).isEqualTo(user);
+	    verifyNoMoreInteractions(userService);
 	}
 	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPostRequest(User user, String url) {

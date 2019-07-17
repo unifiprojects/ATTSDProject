@@ -13,7 +13,7 @@ import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.dto.RegistrationForm;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
-import com.maurosalani.project.attsd.exception.NewPasswordErrorException;
+import com.maurosalani.project.attsd.exception.NewPasswordRequiredException;
 import com.maurosalani.project.attsd.exception.OldPasswordErrorException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
@@ -103,10 +103,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return "passwordError";
 	}
 
-	@ExceptionHandler(NewPasswordErrorException.class)
+	@ExceptionHandler(NewPasswordRequiredException.class)
 	public String handleNewPasswordException(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
-		model.addAttribute(MESSAGE, "New password is required.");
+		model.addAttribute(MESSAGE, "Password is required.");
 		return "passwordError";
 	}
 

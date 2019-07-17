@@ -1,6 +1,6 @@
 package com.maurosalani.project.attsd.exception;
 
-public class NewPasswordErrorException extends Exception {
+public class NewPasswordRequiredException extends Exception {
 
 	/**
 	 * 
