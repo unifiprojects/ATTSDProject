@@ -66,6 +66,15 @@ public class WebViewTest {
 	@MockBean
 	private GameService gameService;
 
+	@Before
+	/**
+	 * Necessary to clear session
+	 */
+	public void clearSessionOfWebClient() {
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+		webClient.getCookieManager().clearCookies();
+	}
+	
 	@Test
 	public void testHomePageTitle() throws Exception {
 		HtmlPage page = webClient.getPage("/");
@@ -124,8 +133,7 @@ public class WebViewTest {
 	@Test
 	public void testHomePage_UserLoginWithSuccess() throws Exception {
 		Credentials credentials = new Credentials("username", "pwd");
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
-		when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		HtmlPage page = webClient.getPage(requestToLogin);
 		
 		assertTextPresent(page, WELCOME_BACK_USER);
@@ -162,8 +170,7 @@ public class WebViewTest {
 	@Test
 	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {
 		Credentials credentials = new Credentials("username", "pwd");
-		when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
 		HtmlPage page = webClient.getPage("/login");
@@ -177,8 +184,7 @@ public class WebViewTest {
 	@Test
 	public void testLoginPage_WhenUsernameOrPasswordNotCorrect_ShouldShowMessage() throws Exception {
 		Credentials credentials = new Credentials("username", "pwd");
-		when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, false);
 		// necessary because 401 would make the test fail, but is the correct status
 		// code to return
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -378,8 +384,7 @@ public class WebViewTest {
 	@Test
 	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowAddToFollowedButton() throws Exception {
 		Credentials credentials = new Credentials("userLogged", "pwd");
-		when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 		
 		User user = new User(2L, "someUser", "pwd");
@@ -404,8 +409,8 @@ public class WebViewTest {
 		User userFollowed = new User(2L, "usernameFollowed", "pwdFollowed");
 		userLogged.addFollowedUser(userFollowed);
 
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
 		webClient.getPage(requestToLogin);
 
 		when(userService.getUserByUsername("usernameFollowed")).thenReturn(userFollowed);
@@ -423,8 +428,7 @@ public class WebViewTest {
 	public void testProfile_WhenLoggedUserAccessHisPersonalProfile_ShouldShowChangePasswordButton() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
-		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
@@ -447,8 +451,7 @@ public class WebViewTest {
 	public void testProfile_UserLoggedAndPressAddFollowed_ShouldRedirectToFollowedProfile() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
-		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
 		User userFollowed = new User(2L, "userFollowed", "pwd");
@@ -471,8 +474,7 @@ public class WebViewTest {
 	public void testProfile_UserLoggedAndPressChangePassword_NewPasswordIsEmpty() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwd");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
-		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
@@ -493,8 +495,7 @@ public class WebViewTest {
     public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwdLogged");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
-		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 		
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
@@ -515,8 +516,7 @@ public class WebViewTest {
     public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
 		Credentials credentials = new Credentials("usernameLogged", "pwd");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
-		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 		
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
@@ -536,8 +536,7 @@ public class WebViewTest {
 	@Test
 	public void testProfileGame_LoggedUserShouldSeeLikeButton() throws Exception {
 		Credentials credentials = new Credentials("username", "pwd");
-		when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
-		WebRequest requestToLogin = createWebRequestToLogin(credentials);
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 		
 		Game game = new Game(1L, "game_nameTest", "description", new Date(1));		
@@ -547,21 +546,16 @@ public class WebViewTest {
 		assertThat(page.getFormByName("like_form").getButtonByName("btn_like"));
 	}
 
-	private WebRequest createWebRequestToLogin(Credentials credentials) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
+	private WebRequest createWebRequestToLogin(Credentials credentials, boolean loginShouldSuccess) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
+		if(loginShouldSuccess)
+			when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
+		else
+			when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
 		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		return requestSettings;
-	}
-	
-	@Before
-	/**
-	 * Necessary to clear session
-	 */
-	public void clearSessionOfWebClient() {
-		webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-		webClient.getCookieManager().clearCookies();
 	}
 
 	private String removeWindowsCR(String s) {
