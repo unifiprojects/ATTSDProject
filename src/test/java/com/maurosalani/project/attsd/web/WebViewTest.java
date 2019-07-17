@@ -44,8 +44,8 @@ import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = UserWebController.class)
-public class UserWebViewTest {
+@WebMvcTest(controllers = WebController.class)
+public class WebViewTest {
 
 	private static final String LATEST_RELEASES_EXISTING_MESSAGE = "Latest releases!";
 

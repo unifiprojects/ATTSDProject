@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -42,8 +41,8 @@ import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = UserWebController.class)
-public class UserWebControllerTest {
+@WebMvcTest(controllers = WebController.class)
+public class WebControllerTest {
 
 	private static final String LATEST_RELEASES = "latestReleases";
 

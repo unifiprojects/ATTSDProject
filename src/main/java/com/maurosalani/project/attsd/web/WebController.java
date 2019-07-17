@@ -33,7 +33,7 @@ import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
 
 @Controller
-public class UserWebController {
+public class WebController {
 
 	private static final String GAMES_LIST = "gamesList";
 
