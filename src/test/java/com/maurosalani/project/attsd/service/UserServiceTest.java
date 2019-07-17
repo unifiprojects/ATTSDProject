@@ -263,6 +263,17 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testAddUserToFollowedUsersList_FollowedNotExist_ShouldThrowException() {
+		User user1 = new User(1L, "username1", "pwd1");
+		User user2 = new User(2L, "username2", "pwd2");
+
+		when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+		when(userRepository.findById(user2.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class)
+				.isThrownBy(() -> userService.addFollowedUser(user1, user2));
+	}
+
+	@Test
 	public void testAddUserToFollowedUsersList_ShouldReturnModifiedUser() throws Exception {
 		User user1 = spy(new User(1L, "username", "pwd"));
 		User user2 = spy(new User(2L, "username", "pwd"));
@@ -270,7 +281,7 @@ public class UserServiceTest {
 		resulted.addFollowedUser(user2);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
 		when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-
+		when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
 
 		User saved = userService.addFollowedUser(user1, user2);
 		assertThat(saved).isEqualTo(resulted);
