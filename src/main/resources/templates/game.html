@@ -1,10 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Game</title>
+<title th:text=${game.name}></title>
 </head>
 <body>
-
+  <h1 id="nameOfGame" th:text="${game.name}"></h1>
+  <div>
+    Release Date:
+    <div id="releaseDate"
+      th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></div>
+  </div>
+  <div>
+    Description:
+    <div id="description" th:text="${game.description}"></div>
+  </div>
+  <div th:if="${game.users == null or game.users.empty}">
+    <h2>No users like this game yet...</h2>
+  </div>
+  <div th:unless="${game.users == null or game.users.empty}">
+    <h2>Users who liked this game:</h2>
+    <table id="usersFans">
+      <tr th:each="user : ${game.users}">
+        <td>
+          <a th:href="@{'/profile/' + ${user.username}}">
+            <span th:text="${user.username}"></span>
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <a th:href="@{/}">Homepage</a>
 </body>
 </html>

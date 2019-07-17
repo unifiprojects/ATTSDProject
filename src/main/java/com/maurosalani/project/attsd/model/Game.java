@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 public class Game implements Serializable {
 
@@ -19,7 +18,7 @@ public class Game implements Serializable {
 	private String description;
 	private Date releaseDate;
 
-	List<User> users;
+	private List<User> users;
 
 	public Game() {
 
@@ -64,6 +63,32 @@ public class Game implements Serializable {
 		this.releaseDate = releaseDate;
 	}
 
+	public void addUser(User user) {
+		if (this.users == null)
+			this.users = new LinkedList<>();
+		this.users.add(user);
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
+		result = prime * result + ((users == null) ? 0 : users.hashCode());
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -73,24 +98,31 @@ public class Game implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Game other = (Game) obj;
-		return Objects.equals(description, other.description) && Objects.equals(id, other.id)
-				&& Objects.equals(name, other.name) && Objects.equals(releaseDate, other.releaseDate);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, id, name, releaseDate);
-	}
-
-	@Override
-	public String toString() {
-		return "Game [id=" + id + ", name=" + name + ", description=" + description + ", releaseDate=" + releaseDate
-				+ "]";
-	}
-
-	public void addUser(User user) {
-		if (this.users == null)
-			this.users = new LinkedList<>();
-		this.users.add(user);
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (releaseDate == null) {
+			if (other.releaseDate != null)
+				return false;
+		} else if (!releaseDate.equals(other.releaseDate))
+			return false;
+		if (users == null) {
+			if (other.users != null)
+				return false;
+		} else if (!users.equals(other.users))
+			return false;
+		return true;
 	}
 }
