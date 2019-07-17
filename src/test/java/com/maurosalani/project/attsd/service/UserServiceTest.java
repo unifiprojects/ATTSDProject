@@ -342,4 +342,19 @@ public class UserServiceTest {
 		inOrder.verify(game).addUser(user);
 		inOrder.verify(userRepository).save(user);
 	}
+	
+	@Test
+	public void testChangePassword_ShouldReturnModifiedUser() throws Exception {
+		User user = spy(new User(1L, "username", "pwd"));
+		String newPassword = "newPwd";
+		User resulted = new User(1L, "username", "newPwd");
+
+		when(userRepository.save(any(User.class))).thenReturn(resulted);
+		
+		User saved = userService.changePassword(user, newPassword);
+		assertThat(saved).isEqualTo(resulted);
+		InOrder inOrder = inOrder(user, userRepository);
+		inOrder.verify(user).setPassword(newPassword);
+		inOrder.verify(userRepository).save(user);
+	}
 }
