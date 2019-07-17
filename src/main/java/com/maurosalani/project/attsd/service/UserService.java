@@ -95,6 +95,7 @@ public class UserService {
 			throw new IllegalArgumentException();
 		
 		checkExistanceOfUser(user.getId());
+		checkExistanceOfUser(followedToAdd.getId());
 		
 		user.addFollowedUser(followedToAdd);
 		followedToAdd.addFollowerUser(user);
@@ -102,9 +103,12 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public User addGame(User user, Game gameToAdd) {
+	public User addGame(User user, Game gameToAdd) throws UserNotFoundException {
 		if (user == null || gameToAdd == null)
 			throw new IllegalArgumentException();
+		
+		checkExistanceOfUser(user.getId());
+		
 		user.addGame(gameToAdd);
 		gameToAdd.addUser(user);
 
