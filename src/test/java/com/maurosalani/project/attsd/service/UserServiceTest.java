@@ -302,15 +302,24 @@ public class UserServiceTest {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.addGame(user, null));
 	}
+	
+	@Test
+	public void testAddGameToGamesList_UserNotFound_ShouldThrowException() {
+		User user = new User(1L, "username", "pwd");
+		Game game = new Game(2L, "game name", "game description", new Date(1000));
+		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.addGame(user, game));
+	}
 
 	@Test
-	public void testAddGameToGamesList_ShouldReturnModifiedUser() {
+	public void testAddGameToGamesList_ShouldReturnModifiedUser() throws Exception {
 		User user = spy(new User(1L, "username", "pwd"));
 		Game game = spy(new Game(2L, "game name", "game description", new Date(1000)));
 		User resulted = new User(1L, "username", "pwd");
 		resulted.addGame(game);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
-
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		
 		User saved = userService.addGame(user, game);
 		assertThat(saved).isEqualTo(resulted);
 		InOrder inOrder = inOrder(user, game, userRepository);
