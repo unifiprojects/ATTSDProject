@@ -19,6 +19,8 @@ import com.maurosalani.project.attsd.repository.UserRepository;
 @Service
 public class UserService {
 
+	private static final String GAME_NOT_FOUND = "Game not found";
+
 	private static final String USER_NOT_FOUND = "User not found";
 
 	@Autowired
@@ -99,8 +101,7 @@ public class UserService {
 	}
 
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
-		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("Game not found"));
-		;
+		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
 	}
 
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
