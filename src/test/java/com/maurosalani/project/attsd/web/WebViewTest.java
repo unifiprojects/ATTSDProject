@@ -3,6 +3,8 @@ package com.maurosalani.project.attsd.web;
 import static com.gargoylesoftware.htmlunit.WebAssert.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -171,9 +173,9 @@ public class WebViewTest {
 		HtmlPage page = webClient.getPage("/login");
 		final HtmlForm loginForm = page.getFormByName("login_form");
 		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
-		assertThat(loginForm.getInputByName("username").isDisabled());
-		assertThat(loginForm.getInputByName("password").isDisabled());
-		assertThat(loginForm.getButtonByName("btn_submit").isDisabled());
+		assertTrue(loginForm.getInputByName("username").isDisabled());
+		assertTrue(loginForm.getInputByName("password").isDisabled());
+		assertTrue(loginForm.getButtonByName("btn_submit").isDisabled());
 	}
 
 	@Test
