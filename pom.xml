@@ -170,17 +170,28 @@
           </executions>
         </plugin>
 
-        <plugin>
+       <plugin>
           <groupId>org.pitest</groupId>
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
+            <verbose>true</verbose>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
+            <excludedClasses>
+              <param>com.maurosalani.project.attsd.dto.*</param>
+              <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+              <param>com.maurosalani.project.attsd.service.*</param>
+              <param>com.maurosalani.project.attsd.exception.*</param>
+            </excludedClasses>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
+            <excludedTestClasses>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
+            </excludedTestClasses>
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
