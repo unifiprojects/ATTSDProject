@@ -1,8 +1,8 @@
 package com.maurosalani.project.attsd.dto;
 
 public class Credentials {
-	public String username;
-	public String password;
+	private String username;
+	private String password;
 
 	public Credentials() {
 	}

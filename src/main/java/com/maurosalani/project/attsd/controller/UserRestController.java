@@ -102,7 +102,7 @@ public class UserRestController {
 	}
 
 	private void checkRequestCorrectness(Long id, User userLogged) throws BadRequestException {
-		if (userLogged.getId() != id)
+		if (!userLogged.getId().equals(id))
 			throw new BadRequestException();
 	}
 
