@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +22,7 @@ import com.maurosalani.project.attsd.repository.UserRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
 	@Autowired
@@ -61,7 +63,7 @@ public class UserRepositoryTest {
 
 		assertThat(userFound).isEqualTo(saved);
 	}
-	
+
 	@Test
 	public void testFindByUsernameLike() {
 		User user1 = new User(null, "user one", "pwd");
