@@ -50,11 +50,11 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User updateAddFollowedUserById(Long id, User followedToAdd) {
+	public User addFollowedUser(User user, User followedToAdd) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User updateAddGameLikedById(Long id, Game gameLiked) {
+	public User addGame(User user, Game gameLiked) {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
