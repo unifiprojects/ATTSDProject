@@ -65,11 +65,7 @@ public class GameService {
 	}
 
 	public void deleteById(Long id) throws GameNotFoundException {
-		if (id == null)
-			throw new IllegalArgumentException();
-
 		checkExistanceOfGame(id);
-
 		gameRepository.deleteById(id);
 	}
 
