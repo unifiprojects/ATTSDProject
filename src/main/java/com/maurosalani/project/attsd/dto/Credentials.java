@@ -9,8 +9,8 @@ public class Credentials {
 
 	public Credentials(String username, String password) {
 		super();
-		this.username = username;
-		this.password = password;
+		setUsername(username);
+		setPassword(password);
 	}
 
 	public String getUsername() {
