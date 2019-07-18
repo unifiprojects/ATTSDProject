@@ -73,7 +73,7 @@ public class UserRestController {
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
-		return userService.updatePasswordById(id, form.getNewPassword());
+		return userService.changePassword(userService.getUserById(id), form.getNewPassword());
 	}
 
 	@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

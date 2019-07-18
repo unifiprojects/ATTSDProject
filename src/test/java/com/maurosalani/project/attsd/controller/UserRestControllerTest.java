@@ -337,7 +337,9 @@ public class UserRestControllerTest {
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-		when(userService.updatePasswordById(1L, form.getNewPassword())).
+		when(userService.getUserById(1L)).
+			thenReturn(userToUpdate);		
+		when(userService.changePassword(userToUpdate, form.getNewPassword())).
 			thenReturn(new User(1L, "testUsername", "newPassword"));
 
 		given().

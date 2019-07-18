@@ -38,7 +38,7 @@ public class UserService {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
-	public User updatePasswordById(Long id, String password) throws UserNotFoundException {
+	public User changePassword(User user, String password) throws UserNotFoundException {
 		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
 	}
 
