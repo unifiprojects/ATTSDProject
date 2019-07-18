@@ -200,36 +200,6 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testGetUserByIdWithEmptyId()  {		
-		given().
-		when().
-			get("/api/users/id").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
-	public void testGetUserByUsernameWithEmptyUsername()  {		
-		given().
-		when().
-			get("/api/users/username").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
-	public void testGetUsersByUsernameLikeWithEmptyUsername()  {		
-		given().
-		when().
-			get("/api/users/usernamelike").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
 	public void testPost_InsertNewUser() {
 		User requestBodyUser = new User(null, "testUsername", "pwd");
 		when(userService.insertNewUser(requestBodyUser)).
@@ -288,22 +258,6 @@ public class UserRestControllerTest {
 			statusCode(401);
 		
 		verifyNoMoreInteractions(ignoreStubs(userService));
-	}
-	
-	@Test
-	public void testPut_UpdateOfUser_WithEmptyIdInUrl()  {
-		User userReplacement = new User(null, "testUsername", "new_password");
-		Credentials credentials = new Credentials("testUsername", "password");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
-
-		given().
-			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
-			body(form).
-		when().
-			put("/api/users/update").
-		then().
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
 	}
 	
 	@Test
@@ -524,22 +478,6 @@ public class UserRestControllerTest {
 			statusCode(401);
 		
 		verifyNoMoreInteractions(ignoreStubs(userService));
-	}
-	
-	@Test
-	public void testDelete_WithEmptyIdInUrl()  {
-		Credentials credentials = new Credentials("testUsername", "password");
-		
-		given().
-			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(credentials).
-		when().
-			delete("/api/users/delete").
-		then().
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-		
-		verifyNoMoreInteractions(userService);
 	}
 
 }

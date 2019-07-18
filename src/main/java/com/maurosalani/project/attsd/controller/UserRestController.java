@@ -101,31 +101,6 @@ public class UserRestController {
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 
-	@GetMapping(path = "/id")
-	public User getUserByIdWithNoId() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@GetMapping(path = "/username")
-	public User getUserByUsernameWithNoUsername() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@GetMapping(path = "/usernamelike")
-	public List<User> getUsersByUsernameLikeWithNoUsername() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@PutMapping(path = "/update")
-	public User updateUserWithNoId() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@DeleteMapping(path = "/delete")
-	public void deleteUserWithNoId() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
 	private void checkRequestCorrectness(Long id, User userLogged) throws BadRequestException {
 		if (userLogged.getId() != id)
 			throw new BadRequestException();
