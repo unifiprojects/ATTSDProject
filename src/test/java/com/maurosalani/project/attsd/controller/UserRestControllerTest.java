@@ -291,7 +291,9 @@ public class UserRestControllerTest {
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-		when(userService.updatePasswordById(1L, form.getNewPassword())).
+		when(userService.getUserById(1L)).
+			thenReturn(userToUpdate);		
+		when(userService.changePassword(userToUpdate, form.getNewPassword())).
 			thenReturn(new User(1L, "testUsername", "newPassword"));
 
 		given().
@@ -338,7 +340,9 @@ public class UserRestControllerTest {
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-		when(userService.updateAddFollowedUserById(1L, form.getFollowedToAdd())).
+		when(userService.getUserById(1L)).
+			thenReturn(userToUpdate);
+		when(userService.addFollowedUser(userToUpdate, form.getFollowedToAdd())).
 			thenReturn(new User(1L, "testUsername", "pwd", asList(followedToAdd), null, null));
 		
 		given().
@@ -388,7 +392,9 @@ public class UserRestControllerTest {
 		
 		when(userService.verifyLogin(credentials)).
 			thenReturn(userToUpdate);
-		when(userService.updateAddGameLikedById(1L, form.getGameLiked())).
+		when(userService.getUserById(1L)).
+			thenReturn(userToUpdate);
+		when(userService.addGame(userToUpdate, form.getGameLiked())).
 			thenReturn(new User(1L, "testUsername", "pwd", null, null, asList(gameLiked)));
 
 		given().

@@ -73,7 +73,7 @@ public class UserRestController {
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
-		return userService.updatePasswordById(id, form.getNewPassword());
+		return userService.changePassword(userService.getUserById(id), form.getNewPassword());
 	}
 
 	@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -81,15 +81,15 @@ public class UserRestController {
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
-		return userService.updateAddFollowedUserById(id, form.getFollowedToAdd());
+		return userService.addFollowedUser(userService.getUserById(id), form.getFollowedToAdd());
 	}
-	
+
 	@PatchMapping(path = "/update/addGame/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User addGameLiked(@PathVariable Long id, @RequestBody UpdateAddGameLikedUserForm form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
-		return userService.updateAddGameLikedById(id, form.getGameLiked());
+		return userService.addGame(userService.getUserById(id), form.getGameLiked());
 	}
 
 	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
