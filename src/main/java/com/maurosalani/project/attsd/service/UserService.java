@@ -103,7 +103,7 @@ public class UserService {
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
 		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
 	}
-
+		
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
 		if (user == null || followedToAdd == null)
 			throw new IllegalArgumentException();

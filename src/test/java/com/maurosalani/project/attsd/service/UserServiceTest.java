@@ -285,12 +285,14 @@ public class UserServiceTest {
 		User resulted = new User(1L, "username", "pwd");
 		resulted.addFollowedUser(user2);
 		when(userRepository.save(any(User.class))).thenReturn(resulted);
-		when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-		when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+		when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
 
 		User saved = userService.addFollowedUser(user1, user2);
 		assertThat(saved).isEqualTo(resulted);
 		InOrder inOrder = inOrder(user1, user2, userRepository);
+		inOrder.verify(userRepository).findById(1L);
+		inOrder.verify(userRepository).findById(2L);
 		inOrder.verify(user1).addFollowedUser(user2);
 		inOrder.verify(user2).addFollowerUser(user1);
 		inOrder.verify(userRepository).save(user1);

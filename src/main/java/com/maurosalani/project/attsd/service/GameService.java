@@ -55,11 +55,11 @@ public class GameService {
 	}
 
 	public Game updateGameById(Long id, Game game) throws GameNotFoundException {
-		if (id == null || game == null)
+		if (game == null)
 			throw new IllegalArgumentException();
-
+		
 		checkExistanceOfGame(id);
-
+		
 		game.setId(id);
 		return gameRepository.save(game);
 	}
