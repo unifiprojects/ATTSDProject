@@ -35,6 +35,14 @@ import com.maurosalani.project.attsd.service.UserService;
 @Controller
 public class WebController {
 
+	private static final String IS_ALREADY_LIKED_FLAG = "isAlreadyLiked";
+
+	private static final String IS_ALREADY_FOLLOWED_FLAG = "isAlreadyFollowed";
+
+	private static final String IS_MY_PROFILE_FLAG = "isMyProfile";
+
+	private static final String IS_LOGGED_FLAG = "isLogged";
+
 	private static final String GAMES_LIST = "gamesList";
 
 	private static final String USERS_LIST = "usersList";
@@ -139,18 +147,18 @@ public class WebController {
 		User user = userService.getUserByUsername(username);
 		model.addAttribute("user", user);
 		if (!isAlreadyLogged(session)) {
-			model.addAttribute("isLogged", false);
-			model.addAttribute("isMyProfile", false);
-			model.addAttribute("isAlreadyFollowed", false);
+			model.addAttribute(IS_LOGGED_FLAG, false);
+			model.addAttribute(IS_MY_PROFILE_FLAG, false);
+			model.addAttribute(IS_ALREADY_FOLLOWED_FLAG, false);
 		} else {
 			User loggedUser = (User) session.getAttribute("user");
 			boolean isMyProfile = loggedUser.getUsername().equals(user.getUsername());
 			boolean isAlreadyFollowed = false;
 			if (loggedUser.getFollowedUsers() != null)
 				isAlreadyFollowed = loggedUser.getFollowedUsers().contains(user);
-			model.addAttribute("isLogged", true);
-			model.addAttribute("isMyProfile", isMyProfile);
-			model.addAttribute("isAlreadyFollowed", isAlreadyFollowed);
+			model.addAttribute(IS_LOGGED_FLAG, true);
+			model.addAttribute(IS_MY_PROFILE_FLAG, isMyProfile);
+			model.addAttribute(IS_ALREADY_FOLLOWED_FLAG, isAlreadyFollowed);
 			if(isMyProfile)
 				model.addAttribute("changePasswordForm", new ChangePasswordForm());
 		}
@@ -162,15 +170,15 @@ public class WebController {
 		Game game = gameService.getGameByName(name);
 		model.addAttribute("game", game);
 		if (!isAlreadyLogged(session)) {
-			model.addAttribute("isLogged", false);
-			model.addAttribute("isAlreadyLiked", false);
+			model.addAttribute(IS_LOGGED_FLAG, false);
+			model.addAttribute(IS_ALREADY_LIKED_FLAG, false);
 		} else {
 			User loggedUser = (User) session.getAttribute("user");
 			boolean isAlreadyLiked = false;
 			if(game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
-			model.addAttribute("isLogged", true);
-			model.addAttribute("isAlreadyLiked", isAlreadyLiked);
+			model.addAttribute(IS_LOGGED_FLAG, true);
+			model.addAttribute(IS_ALREADY_LIKED_FLAG, isAlreadyLiked);
 		}
 		return "game";
 	}

@@ -16,9 +16,9 @@ public class User implements Serializable {
 	private String username;
 	private String password;
 
-	List<User> followedUsers;
-	List<User> followerUsers;
-	List<Game> games;
+	private List<User> followedUsers;
+	private List<User> followerUsers;
+	private List<Game> games;
 
 	public User() {
 
