@@ -29,12 +29,17 @@ public class GameRepositoryTest {
 
 	@Autowired
 	private GameRepository repository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private TestEntityManager entityManager;
 
 	@Before
 	public void clearDatabase() {
+		userRepository.deleteAll();
+		userRepository.flush();		
 		repository.deleteAll();
 		repository.flush();		
 	}
@@ -155,13 +160,10 @@ public class GameRepositoryTest {
 	public void testFindUsersListOfGameByUsername() {
 		User user1 = new User(null, "one", "pwd");
 		User user2 = new User(null, "two", "pwd");
-		User added1 = entityManager.persistFlushFind(user1);
-		User added2 = entityManager.persistFlushFind(user2);
-	
 		Game game = new Game(null, "game_name", "game_description", new Date(1000));
-		game.setUsers(asList(added1, added2));
-		added1.addGame(game);
-		added2.addGame(game);
+		game.setUsers(asList(user1, user2));
+		user1.addGame(game);
+		user2.addGame(game);
 
 		Game saved = entityManager.persistFlushFind(game);
 
