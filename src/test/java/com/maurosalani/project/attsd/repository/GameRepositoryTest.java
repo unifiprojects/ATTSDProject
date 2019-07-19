@@ -2,11 +2,13 @@ package com.maurosalani.project.attsd.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static java.util.Arrays.asList;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,12 @@ public class GameRepositoryTest {
 	@Autowired
 	private TestEntityManager entityManager;
 
+	@Before
+	public void clearDatabase() {
+		repository.deleteAll();
+		repository.flush();		
+	}
+	
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<Game> users = repository.findAll();
@@ -145,17 +153,17 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindUsersListOfGameByUsername() {
-		List<User> users = new LinkedList<User>();
-		users.add(new User(null, "one", "pwd"));
-		users.add(new User(null, "two", "pwd"));
-
-		Game game = new Game(null, "game name", "game description", new Date(1000));
-		game.setUsers(users);
-		users.stream().forEach(user -> user.addGame(game));
+		User user1 = entityManager.persistFlushFind(new User(null, "one", "pwd"));
+		User user2 = entityManager.persistFlushFind(new User(null, "two", "pwd"));
+	
+		Game game = new Game(null, "game_name", "game_description", new Date(1000));
+		game.setUsers(asList(user1, user2));
+		user1.addGame(game);
+		user2.addGame(game);
 
 		Game saved = entityManager.persistFlushFind(game);
 
-		List<User> retrievedUsers = repository.findUsersOfGameByName("game name");
+		List<User> retrievedUsers = repository.findUsersOfGameByName("game_name");
 		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
 	}
 

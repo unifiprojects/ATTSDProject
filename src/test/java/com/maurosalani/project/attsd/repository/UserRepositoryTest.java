@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class UserRepositoryTest {
 	@Autowired
 	private TestEntityManager entityManager;
 
+	@Before
+	public void clearDatabase() {
+		repository.deleteAll();
+		repository.flush();
+	}
+	
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<User> users = repository.findAll();

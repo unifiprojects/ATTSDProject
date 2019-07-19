@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.validator.constraints.Length;
+
 @Entity
 public class Game {
 
@@ -21,6 +23,7 @@ public class Game {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Length(max = 40)
 	@Column(unique = true)
 	@Basic(optional = false)
 	private String name;
