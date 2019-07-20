@@ -6,7 +6,8 @@ addons:
     token: 
       secure: $SONAR_TOKEN
 
-
+services:
+  - docker
 
 matrix:
   include:
