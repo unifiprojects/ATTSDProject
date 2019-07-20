@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
@@ -23,6 +24,7 @@ import com.maurosalani.project.attsd.repository.UserRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("h2")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
