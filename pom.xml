@@ -195,6 +195,10 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
+            <excludedClasses>
+              <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+            </excludedClasses>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
@@ -207,7 +211,7 @@
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>100</mutationThreshold>
+            <mutationThreshold>10</mutationThreshold>
           </configuration>
         </plugin>
 
