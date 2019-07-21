@@ -81,5 +81,14 @@ public class UserServiceRepositoryIT {
 
 		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
 	}
+	
+	@Test
+	public void testServiceCanChangePasswordIntoRepository() throws Exception {
+		User userToUpdate = new User(null, "username", "password");
+		userRepository.save(userToUpdate);
+		User userResulted = userService.changePassword(userToUpdate, "newPassword");
+
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
+	}
 
 }
