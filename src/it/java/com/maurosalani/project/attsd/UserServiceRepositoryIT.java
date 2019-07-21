@@ -25,16 +25,16 @@ public class UserServiceRepositoryIT {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Test
 	public void testServiceCanInsertIntoRepository() throws Exception {
 		User saved = userService.insertNewUser(new User(null, "user", "password"));
 		assertTrue(userRepository.findById(saved.getId()).isPresent());
 	}
-	
+
 	@Test
 	public void testServiceCanDeleteFromRepository() throws Exception {
 		User saved = userService.insertNewUser(new User(null, "user", "password"));
@@ -42,13 +42,15 @@ public class UserServiceRepositoryIT {
 		userService.deleteById(saved.getId());
 		assertFalse(userRepository.findById(saved.getId()).isPresent());
 	}
-	
+
 	@Test
 	public void testServiceCanUpdateIntoRepository() throws Exception {
 		User userToUpdate = new User(null, "username", "password");
 		userRepository.save(userToUpdate);
-		userService.updateUserById(userToUpdate.getId(), new User(userToUpdate.getId(), "newUsername", "newPassword"));
-		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userToUpdate);
+		User userResulted = userService.updateUserById(userToUpdate.getId(),
+				new User(userToUpdate.getId(), "newUsername", "newPassword"));
+
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
 	}
 
 }
