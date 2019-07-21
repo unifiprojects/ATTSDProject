@@ -135,9 +135,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
+          <excludes>
+            <exclude>**/AttsdProjectApplicationTests.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
@@ -211,7 +211,7 @@
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>10</mutationThreshold>
+            <mutationThreshold>99</mutationThreshold>
           </configuration>
         </plugin>
 
@@ -283,7 +283,7 @@
     </profile>
 
     <profile>
-      <id>docker</id>
+      <id>it</id>
       <build>
         <plugins>
           <plugin>
@@ -324,16 +324,33 @@
             <executions>
               <execution>
                 <id>docker:start</id>
-                <phase>initialize</phase>
+                <phase>pre-integration-test</phase>
                 <goals>
                   <goal>start</goal>
                 </goals>
               </execution>
               <execution>
                 <id>docker:stop</id>
-                <phase>verify</phase>
+                <phase>post-integration-test</phase>
                 <goals>
                   <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <configuration>
+                  <includes>
+                    <include>**/AttsdProjectApplicationTests.java</include>
+                  </includes>
+                </configuration>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
               </execution>
             </executions>
