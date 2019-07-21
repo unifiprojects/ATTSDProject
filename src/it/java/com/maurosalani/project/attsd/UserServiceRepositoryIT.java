@@ -3,6 +3,8 @@ package com.maurosalani.project.attsd;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
+import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
 import com.maurosalani.project.attsd.service.UserService;
 
@@ -29,6 +32,9 @@ public class UserServiceRepositoryIT {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private GameRepository gameRepository;
 
 	@Test
 	public void testServiceCanInsertIntoRepository() throws Exception {
@@ -61,6 +67,17 @@ public class UserServiceRepositoryIT {
 		userRepository.save(userToUpdate);
 		userRepository.save(followedToAdd);
 		User userResulted = userService.addFollowedUser(userToUpdate, followedToAdd);
+
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
+	}
+
+	@Test
+	public void testServiceCanAddGameIntoRepository() throws Exception {
+		User userToUpdate = new User(null, "username", "password");
+		Game gameToAdd = new Game(null, "name", "description", new Date(1));
+		userRepository.save(userToUpdate);
+		gameRepository.save(gameToAdd);
+		User userResulted = userService.addGame(userToUpdate, gameToAdd);
 
 		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
 	}
