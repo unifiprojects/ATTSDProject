@@ -2,17 +2,21 @@ package com.maurosalani.project.attsd.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static java.util.Arrays.asList;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
@@ -21,14 +25,27 @@ import com.maurosalani.project.attsd.repository.GameRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("h2")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class GameRepositoryTest {
 
 	@Autowired
 	private GameRepository repository;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private TestEntityManager entityManager;
 
+	@Before
+	public void clearDatabase() {
+		userRepository.deleteAll();
+		userRepository.flush();		
+		repository.deleteAll();
+		repository.flush();		
+	}
+	
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<Game> users = repository.findAll();
@@ -66,11 +83,11 @@ public class GameRepositoryTest {
 
 		assertThat(gamesFound).containsExactlyInAnyOrder(saved1, saved2);
 	}
-	
+
 	@Test
 	public void testNameIsMandatoryWhenGameIsSaved() {
 		Game gameNoName = new Game(null, null, "game_description", new Date(1000));
-		
+
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 				.isThrownBy(() -> repository.saveAndFlush(gameNoName));
 	}
@@ -143,17 +160,16 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindUsersListOfGameByUsername() {
-		List<User> users = new LinkedList<User>();
-		users.add(new User(null, "one", "pwd"));
-		users.add(new User(null, "two", "pwd"));
-
-		Game game = new Game(null, "game name", "game description", new Date(1000));
-		game.setUsers(users);
-		users.stream().forEach(user -> user.addGame(game));
+		User user1 = new User(null, "one", "pwd");
+		User user2 = new User(null, "two", "pwd");
+		Game game = new Game(null, "game_name", "game_description", new Date(1000));
+		game.setUsers(asList(user1, user2));
+		user1.addGame(game);
+		user2.addGame(game);
 
 		Game saved = entityManager.persistFlushFind(game);
 
-		List<User> retrievedUsers = repository.findUsersOfGameByName("game name");
+		List<User> retrievedUsers = repository.findUsersOfGameByName("game_name");
 		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
 	}
 

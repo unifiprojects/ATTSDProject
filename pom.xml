@@ -89,8 +89,13 @@
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -272,6 +277,65 @@
       </build>
     </profile>
 
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <executable>true</executable>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.20.1</version>
+            <extensions>true</extensions>
+            <configuration>
+              <images>
+                <image>
+                  <alias>database</alias>
+                  <name>mysql:8.0.16</name>
+                  <run>
+                    <wait>
+                      <log>mysqld: ready for connections</log>
+                      <time>20000</time>
+                    </wait>
+                    <env>
+                      <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
+                      <MYSQL_DATABASE>springdb</MYSQL_DATABASE>
+                      <MYSQL_USER>user</MYSQL_USER>
+                      <MYSQL_PASSWORD>password</MYSQL_PASSWORD>
+                    </env>
+                    <ports>
+                      <port>3306:3306</port>
+                    </ports>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+            <executions>
+              <execution>
+                <id>docker:start</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>docker:stop</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>

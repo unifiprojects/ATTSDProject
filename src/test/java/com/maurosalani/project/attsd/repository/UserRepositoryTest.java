@@ -7,12 +7,15 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
@@ -21,6 +24,8 @@ import com.maurosalani.project.attsd.repository.UserRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("h2")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
 	@Autowired
@@ -29,6 +34,12 @@ public class UserRepositoryTest {
 	@Autowired
 	private TestEntityManager entityManager;
 
+	@Before
+	public void clearDatabase() {
+		repository.deleteAll();
+		repository.flush();
+	}
+	
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<User> users = repository.findAll();
@@ -61,7 +72,7 @@ public class UserRepositoryTest {
 
 		assertThat(userFound).isEqualTo(saved);
 	}
-	
+
 	@Test
 	public void testFindByUsernameLike() {
 		User user1 = new User(null, "user one", "pwd");
