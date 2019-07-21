@@ -1,7 +1,7 @@
 package com.maurosalani.project.attsd.model;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -86,9 +86,8 @@ public class Game {
 	public void addUser(User user) {
 		if (user != null) {
 			if (this.users == null)
-				this.setUsers(Arrays.asList(user));
-			else
-				this.users.add(user);
+				this.users = new LinkedList<User>();
+			this.users.add(user);
 		}
 	}
 
@@ -133,8 +132,7 @@ public class Game {
 		if (releaseDate == null) {
 			if (other.releaseDate != null)
 				return false;
-		}
-		else if (!releaseDate.equals(other.releaseDate))
+		} else if (!releaseDate.equals(other.releaseDate))
 			return false;
 		return true;
 	}

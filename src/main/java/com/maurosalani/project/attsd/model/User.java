@@ -1,6 +1,7 @@
 package com.maurosalani.project.attsd.model;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -22,7 +23,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Length(max = 40)
 	@Column(unique = true)
 	@Basic(optional = false)
@@ -79,15 +80,15 @@ public class User {
 	public List<User> getFollowedUsers() {
 		return followedUsers;
 	}
-		
+
 	public void setFollowedUsers(List<User> followedUsers) {
 		this.followedUsers = followedUsers;
 	}
-	
+
 	public List<User> getFollowerUsers() {
 		return followerUsers;
 	}
-		
+
 	public void setFollowerUsers(List<User> followerUsers) {
 		this.followerUsers = followerUsers;
 	}
@@ -103,27 +104,24 @@ public class User {
 	public void addFollowedUser(User followedUser) {
 		if (followedUser != null) {
 			if (this.followedUsers == null)
-				this.setFollowedUsers(Arrays.asList(followedUser));
-			else
-				this.followedUsers.add(followedUser);
+				this.followedUsers = new LinkedList<User>();
+			this.followedUsers.add(followedUser);
 		}
 	}
 
 	public void addFollowerUser(User followerUser) {
 		if (followerUser != null) {
 			if (this.followerUsers == null)
-				this.setFollowerUsers(Arrays.asList(followerUser));
-			else
-				this.followerUsers.add(followerUser);
+				this.followerUsers = new LinkedList<User>();
+			this.followerUsers.add(followerUser);
 		}
 	}
 
 	public void addGame(Game game) {
 		if (game != null) {
 			if (this.games == null)
-				this.setGames(Arrays.asList(game));
-			else
-				this.games.add(game);
+				this.games = new LinkedList<Game>();
+			this.games.add(game);
 		}
 	}
 
@@ -136,7 +134,7 @@ public class User {
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -149,20 +147,17 @@ public class User {
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		}
-		else if (!id.equals(other.id))
+		} else if (!id.equals(other.id))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		}
-		else if (!password.equals(other.password))
+		} else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		}
-		else if (!username.equals(other.username))
+		} else if (!username.equals(other.username))
 			return false;
 		return true;
 	}

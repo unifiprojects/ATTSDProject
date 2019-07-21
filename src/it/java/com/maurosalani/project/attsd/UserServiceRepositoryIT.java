@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
 import com.maurosalani.project.attsd.service.UserService;
@@ -49,6 +50,17 @@ public class UserServiceRepositoryIT {
 		userRepository.save(userToUpdate);
 		User userResulted = userService.updateUserById(userToUpdate.getId(),
 				new User(userToUpdate.getId(), "newUsername", "newPassword"));
+
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
+	}
+
+	@Test
+	public void testServiceCanAddFollowedIntoRepository() throws Exception {
+		User userToUpdate = new User(null, "username", "password");
+		User followedToAdd = new User(null, "followed", "password");
+		userRepository.save(userToUpdate);
+		userRepository.save(followedToAdd);
+		User userResulted = userService.addFollowedUser(userToUpdate, followedToAdd);
 
 		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
 	}
