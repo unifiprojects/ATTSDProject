@@ -194,37 +194,7 @@ public class GameRestControllerTest {
 				"description[1]", equalTo("description2"),
 				"releaseDate[1]", equalTo(1000));
 	}
-	
-	@Test
-	public void testGetGameByIdWithEmptyId()  {		
-		given().
-		when().
-			get("/api/games/id").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
-	public void testGetGameByNameWithEmptyName()  {		
-		given().
-		when().
-			get("/api/games/name").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
-	public void testGetGamesByNameLikeWithEmptyName()  {		
-		given().
-		when().
-			get("/api/games/namelike").
-		then().	
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
+
 	@Test
 	public void testPost_InsertNewGame() {
 		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
@@ -264,20 +234,6 @@ public class GameRestControllerTest {
 	}
 	
 	@Test
-	public void testPut_UpdateOfGame_WithEmptyId()  {
-		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
-
-		given().
-			contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).
-			body(requestBodyGame).
-		when().
-			put("/api/games/update").
-		then().
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
-	}
-	
-	@Test
 	public void testPut_UpdateOfGame_IdNotFound() throws GameNotFoundException  {
 		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
 		doThrow(GameNotFoundException.class).when(gameService).updateGameById(1L, requestBodyGame);
@@ -313,15 +269,5 @@ public class GameRestControllerTest {
 		then().
 			statusCode(404).
 			statusLine(containsString("Game Not Found"));
-	}
-	
-	@Test
-	public void testDelete_WithEmptyId()  {
-		given().
-		when().
-			delete("/api/games/delete").
-		then().
-			statusCode(400).
-			statusLine(containsString("Bad Request"));
 	}
 }

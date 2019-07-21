@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
@@ -62,30 +61,5 @@ public class GameRestController {
 	public void deleteGame(@PathVariable Long id, HttpServletResponse response) throws GameNotFoundException {
 		gameService.deleteGameById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
-	}
-
-	@GetMapping(path = "/id")
-	public Game getGameByIdWithNoId() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@GetMapping(path = "/name")
-	public Game getGameByNameWithNoName() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@GetMapping(path = "/namelike")
-	public List<Game> getGamesByNameLikeWithNoName() throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@PutMapping(path = "/update")
-	public Game updateGameWithNoId(@RequestBody Game game) throws BadRequestException {
-		throw new BadRequestException();
-	}
-
-	@DeleteMapping(path = "/delete")
-	public void deleteGameWithNoId() throws BadRequestException {
-		throw new BadRequestException();
 	}
 }
