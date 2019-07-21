@@ -3,6 +3,8 @@ package com.maurosalani.project.attsd;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +43,12 @@ public class UserServiceRepositoryIT {
 		assertFalse(userRepository.findById(saved.getId()).isPresent());
 	}
 	
+	@Test
+	public void testServiceCanUpdateIntoRepository() throws Exception {
+		User userToUpdate = new User(null, "username", "password");
+		userRepository.save(userToUpdate);
+		userService.updateUserById(userToUpdate.getId(), new User(userToUpdate.getId(), "newUsername", "newPassword"));
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userToUpdate);
+	}
 
 }
