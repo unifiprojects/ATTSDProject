@@ -3,7 +3,6 @@ package com.maurosalani.project.attsd.model;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -27,7 +26,7 @@ public class Game {
 	@Column(unique = true)
 	@Basic(optional = false)
 	private String name;
-	
+
 	private String description;
 	private Date releaseDate;
 
@@ -38,7 +37,6 @@ public class Game {
 	}
 
 	public Game(Long id, String name, String description, Date releaseDate) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -85,7 +83,7 @@ public class Game {
 		this.users = users;
 	}
 
-	public void addUsers(User user) {
+	public void addUser(User user) {
 		if (user != null) {
 			if (this.users == null)
 				this.setUsers(Arrays.asList(user));
@@ -96,7 +94,13 @@ public class Game {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(description, id, name, releaseDate, users);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
+		return result;
 	}
 
 	@Override
@@ -108,9 +112,27 @@ public class Game {
 		if (getClass() != obj.getClass())
 			return false;
 		Game other = (Game) obj;
-		return Objects.equals(description, other.description) && Objects.equals(id, other.id)
-				&& Objects.equals(name, other.name) && Objects.equals(releaseDate, other.releaseDate)
-				&& Objects.equals(users, other.users);
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (releaseDate == null) {
+			if (other.releaseDate != null)
+				return false;
+		} else if (!releaseDate.equals(other.releaseDate))
+			return false;
+		return true;
 	}
 
 	@Override

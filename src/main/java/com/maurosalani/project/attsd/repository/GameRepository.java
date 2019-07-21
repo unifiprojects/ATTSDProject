@@ -1,6 +1,7 @@
 package com.maurosalani.project.attsd.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,7 @@ import com.maurosalani.project.attsd.model.User;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
 
-	Game findByName(String string);
+	Optional<Game> findByName(String string);
 
 	List<Game> findByNameLike(String string);
 

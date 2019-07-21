@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,18 +60,18 @@ public class UserRepositoryTest {
 	public void testFindByUsername() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
-		User userFound = repository.findByUsername("test");
+		Optional<User> userFound = repository.findByUsername("test");
 
-		assertThat(userFound).isEqualTo(saved);
+		assertThat(userFound.get()).isEqualTo(saved);
 	}
 
 	@Test
 	public void testFindByUsernameAndPassword() {
 		User user = new User(null, "test", "pwd");
 		User saved = entityManager.persistFlushFind(user);
-		User userFound = repository.findByUsernameAndPassword("test", "pwd");
+		Optional<User> userFound = repository.findByUsernameAndPassword("test", "pwd");
 
-		assertThat(userFound).isEqualTo(saved);
+		assertThat(userFound.get()).isEqualTo(saved);
 	}
 
 	@Test

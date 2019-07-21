@@ -7,6 +7,7 @@ import static java.util.Arrays.asList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -67,9 +68,9 @@ public class GameRepositoryTest {
 		Game game = new Game(null, "game name", "game description", new Date(1000));
 		Game saved = entityManager.persistFlushFind(game);
 
-		Game gameFound = repository.findByName("game name");
+		Optional<Game> gameFound = repository.findByName("game name");
 
-		assertThat(gameFound).isEqualTo(saved);
+		assertThat(gameFound.get()).isEqualTo(saved);
 	}
 
 	@Test

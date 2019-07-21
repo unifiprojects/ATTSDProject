@@ -1,6 +1,7 @@
 package com.maurosalani.project.attsd.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,11 +11,11 @@ import com.maurosalani.project.attsd.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	User findByUsername(String string);
+	Optional<User> findByUsername(String string);
 
 	List<User> findByUsernameLike(String string);
 
-	User findByUsernameAndPassword(String string, String string2);
+	Optional<User> findByUsernameAndPassword(String string, String string2);
 
 	@Query("select u.games from User u where u.username = ?1")
 	List<Game> findGamesOfUserByUsername(String username);

@@ -97,6 +97,10 @@
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -191,17 +195,11 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
-            <failWhenNoMutations>false</failWhenNoMutations>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
-            <excludedClasses>
-              <param>com.maurosalani.project.attsd.model.*</param>
-              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
-            </excludedClasses>
             <targetTests>
-              <param>com.maurosalani.project.attsd.model.*</param>
-              <param>com.maurosalani.project.attsd.repository.*</param>
+              <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
             <excludedTestClasses>
               <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
@@ -250,8 +248,11 @@
             <!-- configured in pluginManagement -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- Code coverage for surefire tests -->
+              <argLine>${surefireArgLine}</argLine>
+            </configuration>
           </plugin>
-
         </plugins>
       </build>
     </profile>
