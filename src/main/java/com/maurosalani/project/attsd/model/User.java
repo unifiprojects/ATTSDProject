@@ -92,16 +92,6 @@ public class User {
 		this.followerUsers = followerUsers;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		return result;
-	}
-
 	public List<Game> getGames() {
 		return games;
 	}
@@ -138,6 +128,16 @@ public class User {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -149,47 +149,21 @@ public class User {
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		}
+		else if (!id.equals(other.id))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} else if (!password.equals(other.password))
+		}
+		else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		} else if (!username.equals(other.username))
+		}
+		else if (!username.equals(other.username))
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		String followedUserString;
-		String followerUserString;
-		String gamesString;
-		if (followedUsers == null || followedUsers.isEmpty()) {
-			followedUserString = "None";
-		} else {
-			followedUserString = followedUsers.stream().map(User::toStringReducedInfo).reduce("", String::concat);
-		}
-		if (followerUsers == null || followerUsers.isEmpty()) {
-			followerUserString = "None";
-		} else {
-			followerUserString = followerUsers.stream().map(User::toStringReducedInfo).reduce("", String::concat);
-		}
-		if (games == null || games.isEmpty()) {
-			gamesString = "None";
-		} else {
-			gamesString = games.toString();
-		}
-		return "\nUser [id=" + id + ", username=" + username + ", password=" + password + ", \n\tfollowed="
-				+ followedUserString + ", \n\tfollower=" + followerUserString + ", \n\tgames=" + gamesString + "]";
-	}
-
-	private String toStringReducedInfo() {
-		return "User [id=" + id + ", username=" + username + "]";
-	}
-
 }

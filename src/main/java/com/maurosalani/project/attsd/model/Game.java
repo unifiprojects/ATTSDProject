@@ -115,30 +115,27 @@ public class Game {
 		if (description == null) {
 			if (other.description != null)
 				return false;
-		} else if (!description.equals(other.description))
+		}
+		else if (!description.equals(other.description))
 			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		}
+		else if (!id.equals(other.id))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
-		} else if (!name.equals(other.name))
+		}
+		else if (!name.equals(other.name))
 			return false;
 		if (releaseDate == null) {
 			if (other.releaseDate != null)
 				return false;
-		} else if (!releaseDate.equals(other.releaseDate))
+		}
+		else if (!releaseDate.equals(other.releaseDate))
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "Game [id=" + id + ", name=" + name + ", description=" + description + ", releaseDate=" + releaseDate
-				+ "]";
-	}
-
 }

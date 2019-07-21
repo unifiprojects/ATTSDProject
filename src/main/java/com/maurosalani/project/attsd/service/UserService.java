@@ -8,13 +8,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
-
 
 @Service
 public class UserService {
@@ -59,10 +59,12 @@ public class UserService {
 		return userRepository.findByUsernameLike(username);
 	}
 
-	public User insertNewUser(User user) throws UsernameAlreadyExistingException {
+	public User insertNewUser(User user) throws UsernameAlreadyExistingException, PasswordRequiredException {
 		if (user == null)
 			throw new IllegalArgumentException();
+		
 		checkIfUsernameAlreadyExists(user);
+		checkPasswordIsCorrect(user.getPassword());
 
 		user.setId(null);
 		try {
@@ -77,11 +79,12 @@ public class UserService {
 			throw new UsernameAlreadyExistingException("Username already existing.");
 	}
 
-	public User updateUserById(Long id, User user) throws UserNotFoundException {
+	public User updateUserById(Long id, User user) throws UserNotFoundException, PasswordRequiredException {
 		if (id == null || user == null)
 			throw new IllegalArgumentException();
-
+		
 		checkExistanceOfUser(id);
+		checkPasswordIsCorrect(user.getPassword());
 
 		user.setId(id);
 		return userRepository.save(user);
@@ -96,14 +99,6 @@ public class UserService {
 		userRepository.deleteById(id);
 	}
 
-	private void checkExistanceOfUser(Long id) throws UserNotFoundException {
-		userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-	}
-
-	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
-		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
-	}
-		
 	public User addFollowedUser(User user, User followedToAdd) throws UserNotFoundException {
 		if (user == null || followedToAdd == null)
 			throw new IllegalArgumentException();
@@ -130,13 +125,19 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
-	public User changePassword(User user, String newPassword) throws UserNotFoundException {
-		if(user == null || newPassword == null || StringUtils.isWhitespace(newPassword))
+	public User changePassword(User user, String newPassword) throws UserNotFoundException, PasswordRequiredException {
+		if (user == null)
 			throw new IllegalArgumentException();
 		
+		checkPasswordIsCorrect(newPassword);
 		checkExistanceOfUser(user.getId());
 		user.setPassword(newPassword);
 		return userRepository.save(user);
+	}
+
+	private void checkPasswordIsCorrect(String password) throws PasswordRequiredException {
+		if (password == null || StringUtils.isWhitespace(password))
+			throw new PasswordRequiredException();
 	}
 
 	public User getUserByUsernameAndPassword(String username, String password) throws UserNotFoundException {
@@ -146,4 +147,11 @@ public class UserService {
 				.orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 	}
 
+	private void checkExistanceOfUser(Long id) throws UserNotFoundException {
+		userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+	}
+
+	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
+		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
+	}
 }

@@ -28,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
@@ -83,7 +84,7 @@ public class UserServiceTest {
 	public void testGetUserByUsernameWhenUserDoesNotExist() {
 		when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
-				.isThrownBy(() -> userService.getUserByUsername("username"));
+			.isThrownBy(() -> userService.getUserByUsername("username"));
 	}
 
 	@Test
@@ -102,15 +103,15 @@ public class UserServiceTest {
 	public void testGetUserByUsernameAndPassword_WhenUserDoesNotExist() {
 		when(userRepository.findByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
-				.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", "password"));
+			.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", "password"));
 	}
 
 	@Test
 	public void testGetUserByUsernameAndPassword_WithUsernameOrPasswordNull() {
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", null));
+			.isThrownBy(() -> userService.getUserByUsernameAndPassword("username", null));
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.getUserByUsernameAndPassword(null, "password"));
+			.isThrownBy(() -> userService.getUserByUsernameAndPassword(null, "password"));
 	}
 
 	@Test
@@ -137,11 +138,11 @@ public class UserServiceTest {
 	@Test
 	public void testGetUsersByUsernameLikeWithUsernameNull() {
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.getUsersByUsernameLike(null));
+			.isThrownBy(() -> userService.getUsersByUsernameLike(null));
 	}
 
 	@Test
-	public void testInsertNewUser_setsIdToNull_returnsSavedUser() throws UsernameAlreadyExistingException {
+	public void testInsertNewUser_ShouldSetIdToNullAndReturnSavedUser() throws Exception {
 		User toSave = spy(new User(99L, "toSaveUsername", "toSavePwd"));
 		User saved = new User(1L, "savedUsername", "savedPwd");
 
@@ -161,16 +162,36 @@ public class UserServiceTest {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.insertNewUser(null));
 		verifyNoMoreInteractions(userRepository);
 	}
-
+	
 	@Test
-	public void testInsertNewUser_UsernameAndPasswordAreNull_ShouldThrowException() {
-		User userToInsert = new User(null, null, null);
+	public void testInsertNewUser_PasswordIsEmpty_ShouldThrowException() {
+		User userToInsert = new User(null, "username", "");
+		when(userRepository.findByUsername("username")).thenReturn(Optional.ofNullable(any(User.class)));
+		
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.insertNewUser(userToInsert));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
+	}
+	
+	@Test
+	public void testInsertNewUser_PasswordIsNull_ShouldThrowException() {
+		User userToInsert = new User(null, "username", null);
+		when(userRepository.findByUsername("username")).thenReturn(Optional.ofNullable(any(User.class)));
+		
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.insertNewUser(userToInsert));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
+	}
+	
+	@Test
+	public void testInsertNewUser_UsernameIsNull_ShouldThrowException() {
+		User userToInsert = new User(null, null, "pwd");
 		when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
 		when(userRepository.save(userToInsert)).thenThrow(DataIntegrityViolationException.class);
 
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
-				.isThrownBy(() -> userService.insertNewUser(userToInsert))
-				.withMessage("Username or password are invalid.");
+			.isThrownBy(() -> userService.insertNewUser(userToInsert))
+			.withMessage("Username or password are invalid.");
 	}
 
 	@Test
@@ -180,7 +201,7 @@ public class UserServiceTest {
 		when(userRepository.findByUsername("usernameAlreadyExisting")).thenReturn(Optional.of(userAlreadyExisting));
 
 		assertThatExceptionOfType(UsernameAlreadyExistingException.class)
-				.isThrownBy(() -> userService.insertNewUser(userToInsert)).withMessage("Username already existing.");
+			.isThrownBy(() -> userService.insertNewUser(userToInsert)).withMessage("Username already existing.");
 		verifyNoMoreInteractions(ignoreStubs(userRepository));
 	}
 
@@ -208,23 +229,42 @@ public class UserServiceTest {
 
 	@Test
 	public void testUpdateUserById_IdNotFound_ShouldThrowException() {
-		User user = new User(1L, "username", "pwd");
-		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+		User replacement = new User(1L, "replacement", "pwd");
+		when(userRepository.findById(1L)).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
-				.isThrownBy(() -> userService.updateUserById(user.getId(), user));
+			.isThrownBy(() -> userService.updateUserById(replacement.getId(), replacement));
 	}
 
 	@Test
 	public void testUpdateUserById_IdIsNull_ShouldThrowException() {
-		User user = new User(1L, "username", "pwd");
+		User replacement = new User(1L, "replacement", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.updateUserById(null, user));
+			.isThrownBy(() -> userService.updateUserById(null, replacement));
 		verifyNoMoreInteractions(userRepository);
 	}
 
 	@Test
+	public void testUpdateUserById_PasswordIsNull_ShouldThrowException() {
+		User replacement = new User(1L, "replacement", null);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(replacement));
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.updateUserById(1L, replacement));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
+	}
+	
+	@Test
+	public void testUpdateUserById_PasswordIsEmpty_ShouldThrowException() {
+		User replacement = new User(1L, "replacement", "");
+		when(userRepository.findById(1L)).thenReturn(Optional.of(replacement));
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.updateUserById(1L, replacement));
+		verifyNoMoreInteractions(ignoreStubs(userRepository));
+	}
+
+	@Test
 	public void testDeleteById_IdIsNull() {
-		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.deleteById(null));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+			.isThrownBy(() -> userService.deleteById(null));
 		verifyNoMoreInteractions(userRepository);
 	}
 
@@ -247,14 +287,14 @@ public class UserServiceTest {
 	public void testAddUserToFollowedUsersList_UserIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addFollowedUser(null, user));
+			.isThrownBy(() -> userService.addFollowedUser(null, user));
 	}
 
 	@Test
 	public void testAddUserToFollowedUsersList_ToAddUserIsNull_ShouldThrowException() {
 		User user = new User(1L, "username", "pwd");
 		assertThatExceptionOfType(IllegalArgumentException.class)
-				.isThrownBy(() -> userService.addFollowedUser(user, null));
+			.isThrownBy(() -> userService.addFollowedUser(user, null));
 	}
 
 	@Test
@@ -264,7 +304,7 @@ public class UserServiceTest {
 
 		when(userRepository.findById(user1.getId())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
-				.isThrownBy(() -> userService.addFollowedUser(user1, user2));
+			.isThrownBy(() -> userService.addFollowedUser(user1, user2));
 	}
 
 	@Test
@@ -275,7 +315,7 @@ public class UserServiceTest {
 		when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
 		when(userRepository.findById(user2.getId())).thenReturn(Optional.empty());
 		assertThatExceptionOfType(UserNotFoundException.class)
-				.isThrownBy(() -> userService.addFollowedUser(user1, user2));
+			.isThrownBy(() -> userService.addFollowedUser(user1, user2));
 	}
 
 	@Test
@@ -363,20 +403,23 @@ public class UserServiceTest {
 	@Test
 	public void testChangePassword_UserIsNull_ShouldThrowException() throws Exception {
 		String newPassword = "newPwd";
-		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(null, newPassword));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+			.isThrownBy(() -> userService.changePassword(null, newPassword));
 	}
 	
 	@Test
 	public void testChangePassword_PasswordIsNull_ShouldThrowException() throws Exception {
 		User user = new User(1L, "username", "pwd");
-		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(user, null));
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.changePassword(user, null));
 	}
 	
 	@Test
 	public void testChangePassword_PasswordIsEmpty_ShouldThrowException() throws Exception {
-		String newPassword = "  ";
+		String newPassword = "";
 		User user = new User(1L, "username", "pwd");
-		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> userService.changePassword(user, newPassword));
+		assertThatExceptionOfType(PasswordRequiredException.class)
+			.isThrownBy(() -> userService.changePassword(user, newPassword));
 	}
 	
 	@Test
@@ -384,6 +427,7 @@ public class UserServiceTest {
 		User user = new User(1L, "username", "pwd");
 		String newPassword = "newPasssword";
 		when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
-		assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.changePassword(user, newPassword));
+		assertThatExceptionOfType(UserNotFoundException.class)
+			.isThrownBy(() -> userService.changePassword(user, newPassword));
 	}
 }
