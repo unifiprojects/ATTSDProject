@@ -58,6 +58,15 @@
     <sonar.issue.ignore.multicriteria.e2.resourceKey>
       **/model/*.java
     </sonar.issue.ignore.multicriteria.e2.resourceKey>
+    <!-- "Return values from functions without side effects
+     should not be ignored", disabled on UserService class in methods 
+     that throw an Exception that is caught by Spring -->
+    <sonar.issue.ignore.multicriteria.e3.ruleKey>
+      squid:S2201
+    </sonar.issue.ignore.multicriteria.e3.ruleKey>
+    <sonar.issue.ignore.multicriteria.e3.resourceKey>
+      **/UserService.java
+    </sonar.issue.ignore.multicriteria.e3.resourceKey>
   </properties>
 
   <dependencies>
