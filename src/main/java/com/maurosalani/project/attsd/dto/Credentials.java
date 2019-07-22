@@ -33,8 +33,8 @@ public class Credentials {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		return result;
 	}
 
@@ -47,17 +47,17 @@ public class Credentials {
 		if (getClass() != obj.getClass())
 			return false;
 		Credentials other = (Credentials) obj;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		}
-		else if (!password.equals(other.password))
-			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		}
+		} 
 		else if (!username.equals(other.username))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} 
+		else if (!password.equals(other.password))
 			return false;
 		return true;
 	}

@@ -59,9 +59,9 @@
     <sonar.issue.ignore.multicriteria.e2.resourceKey>
       **/model/*.java
     </sonar.issue.ignore.multicriteria.e2.resourceKey>
-    <!-- "Return values from functions without side effects
-     should not be ignored", disabled on UserService class in methods 
-     that throw an Exception that is caught by Spring -->
+    <!-- "Return values from functions without side effects should not be 
+      ignored", disabled on UserService class in methods that throw an Exception 
+      that is caught by Spring -->
     <sonar.issue.ignore.multicriteria.e3.ruleKey>
       squid:S2201
     </sonar.issue.ignore.multicriteria.e3.ruleKey>
@@ -330,7 +330,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.20.1</version>
+            <version>0.30.0</version>
             <extensions>true</extensions>
             <configuration>
               <images>
