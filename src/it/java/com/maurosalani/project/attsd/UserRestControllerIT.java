@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.dto.UserDTO;
@@ -23,6 +24,7 @@ import org.springframework.http.MediaType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("mysql")
 public class UserRestControllerIT {
 
 	@Autowired
@@ -43,9 +45,10 @@ public class UserRestControllerIT {
 		UserDTO userDto = new UserDTO(null, "username", "password");
 		Response response =
 				given().
-				contentType(MediaType.APPLICATION_JSON_VALUE).
-				body(userDto).when()
-				.post("/api/users/new");
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+					post("/api/users/new");
 		User saved = response.getBody().as(User.class);
 
 		assertThat(userRepository.findById(saved.getId()).get()).isEqualTo(saved);
