@@ -23,6 +23,7 @@ import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.BadRequestException;
+import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -64,7 +65,7 @@ public class UserRestController {
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
-			throws UserNotFoundException, LoginFailedException, BadRequestException {
+			throws UserNotFoundException, LoginFailedException, BadRequestException, PasswordRequiredException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
 		return userService.updateUserById(id, form.getUserToUpdate());
@@ -72,7 +73,7 @@ public class UserRestController {
 
 	@PatchMapping(path = "/update/password/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdatePasswordUserForm form)
-			throws UserNotFoundException, LoginFailedException, BadRequestException {
+			throws UserNotFoundException, LoginFailedException, BadRequestException, PasswordRequiredException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
 		return userService.changePassword(userService.getUserById(id), form.getNewPassword());
@@ -88,7 +89,7 @@ public class UserRestController {
 
 	@PatchMapping(path = "/update/addGame/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public User addGameLiked(@PathVariable Long id, @RequestBody UpdateAddGameLikedUserForm form)
-			throws UserNotFoundException, LoginFailedException, BadRequestException {
+			throws UserNotFoundException, LoginFailedException, BadRequestException, GameNotFoundException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
 		return userService.addGame(userService.getUserById(id), form.getGameLiked());

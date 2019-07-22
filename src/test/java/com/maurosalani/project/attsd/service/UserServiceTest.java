@@ -29,6 +29,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
@@ -440,5 +441,13 @@ public class UserServiceTest {
 			.thenReturn(Optional.of(userToLog));
 		User userLogged = userService.verifyLogin(credentials);
 		assertThat(userLogged).isEqualTo(userToLog);
-	}	
+	}
+	
+	@Test
+	public void testVerifyLogin_UserDoesNotExist_ShouldThrowException() throws Exception {
+		Credentials credentials = new Credentials("username_not_existing", "password"); 
+		when(userRepository.findByUsernameAndPassword("username_not_existing", "password"))
+			.thenReturn(Optional.empty());
+		assertThatExceptionOfType(LoginFailedException.class).isThrownBy(() -> userService.verifyLogin(credentials));
+	}
 }
