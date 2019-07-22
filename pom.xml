@@ -40,7 +40,7 @@
       **/*Application.*,
       **/model/*
     </sonar.coverage.exclusions>
-    <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
       *ApplicationTests which just checks that the Spring application can start, 
       without any assertion -->
@@ -50,6 +50,23 @@
     <sonar.issue.ignore.multicriteria.e1.resourceKey>
       **/*ApplicationTests.java
     </sonar.issue.ignore.multicriteria.e1.resourceKey>
+    <!-- "Cognitive Complexity of methods should not be too high", disabled 
+      on model classes that contains eclipse auto generated equals method -->
+    <sonar.issue.ignore.multicriteria.e2.ruleKey>
+      squid:S3776
+    </sonar.issue.ignore.multicriteria.e2.ruleKey>
+    <sonar.issue.ignore.multicriteria.e2.resourceKey>
+      **/model/*.java
+    </sonar.issue.ignore.multicriteria.e2.resourceKey>
+    <!-- "Return values from functions without side effects
+     should not be ignored", disabled on UserService class in methods 
+     that throw an Exception that is caught by Spring -->
+    <sonar.issue.ignore.multicriteria.e3.ruleKey>
+      squid:S2201
+    </sonar.issue.ignore.multicriteria.e3.ruleKey>
+    <sonar.issue.ignore.multicriteria.e3.resourceKey>
+      **/UserService.java
+    </sonar.issue.ignore.multicriteria.e3.resourceKey>
   </properties>
 
   <dependencies>
@@ -65,7 +82,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -77,11 +93,27 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -111,15 +143,33 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
+          <excludes>
+            <exclude>**/AttsdProjectApplicationTests.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
-
     </plugins>
+
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <executions>
+            <execution>
+              <configuration>
+                <includes>
+                  <include>**/*IT.java</include>
+                  <include>**/AttsdProjectApplicationTests.java</include>
+                </includes>
+              </configuration>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
 
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -169,16 +219,24 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
+            <excludedClasses>
+              <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+            </excludedClasses>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
+            <excludedTestClasses>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
+              <param>com.maurosalani.project.attsd.*IT*</param>
+            </excludedTestClasses>
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>100</mutationThreshold>
+            <mutationThreshold>98</mutationThreshold>
           </configuration>
         </plugin>
 
@@ -216,11 +274,9 @@
           </plugin>
 
           <plugin>
-            <!-- configured in pluginManagement -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
           </plugin>
-
         </plugins>
       </build>
     </profile>
@@ -246,6 +302,70 @@
       </build>
     </profile>
 
+    <profile>
+      <id>it</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <executable>true</executable>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.20.1</version>
+            <extensions>true</extensions>
+            <configuration>
+              <images>
+                <image>
+                  <alias>database</alias>
+                  <name>mysql:8.0.16</name>
+                  <run>
+                    <wait>
+                      <log>mysqld: ready for connections</log>
+                      <time>20000</time>
+                    </wait>
+                    <env>
+                      <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
+                      <MYSQL_DATABASE>springdb</MYSQL_DATABASE>
+                      <MYSQL_USER>user</MYSQL_USER>
+                      <MYSQL_PASSWORD>password</MYSQL_PASSWORD>
+                    </env>
+                    <ports>
+                      <port>3306:3306</port>
+                    </ports>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+            <executions>
+              <execution>
+                <id>docker:start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>docker:stop</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <!-- Configured in pluginManagement -->
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>

@@ -6,17 +6,18 @@ addons:
     token: 
       secure: $SONAR_TOKEN
 
+services:
+  - docker
+
 matrix:
   include:
-    # perform code coverage, send report to coveralls and execute sonar
     - jdk: openjdk8
-      if: type IN (push)
+      if: type IN (push) AND type NOT IN (pull_request)
       env: MAVEN_ARGS="-Pjacoco coveralls:report sonar:sonar"
-    # perform also mutation testing, but only on Pull Request
     - jdk: openjdk8
       if: type IN (pull_request)
-      env: MAVEN_ARGS="-Ppit,jacoco coveralls:report sonar:sonar"
-
+      env: MAVEN_ARGS="-Pjacoco,pit,it coveralls:report sonar:sonar"
+          
 install: true
 
 cache:
