@@ -22,6 +22,7 @@ import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
 import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
+import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
@@ -59,8 +60,8 @@ public class UserRestController {
 	}
 
 	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User insertNewUser(@RequestBody User user) throws UsernameAlreadyExistingException, PasswordRequiredException {
-		return userService.insertNewUser(user);
+	public User insertNewUser(@RequestBody UserDTO userDto) throws UsernameAlreadyExistingException, PasswordRequiredException {
+		return userService.insertNewUser(userDto.getUser());
 	}
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

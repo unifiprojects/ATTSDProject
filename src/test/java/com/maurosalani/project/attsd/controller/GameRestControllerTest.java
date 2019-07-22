@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import com.maurosalani.project.attsd.dto.GameDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
@@ -197,13 +198,13 @@ public class GameRestControllerTest {
 
 	@Test
 	public void testPost_InsertNewGame() {
-		Game requestBodyGame = new Game(null, "name", "description", new Date(1000));
-		when(gameService.insertNewGame(requestBodyGame)).
+		Game newGame = new Game(null, "name", "description", new Date(1000));
+		when(gameService.insertNewGame(newGame)).
 			thenReturn(new Game(1L, "name", "description", new Date(1000)));
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyGame).
+			body(new GameDTO(null, "name", "description", new Date(1000))).
 		when().
 			post("/api/games/new").
 		then().
@@ -222,7 +223,7 @@ public class GameRestControllerTest {
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyGame).
+			body(new GameDTO(null, "name", "new_description", new Date(1000))).
 		when().
 			put("/api/games/update/1").
 		then().
@@ -240,7 +241,7 @@ public class GameRestControllerTest {
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyGame).
+			body(new GameDTO(null, "name", "description", new Date(1000))).
 		when().
 			put("/api/games/update/1").
 		then().

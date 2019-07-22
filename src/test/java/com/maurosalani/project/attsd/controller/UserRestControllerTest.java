@@ -34,6 +34,7 @@ import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
 import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
+import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
@@ -201,13 +202,13 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testPost_InsertNewUser() throws Exception {
-		User requestBodyUser = new User(null, "testUsername", "pwd");
-		when(userService.insertNewUser(requestBodyUser)).
+		User newUser = new User(null, "testUsername", "pwd");
+		when(userService.insertNewUser(newUser)).
 			thenReturn(new User(1L, "testUsername", "pwd"));
 
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(requestBodyUser).
+			body(new UserDTO(null, "testUsername", "pwd")).
 		when().
 			post("/api/users/new").
 		then().

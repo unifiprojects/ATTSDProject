@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maurosalani.project.attsd.dto.GameDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
@@ -48,13 +49,13 @@ public class GameRestController {
 	}
 
 	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Game insertNewGame(@RequestBody Game game) {
-		return gameService.insertNewGame(game);
+	public Game insertNewGame(@RequestBody GameDTO gameDto) {
+		return gameService.insertNewGame(gameDto.getGame());
 	}
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Game updateGameById(@PathVariable Long id, @RequestBody Game game) throws GameNotFoundException {
-		return gameService.updateGameById(id, game);
+	public Game updateGameById(@PathVariable Long id, @RequestBody GameDTO gameDto) throws GameNotFoundException {
+		return gameService.updateGameById(id, gameDto.getGame());
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
