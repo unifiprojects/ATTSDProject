@@ -38,6 +38,7 @@ import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
@@ -231,7 +232,23 @@ public class UserRestControllerTest {
 		when().
 			post("/api/users/new").
 		then().
-			statusCode(400);
+			statusCode(400).
+			statusLine(containsString("Password required"));
+	}
+	
+	@Test
+	public void testPost_InsertNewUser_UsernameAlreadyExist() throws Exception {
+		User newUser = new User(null, "testUsername", "testPassword");
+		when(userService.insertNewUser(newUser)).thenThrow(UsernameAlreadyExistingException.class);
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(new UserDTO(null, "testUsername", "testPassword")).
+		when().
+			post("/api/users/new").
+		then().
+			statusCode(400).
+			statusLine(containsString("Username already exist"));
 	}
 	
 	@Test

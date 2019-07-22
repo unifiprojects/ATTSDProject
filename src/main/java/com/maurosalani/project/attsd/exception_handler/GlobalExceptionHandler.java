@@ -14,6 +14,7 @@ import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -40,7 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(PasswordRequiredException.class)
 	public void handePasswordIsRequired(HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.BAD_REQUEST.value(), "Bad Request");
+		response.sendError(HttpStatus.BAD_REQUEST.value(), "Password required");
+	}
+	
+	@ExceptionHandler(UsernameAlreadyExistingException.class)
+	public void handeUsernameAlreadyExist(HttpServletResponse response) throws IOException {
+		response.sendError(HttpStatus.BAD_REQUEST.value(), "Username already exist");
 	}
 
 }
