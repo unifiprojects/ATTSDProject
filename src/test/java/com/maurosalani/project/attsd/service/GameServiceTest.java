@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -25,6 +26,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageRequest;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.model.Game;
@@ -187,5 +189,17 @@ public class GameServiceTest {
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
 		assertThatCode(() -> gameService.deleteById(1L)).doesNotThrowAnyException();
 		verify(gameRepository, times(1)).deleteById(1L);
+	}
+	
+	@Test
+	public void testFindTop3LatestReleaseGames() {
+		Game game1 = new Game(1L, "game1", "description1", new Date(100));
+		Game game2 = new Game(2L, "game2", "description2", new Date(200));
+		Game game3 = new Game(3L, "game3", "description3", new Date(300));
+		when(gameRepository.findFirstN_OrderByReleaseDate(PageRequest.of(0,3))).thenReturn(asList(game3, game2, game1));
+		
+		List<Game> latest3Release = gameService.getLatestReleasesGames(3);
+		assertThat(latest3Release.size()).isEqualTo(3);
+		assertThat(latest3Release).containsExactly(game3, game2, game1);
 	}
 }

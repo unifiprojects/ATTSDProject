@@ -3,6 +3,7 @@ package com.maurosalani.project.attsd.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
@@ -67,6 +68,10 @@ public class GameService {
 	public void deleteById(Long id) throws GameNotFoundException {
 		checkExistanceOfGame(id);
 		gameRepository.deleteById(id);
+	}
+	
+	public List<Game> getLatestReleasesGames(int count) {
+		return gameRepository.findFirstN_OrderByReleaseDate(PageRequest.of(0,count));
 	}
 
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
