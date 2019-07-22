@@ -9,6 +9,8 @@ import java.util.Date;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +23,7 @@ import com.maurosalani.project.attsd.service.GameService;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Import(GameService.class)
+@AutoConfigureTestDatabase(replace=Replace.NONE)
 @ActiveProfiles("mysql")
 public class GameServiceRepositoryIT {
 
