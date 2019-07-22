@@ -90,7 +90,7 @@ public class Game {
 	public void addUser(User user) {
 		if (user != null) {
 			if (this.users == null)
-				this.users = new LinkedList<User>();
+				this.users = new LinkedList<>();
 			this.users.add(user);
 		}
 	}
@@ -136,7 +136,8 @@ public class Game {
 		if (releaseDate == null) {
 			if (other.releaseDate != null)
 				return false;
-		} else if (!releaseDate.equals(other.releaseDate))
+		}
+		else if (!releaseDate.equals(other.releaseDate))
 			return false;
 		return true;
 	}

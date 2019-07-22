@@ -71,7 +71,7 @@ public class GameService {
 	}
 	
 	public List<Game> getLatestReleasesGames(int count) {
-		return gameRepository.findFirstN_OrderByReleaseDate(PageRequest.of(0, count));
+		return gameRepository.findFirstNOrderByReleaseDate(PageRequest.of(0, count));
 	}
 
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {

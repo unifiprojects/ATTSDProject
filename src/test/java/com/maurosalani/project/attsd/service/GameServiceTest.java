@@ -196,7 +196,7 @@ public class GameServiceTest {
 		Game game1 = new Game(1L, "game1", "description1", new Date(100));
 		Game game2 = new Game(2L, "game2", "description2", new Date(200));
 		Game game3 = new Game(3L, "game3", "description3", new Date(300));
-		when(gameRepository.findFirstN_OrderByReleaseDate(PageRequest.of(0,3))).thenReturn(asList(game3, game2, game1));
+		when(gameRepository.findFirstNOrderByReleaseDate(PageRequest.of(0,3))).thenReturn(asList(game3, game2, game1));
 		
 		List<Game> latest3Release = gameService.getLatestReleasesGames(3);
 		assertThat(latest3Release.size()).isEqualTo(3);

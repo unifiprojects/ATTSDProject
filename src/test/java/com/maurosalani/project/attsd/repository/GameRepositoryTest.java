@@ -187,7 +187,7 @@ public class GameRepositoryTest {
 		Game game4Saved = entityManager.persistFlushFind(game4);
 		Game game5Saved = entityManager.persistFlushFind(game5);
 		
-		List<Game> latest3Release = repository.findFirstN_OrderByReleaseDate(PageRequest.of(0,3));
+		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0,3));
 		assertThat(latest3Release.size()).isEqualTo(3);
 		assertThat(latest3Release).containsExactly(game5Saved, game4Saved, game3Saved);
 		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);

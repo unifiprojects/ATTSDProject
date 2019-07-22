@@ -103,7 +103,7 @@ public class User {
 	public void addFollowedUser(User followedUser) {
 		if (followedUser != null) {
 			if (this.followedUsers == null)
-				this.followedUsers = new LinkedList<User>();
+				this.followedUsers = new LinkedList<>();
 			this.followedUsers.add(followedUser);
 		}
 	}
@@ -111,7 +111,7 @@ public class User {
 	public void addFollowerUser(User followerUser) {
 		if (followerUser != null) {
 			if (this.followerUsers == null)
-				this.followerUsers = new LinkedList<User>();
+				this.followerUsers = new LinkedList<>();
 			this.followerUsers.add(followerUser);
 		}
 	}
@@ -119,7 +119,7 @@ public class User {
 	public void addGame(Game game) {
 		if (game != null) {
 			if (this.games == null)
-				this.games = new LinkedList<Game>();
+				this.games = new LinkedList<>();
 			this.games.add(game);
 		}
 	}
@@ -146,17 +146,20 @@ public class User {
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} 
+		else if (!id.equals(other.id))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} else if (!password.equals(other.password))
+		} 
+		else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} 
+		else if (!username.equals(other.username))
 			return false;
 		return true;
 	}

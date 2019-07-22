@@ -20,6 +20,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 	List<User> findUsersOfGameByName(String string);
 
 	@Query("select u from Game u order by u.releaseDate desc")
-	List<Game> findFirstN_OrderByReleaseDate(Pageable pageable);	
+	List<Game> findFirstNOrderByReleaseDate(Pageable pageable);	
 
 }
