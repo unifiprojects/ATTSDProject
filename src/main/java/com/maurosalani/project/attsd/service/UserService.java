@@ -159,6 +159,6 @@ public class UserService {
 
 	public User verifyLogin(Credentials credentials) throws LoginFailedException {
 		return userRepository.findByUsernameAndPassword(credentials.getUsername(), credentials.getPassword())
-				.orElseThrow(() -> new LoginFailedException());
+				.orElseThrow(LoginFailedException::new);
 	}
 }
