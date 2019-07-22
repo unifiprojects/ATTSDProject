@@ -24,7 +24,9 @@ import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
 
@@ -56,7 +58,7 @@ public class UserRestController {
 	}
 
 	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User insertNewUser(@RequestBody User user) {
+	public User insertNewUser(@RequestBody User user) throws UsernameAlreadyExistingException, PasswordRequiredException {
 		return userService.insertNewUser(user);
 	}
 
@@ -97,7 +99,7 @@ public class UserRestController {
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(credentials);
 		checkRequestCorrectness(id, userLogged);
-		userService.deleteUserById(id);
+		userService.deleteById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 

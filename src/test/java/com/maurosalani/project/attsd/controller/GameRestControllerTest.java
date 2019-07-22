@@ -256,12 +256,12 @@ public class GameRestControllerTest {
 		then().
 			statusCode(204);
 
-		verify(gameService, times(1)).deleteGameById(1L);
+		verify(gameService, times(1)).deleteById(1L);
 	}
 	
 	@Test
 	public void testDelete_removeNotExistingGame_shouldReturn404() throws GameNotFoundException {
-		doThrow(GameNotFoundException.class).when(gameService).deleteGameById(anyLong());
+		doThrow(GameNotFoundException.class).when(gameService).deleteById(anyLong());
 		
 		given().
 		when().

@@ -35,7 +35,9 @@ import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
@@ -200,7 +202,7 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
-	public void testPost_InsertNewUser() {
+	public void testPost_InsertNewUser() throws Exception {
 		User requestBodyUser = new User(null, "testUsername", "pwd");
 		when(userService.insertNewUser(requestBodyUser)).
 			thenReturn(new User(1L, "testUsername", "pwd"));
@@ -447,7 +449,7 @@ public class UserRestControllerTest {
 		then().
 			statusCode(204);
 		
-		verify(userService, times(1)).deleteUserById(1L);
+		verify(userService, times(1)).deleteById(1L);
 	}
 	
 	@Test

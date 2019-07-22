@@ -59,7 +59,7 @@ public class GameRestController {
 
 	@DeleteMapping(path = "/delete/{id}")
 	public void deleteGame(@PathVariable Long id, HttpServletResponse response) throws GameNotFoundException {
-		gameService.deleteGameById(id);
+		gameService.deleteById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
 	}
 }

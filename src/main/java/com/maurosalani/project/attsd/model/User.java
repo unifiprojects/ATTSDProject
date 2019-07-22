@@ -30,8 +30,6 @@ public class User {
 
 	@Basic(optional = false)
 	private String password;
-	private List<User> followedUsers;
-	private List<Game> games;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))

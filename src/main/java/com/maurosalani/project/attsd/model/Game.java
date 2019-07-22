@@ -33,7 +33,6 @@ public class Game {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date releaseDate;
-	private List<User> users;
 
 	@ManyToMany(mappedBy = "games", cascade = CascadeType.ALL)
 	private List<User> users;
@@ -54,10 +53,6 @@ public class Game {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getName() {
