@@ -60,7 +60,8 @@ public class UserRestController {
 	}
 
 	@PostMapping(path = "/new", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User insertNewUser(@RequestBody UserDTO userDto) throws UsernameAlreadyExistingException, PasswordRequiredException {
+	public User insertNewUser(@RequestBody UserDTO userDto)
+			throws UsernameAlreadyExistingException, PasswordRequiredException {
 		return userService.insertNewUser(userDto.getUser());
 	}
 

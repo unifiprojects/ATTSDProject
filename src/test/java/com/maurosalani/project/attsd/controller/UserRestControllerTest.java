@@ -36,6 +36,7 @@ import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
@@ -217,6 +218,20 @@ public class UserRestControllerTest {
 				"id", equalTo(1),
 				"username", equalTo("testUsername"),
 				"password", equalTo("pwd"));
+	}
+	
+	@Test
+	public void testPost_InsertNewUser_PasswordRequired() throws Exception {
+		User newUser = new User(null, "testUsername", "");
+		when(userService.insertNewUser(newUser)).thenThrow(PasswordRequiredException.class);
+
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(new UserDTO(null, "testUsername", "")).
+		when().
+			post("/api/users/new").
+		then().
+			statusCode(400);
 	}
 	
 	@Test

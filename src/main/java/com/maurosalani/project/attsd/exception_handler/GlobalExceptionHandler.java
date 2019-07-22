@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 
 @ControllerAdvice
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(LoginFailedException.class)
 	public void handeLoginFailed(HttpServletResponse response) throws IOException {
 		response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password.");
+	}
+
+	@ExceptionHandler(PasswordRequiredException.class)
+	public void handePasswordIsRequired(HttpServletResponse response) throws IOException {
+		response.sendError(HttpStatus.BAD_REQUEST.value(), "Bad Request");
 	}
 
 }
