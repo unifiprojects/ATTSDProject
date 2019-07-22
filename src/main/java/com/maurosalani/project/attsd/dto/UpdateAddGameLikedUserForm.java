@@ -54,12 +54,14 @@ public class UpdateAddGameLikedUserForm {
 		if (credentials == null) {
 			if (other.credentials != null)
 				return false;
-		} else if (!credentials.equals(other.credentials))
+		}
+		else if (!credentials.equals(other.credentials))
 			return false;
 		if (gameLiked == null) {
 			if (other.gameLiked != null)
 				return false;
-		} else if (!gameLiked.equals(other.gameLiked))
+		}
+		else if (!gameLiked.equals(other.gameLiked))
 			return false;
 		return true;
 	}

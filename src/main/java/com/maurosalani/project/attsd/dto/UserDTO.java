@@ -32,9 +32,7 @@ public class UserDTO {
 	}
 
 	public User getUser() {
-		User user = new User(this.id, this.username, this.password);
-
-		return user;
+		return new User(this.id, this.username, this.password);
 	}
 
 	public void setId(Long id) {

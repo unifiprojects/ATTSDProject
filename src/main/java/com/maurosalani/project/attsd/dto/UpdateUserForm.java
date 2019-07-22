@@ -53,12 +53,14 @@ public class UpdateUserForm {
 		if (credentials == null) {
 			if (other.credentials != null)
 				return false;
-		} else if (!credentials.equals(other.credentials))
+		}
+		else if (!credentials.equals(other.credentials))
 			return false;
 		if (userToUpdate == null) {
 			if (other.userToUpdate != null)
 				return false;
-		} else if (!userToUpdate.equals(other.userToUpdate))
+		}
+		else if (!userToUpdate.equals(other.userToUpdate))
 			return false;
 		return true;
 	}

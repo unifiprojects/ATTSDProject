@@ -161,17 +161,20 @@ public class User {
 		if (followedUsers == null) {
 			if (other.followedUsers != null)
 				return false;
-		} else if (!followedUsers.equals(other.followedUsers))
+		}
+		else if (!followedUsers.equals(other.followedUsers))
 			return false;
 		if (followerUsers == null) {
 			if (other.followerUsers != null)
 				return false;
-		} else if (!followerUsers.equals(other.followerUsers))
+		}
+		else if (!followerUsers.equals(other.followerUsers))
 			return false;
 		if (games == null) {
 			if (other.games != null)
 				return false;
-		} else if (!games.equals(other.games))
+		}
+		else if (!games.equals(other.games))
 			return false;
 		if (id == null) {
 			if (other.id != null)

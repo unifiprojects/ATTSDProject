@@ -53,12 +53,14 @@ public class UpdateAddFollowedUserForm {
 		if (credentials == null) {
 			if (other.credentials != null)
 				return false;
-		} else if (!credentials.equals(other.credentials))
+		}
+		else if (!credentials.equals(other.credentials))
 			return false;
 		if (followedToAdd == null) {
 			if (other.followedToAdd != null)
 				return false;
-		} else if (!followedToAdd.equals(other.followedToAdd))
+		}
+		else if (!followedToAdd.equals(other.followedToAdd))
 			return false;
 		return true;
 	}

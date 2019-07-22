@@ -51,12 +51,14 @@ public class UpdatePasswordUserForm {
 		if (credentials == null) {
 			if (other.credentials != null)
 				return false;
-		} else if (!credentials.equals(other.credentials))
+		}
+		else if (!credentials.equals(other.credentials))
 			return false;
 		if (newPassword == null) {
 			if (other.newPassword != null)
 				return false;
-		} else if (!newPassword.equals(other.newPassword))
+		}
+		else if (!newPassword.equals(other.newPassword))
 			return false;
 		return true;
 	}

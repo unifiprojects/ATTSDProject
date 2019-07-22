@@ -42,8 +42,7 @@ public class GameDTO {
 	}
 
 	public Game getGame() {
-		Game game = new Game(this.id, this.name, this.description, this.releaseDate);
-		return game;
+		return new Game(this.id, this.name, this.description, this.releaseDate);
 	}
 
 	public void setId(Long id) {
