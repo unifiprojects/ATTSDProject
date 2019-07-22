@@ -377,9 +377,9 @@
                     </wait>
                     <env>
                       <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
-                      <MYSQL_DATABASE>springdb</MYSQL_DATABASE>
-                      <MYSQL_USER>user</MYSQL_USER>
-                      <MYSQL_PASSWORD>password</MYSQL_PASSWORD>
+                      <MYSQL_DATABASE>attsd_database_test</MYSQL_DATABASE>
+                      <MYSQL_USER>springuser_test</MYSQL_USER>
+                      <MYSQL_PASSWORD>springuser_test</MYSQL_PASSWORD>
                     </env>
                     <ports>
                       <port>3306:3306</port>
