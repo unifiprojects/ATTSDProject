@@ -222,11 +222,12 @@
             </targetTests>
             <excludedTestClasses>
               <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
+              <param>com.maurosalani.project.attsd.*IT*</param>
             </excludedTestClasses>
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>100</mutationThreshold>
+            <mutationThreshold>98</mutationThreshold>
           </configuration>
         </plugin>
 

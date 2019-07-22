@@ -181,8 +181,8 @@ public class GameRepositoryTest {
 		Game game3 = new Game(null, "game3", "description3", new Date(300));
 		Game game4 = new Game(null, "game4", "description4", new Date(400));
 		Game game5 = new Game(null, "game5", "description5", new Date(500));
-		entityManager.persistFlushFind(game1);
-		entityManager.persistFlushFind(game2);
+		Game game1Saved = entityManager.persistFlushFind(game1);
+		Game game2Saved = entityManager.persistFlushFind(game2);
 		Game game3Saved = entityManager.persistFlushFind(game3);
 		Game game4Saved = entityManager.persistFlushFind(game4);
 		Game game5Saved = entityManager.persistFlushFind(game5);
@@ -190,6 +190,7 @@ public class GameRepositoryTest {
 		List<Game> latest3Release = repository.findFirstN_OrderByReleaseDate(PageRequest.of(0,3));
 		assertThat(latest3Release.size()).isEqualTo(3);
 		assertThat(latest3Release).containsExactly(game5Saved, game4Saved, game3Saved);
+		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);
 	}
 
 }
