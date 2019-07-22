@@ -140,9 +140,6 @@ public class User {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((followedUsers == null) ? 0 : followedUsers.hashCode());
-		result = prime * result + ((followerUsers == null) ? 0 : followerUsers.hashCode());
-		result = prime * result + ((games == null) ? 0 : games.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
@@ -158,24 +155,6 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (followedUsers == null) {
-			if (other.followedUsers != null)
-				return false;
-		}
-		else if (!followedUsers.equals(other.followedUsers))
-			return false;
-		if (followerUsers == null) {
-			if (other.followerUsers != null)
-				return false;
-		}
-		else if (!followerUsers.equals(other.followerUsers))
-			return false;
-		if (games == null) {
-			if (other.games != null)
-				return false;
-		}
-		else if (!games.equals(other.games))
-			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -196,4 +175,5 @@ public class User {
 			return false;
 		return true;
 	}
+
 }
