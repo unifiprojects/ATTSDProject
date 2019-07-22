@@ -1,8 +1,8 @@
 package com.maurosalani.project.attsd.repository;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static java.util.Arrays.asList;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,12 +17,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
-import com.maurosalani.project.attsd.repository.GameRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -172,6 +172,24 @@ public class GameRepositoryTest {
 
 		List<User> retrievedUsers = repository.findUsersOfGameByName("game_name");
 		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
+	}
+	
+	@Test
+	public void testFindTop3LatestReleaseGames() {
+		Game game1 = new Game(null, "game1", "description1", new Date(100));
+		Game game2 = new Game(null, "game2", "description2", new Date(200));
+		Game game3 = new Game(null, "game3", "description3", new Date(300));
+		Game game4 = new Game(null, "game4", "description4", new Date(400));
+		Game game5 = new Game(null, "game5", "description5", new Date(500));
+		entityManager.persistFlushFind(game1);
+		entityManager.persistFlushFind(game2);
+		Game game3Saved = entityManager.persistFlushFind(game3);
+		Game game4Saved = entityManager.persistFlushFind(game4);
+		Game game5Saved = entityManager.persistFlushFind(game5);
+		
+		List<Game> latest3Release = repository.findFirstN_OrderByReleaseDate(PageRequest.of(0,3));
+		assertThat(latest3Release.size()).isEqualTo(3);
+		assertThat(latest3Release).containsExactly(game5Saved, game4Saved, game3Saved);
 	}
 
 }
