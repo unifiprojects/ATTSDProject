@@ -38,7 +38,8 @@
     <!-- Exclude non covered files -->
     <sonar.coverage.exclusions>
       **/*Application.*,
-      **/model/*
+      **/model/*,
+      **/dto/*
     </sonar.coverage.exclusions>
     <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
