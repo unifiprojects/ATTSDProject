@@ -40,7 +40,7 @@
       **/*Application.*,
       **/model/*
     </sonar.coverage.exclusions>
-    <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
       *ApplicationTests which just checks that the Spring application can start, 
       without any assertion -->
