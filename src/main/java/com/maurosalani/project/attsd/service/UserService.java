@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
+import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
@@ -62,7 +64,7 @@ public class UserService {
 	public User insertNewUser(User user) throws UsernameAlreadyExistingException, PasswordRequiredException {
 		if (user == null)
 			throw new IllegalArgumentException();
-		
+
 		checkIfUsernameAlreadyExists(user);
 		checkPasswordIsCorrect(user.getPassword());
 
@@ -82,7 +84,7 @@ public class UserService {
 	public User updateUserById(Long id, User user) throws UserNotFoundException, PasswordRequiredException {
 		if (id == null || user == null)
 			throw new IllegalArgumentException();
-		
+
 		checkExistanceOfUser(id);
 		checkPasswordIsCorrect(user.getPassword());
 
@@ -128,7 +130,7 @@ public class UserService {
 	public User changePassword(User user, String newPassword) throws UserNotFoundException, PasswordRequiredException {
 		if (user == null)
 			throw new IllegalArgumentException();
-		
+
 		checkPasswordIsCorrect(newPassword);
 		checkExistanceOfUser(user.getId());
 		user.setPassword(newPassword);
@@ -153,5 +155,10 @@ public class UserService {
 
 	private void checkExistanceOfGame(Long id) throws GameNotFoundException {
 		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
+	}
+
+	public User verifyLogin(Credentials credentials) throws LoginFailedException {
+		return userRepository.findByUsernameAndPassword(credentials.getUsername(), credentials.getPassword())
+				.orElseThrow(() -> new LoginFailedException());
 	}
 }

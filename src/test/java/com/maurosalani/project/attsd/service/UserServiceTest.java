@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import com.maurosalani.project.attsd.dto.Credentials;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -430,4 +431,14 @@ public class UserServiceTest {
 		assertThatExceptionOfType(UserNotFoundException.class)
 			.isThrownBy(() -> userService.changePassword(user, newPassword));
 	}
+	
+	@Test
+	public void testVerifyLogin_UserSucceed() throws Exception {
+		User userToLog = new User(1L,"username","password");
+		Credentials credentials = new Credentials("username", "password"); 
+		when(userRepository.findByUsernameAndPassword("username", "password"))
+			.thenReturn(Optional.of(userToLog));
+		User userLogged = userService.verifyLogin(credentials);
+		assertThat(userLogged).isEqualTo(userToLog);
+	}	
 }
