@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -28,6 +30,8 @@ public class Game {
 	private String name;
 
 	private String description;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date releaseDate;
 
 	@ManyToMany(mappedBy = "games", cascade = CascadeType.ALL)

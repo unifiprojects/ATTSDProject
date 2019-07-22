@@ -15,11 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
-import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.GameRepository;
-import com.maurosalani.project.attsd.repository.UserRepository;
 import com.maurosalani.project.attsd.service.GameService;
-import com.maurosalani.project.attsd.service.UserService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
