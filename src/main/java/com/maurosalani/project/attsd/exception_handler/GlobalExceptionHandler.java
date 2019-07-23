@@ -36,7 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(LoginFailedException.class)
 	public void handeLoginFailed(HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password.");
+		response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password");
 	}
 
 	@ExceptionHandler(PasswordRequiredException.class)

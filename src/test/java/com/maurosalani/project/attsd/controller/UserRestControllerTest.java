@@ -363,6 +363,23 @@ public class UserRestControllerTest {
 		
 		verifyNoMoreInteractions(ignoreStubs(userService));
 	}
+	
+	@Test
+	public void testPatch_UpdatePassword_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
+		String newPassword = "newPassword";
+		UpdatePasswordUserForm form = new UpdatePasswordUserForm(null, newPassword);
+		
+		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/password/1").
+		then().
+			statusCode(401).
+			statusLine(containsString("Invalid username or password"));
+	}
 
 	@Test
 	public void testPatch_AddFollowedUser_UserSuccessLogin() throws Exception {
