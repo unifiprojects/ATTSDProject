@@ -29,11 +29,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.maurosalani.project.attsd.dto.Credentials;
-import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
-import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
-import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
-import com.maurosalani.project.attsd.dto.UpdateUserForm;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
@@ -254,9 +254,9 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateUser_UserSuccessLogin() throws Exception {
 		User userReplacement = new User(null, "testUsername", "new_password");
-		Credentials credentials = new Credentials("testUsername", "password");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "password");
 		User userToUpdate = new User(1L, "testUsername", "password");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		UpdateUserFormDTO form = new UpdateUserFormDTO(credentialsDTO, userReplacement);
 		
 		when(userService.verifyLogin(form.getCredentials())).
 			thenReturn(userToUpdate);
@@ -279,7 +279,7 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateOfUser_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
 		User userReplacement = new User(null, "testUsername", "new_password");
-		UpdateUserForm form = new UpdateUserForm(null, userReplacement);
+		UpdateUserFormDTO form = new UpdateUserFormDTO(null, userReplacement);
 		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
 		
 		given().
@@ -296,9 +296,9 @@ public class UserRestControllerTest {
 	@Test
 	public void testPut_UpdateAnotherUser_ShouldGetBadRequestError() throws Exception{
 		User userReplacement = new User(null, "myUsername", "new_password");
-		Credentials credentials = new Credentials("myUsername", "myPassword");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("myUsername", "myPassword");
 		User userToUpdate = new User(1L, "myUsername", "myPassword");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		UpdateUserFormDTO form = new UpdateUserFormDTO(credentialsDTO, userReplacement);
 		
 		when(userService.verifyLogin(form.getCredentials())).
 			thenReturn(userToUpdate);
@@ -318,11 +318,11 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_UpdatePassword_UserSuccessLogin() throws Exception {
 		String newPassword = "newPassword";
-		Credentials credentials = new Credentials("testUsername", "password");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "password");
 		User userToUpdate = new User(1L, "testUsername", "password");
-		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, newPassword);
+		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO(credentialsDTO, newPassword);
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		when(userService.getUserById(1L)).
 			thenReturn(userToUpdate);		
@@ -345,11 +345,11 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_UpdatePasswordToAnotherUser_ShouldGetBadRequest() throws Exception {
 		String newPassword = "newPassword";
-		Credentials credentials = new Credentials("myUsername", "myPassword");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("myUsername", "myPassword");
 		User userToUpdate = new User(1L, "myUsername", "myPassword");
-		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, newPassword);
+		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO(credentialsDTO, newPassword);
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		
 		given().
@@ -367,7 +367,7 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_UpdatePassword_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
 		String newPassword = "newPassword";
-		UpdatePasswordUserForm form = new UpdatePasswordUserForm(null, newPassword);
+		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO(null, newPassword);
 		
 		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
 		
@@ -384,11 +384,11 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddFollowedUser_UserSuccessLogin() throws Exception {
 		User followedToAdd = new User(null, "followed", "pwd");
-		Credentials credentials = new Credentials("testUsername", "pwd");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "pwd");
 		User userToUpdate = new User(1L, "testUsername", "pwd");
-		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		UpdateAddFollowedUserFormDTO form = new UpdateAddFollowedUserFormDTO(credentialsDTO, followedToAdd);
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		when(userService.getUserById(1L)).
 			thenReturn(userToUpdate);
@@ -412,12 +412,12 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddFollowedUserToAnotherUser_ShouldGetBadRequest() throws Exception {
 		User followedToAdd = new User(null, "followed", "pwd");
-		Credentials credentials = new Credentials("myUsername", "myPwd");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("myUsername", "myPwd");
 		User userToUpdate = new User(1L, "myUsername", "myPwd");
-		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		UpdateAddFollowedUserFormDTO form = new UpdateAddFollowedUserFormDTO(credentialsDTO, followedToAdd);
 		
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		
 		given().
@@ -435,7 +435,7 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddFollowedUser_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
 		User followedToAdd = new User(null, "followed", "pwd");
-		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(null, followedToAdd);
+		UpdateAddFollowedUserFormDTO form = new UpdateAddFollowedUserFormDTO(null, followedToAdd);
 		
 		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
 		
@@ -452,12 +452,12 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddGameLiked_UserSuccessLogin() throws Exception {
 		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
-		Credentials credentials = new Credentials("testUsername", "pwd");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "pwd");
 		User userToUpdate = new User(1L, "testUsername", "pwd");
-		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(credentials, gameLiked);
+		UpdateAddGameLikedUserFormDTO form = new UpdateAddGameLikedUserFormDTO(credentialsDTO, gameLiked);
 		
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		when(userService.getUserById(1L)).
 			thenReturn(userToUpdate);
@@ -481,11 +481,11 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddGameLikedToAnotherUser_ShouldGetBadRequest() throws Exception {
 		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
-		Credentials credentials = new Credentials("myUsername", "myPwd");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("myUsername", "myPwd");
 		User userToUpdate = new User(1L, "myUsername", "myPwd");
-		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(credentials, gameLiked);
+		UpdateAddGameLikedUserFormDTO form = new UpdateAddGameLikedUserFormDTO(credentialsDTO, gameLiked);
 		
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToUpdate);
 		
 		given().
@@ -503,7 +503,7 @@ public class UserRestControllerTest {
 	@Test
 	public void testPatch_AddGameLiked_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
 		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
-		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(null, gameLiked);
+		UpdateAddGameLikedUserFormDTO form = new UpdateAddGameLikedUserFormDTO(null, gameLiked);
 		
 		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
 		
@@ -519,13 +519,13 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
-		Credentials credentials = new Credentials("testUsername", "password");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "password");
 		User userToDelete = new User(1L, "username", "password");
-		when(userService.verifyLogin(credentials)).thenReturn(userToDelete);
+		when(userService.verifyLogin(credentialsDTO)).thenReturn(userToDelete);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(credentials).
+			body(credentialsDTO).
 		when().
 			delete("/api/users/delete/1").
 		then().
@@ -536,14 +536,14 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_removeAnotherUser_shouldReturnBadRequest() throws Exception{
-		Credentials credentials = new Credentials("myUsername", "myPassword");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("myUsername", "myPassword");
 		User userToDelete = new User(1L, "myUsername", "myPassword");
-		when(userService.verifyLogin(credentials)).
+		when(userService.verifyLogin(credentialsDTO)).
 			thenReturn(userToDelete);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(credentials).
+			body(credentialsDTO).
 		when().
 			
 			delete("/api/users/delete/99").
@@ -556,12 +556,12 @@ public class UserRestControllerTest {
 	
 	@Test
 	public void testDelete_LoginFail_shouldReturnUnauthorized() throws Exception {
-		Credentials credentials = new Credentials("testUsername", "password");
-		when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "password");
+		when(userService.verifyLogin(credentialsDTO)).thenThrow(LoginFailedException.class);
 		
 		given().
 			contentType(MediaType.APPLICATION_JSON_VALUE).
-			body(credentials).
+			body(credentialsDTO).
 		when().
 			delete("/api/users/delete/1").
 		then().

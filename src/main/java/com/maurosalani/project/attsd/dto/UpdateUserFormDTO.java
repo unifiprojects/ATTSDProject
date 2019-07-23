@@ -2,26 +2,26 @@ package com.maurosalani.project.attsd.dto;
 
 import com.maurosalani.project.attsd.model.User;
 
-public class UpdateUserForm {
+public class UpdateUserFormDTO {
 
-	private Credentials credentials;
+	private CredentialsDTO credentialsDTO;
 	private User userToUpdate;
 
-	public UpdateUserForm() {
+	public UpdateUserFormDTO() {
 	}
 
-	public UpdateUserForm(Credentials credentials, User userToUpdate) {
+	public UpdateUserFormDTO(CredentialsDTO credentialsDTO, User userToUpdate) {
 		super();
-		this.credentials = credentials;
+		this.credentialsDTO = credentialsDTO;
 		this.userToUpdate = userToUpdate;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
+	public CredentialsDTO getCredentials() {
+		return credentialsDTO;
 	}
 
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
+	public void setCredentials(CredentialsDTO credentialsDTO) {
+		this.credentialsDTO = credentialsDTO;
 	}
 
 	public User getUserToUpdate() {
@@ -36,7 +36,7 @@ public class UpdateUserForm {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+		result = prime * result + ((credentialsDTO == null) ? 0 : credentialsDTO.hashCode());
 		result = prime * result + ((userToUpdate == null) ? 0 : userToUpdate.hashCode());
 		return result;
 	}
@@ -49,12 +49,12 @@ public class UpdateUserForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UpdateUserForm other = (UpdateUserForm) obj;
-		if (credentials == null) {
-			if (other.credentials != null)
+		UpdateUserFormDTO other = (UpdateUserFormDTO) obj;
+		if (credentialsDTO == null) {
+			if (other.credentialsDTO != null)
 				return false;
 		}
-		else if (!credentials.equals(other.credentials))
+		else if (!credentialsDTO.equals(other.credentialsDTO))
 			return false;
 		if (userToUpdate == null) {
 			if (other.userToUpdate != null)

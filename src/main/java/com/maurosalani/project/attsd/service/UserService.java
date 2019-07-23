@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
@@ -157,8 +157,8 @@ public class UserService {
 		gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(GAME_NOT_FOUND));
 	}
 
-	public User verifyLogin(Credentials credentials) throws LoginFailedException {
-		return userRepository.findByUsernameAndPassword(credentials.getUsername(), credentials.getPassword())
+	public User verifyLogin(CredentialsDTO credentialsDTO) throws LoginFailedException {
+		return userRepository.findByUsernameAndPassword(credentialsDTO.getUsername(), credentialsDTO.getPassword())
 				.orElseThrow(LoginFailedException::new);
 	}
 }

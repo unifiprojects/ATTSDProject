@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.maurosalani.project.attsd.dto.Credentials;
-import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
-import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
-import com.maurosalani.project.attsd.dto.UpdateUserForm;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.UserRepository;
@@ -60,9 +60,9 @@ public class UserRestControllerIT {
 	@Test
 	public void testUpdate_WithExistingUser() throws Exception {
 		User saved = userRepository.save(new User (null, "testUsername", "testPassword"));
-		Credentials credentials = new Credentials("testUsername", "testPassword");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "testPassword");
 		User userReplacement = new User(null, "new_username", "new_password");
-		UpdateUserForm form = new UpdateUserForm(credentials, userReplacement);
+		UpdateUserFormDTO form = new UpdateUserFormDTO(credentialsDTO, userReplacement);
 		
 		Response response =
 				given().
@@ -78,8 +78,8 @@ public class UserRestControllerIT {
 	@Test
 	public void testUpdate_ChangedPasswordOfExistingUser() throws Exception {
 		User saved = userRepository.save(new User (null, "testUsername", "testPassword"));
-		Credentials credentials = new Credentials("testUsername", "testPassword");
-		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, "new_password");
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "testPassword");
+		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO(credentialsDTO, "new_password");
 		
 		Response response =
 				given().
@@ -96,8 +96,8 @@ public class UserRestControllerIT {
 	public void testUpdate_AddFollowedToExistingUser() throws Exception {
 		User userToUpdate = userRepository.save(new User(null, "testUsername", "testPassword"));
 		User followedToAdd = userRepository.save(new User(null, "followed", "password"));
-		Credentials credentials = new Credentials("testUsername", "testPassword");
-		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		CredentialsDTO credentialsDTO = new CredentialsDTO("testUsername", "testPassword");
+		UpdateAddFollowedUserFormDTO form = new UpdateAddFollowedUserFormDTO(credentialsDTO, followedToAdd);
 		
 		Response response =
 				given().

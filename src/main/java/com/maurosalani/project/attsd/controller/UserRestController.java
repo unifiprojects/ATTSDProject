@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maurosalani.project.attsd.dto.Credentials;
-import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
-import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserForm;
-import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
-import com.maurosalani.project.attsd.dto.UpdateUserForm;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.exception.BadRequestException;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
@@ -66,7 +66,7 @@ public class UserRestController {
 	}
 
 	@PutMapping(path = "/update/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserForm form)
+	public User updateUser(@PathVariable Long id, @RequestBody UpdateUserFormDTO form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException, PasswordRequiredException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
@@ -74,7 +74,7 @@ public class UserRestController {
 	}
 
 	@PatchMapping(path = "/update/password/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdatePasswordUserForm form)
+	public User updatePasswordOfUser(@PathVariable Long id, @RequestBody UpdatePasswordUserFormDTO form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException, PasswordRequiredException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
@@ -82,7 +82,7 @@ public class UserRestController {
 	}
 
 	@PatchMapping(path = "/update/addFollowedUser/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User addFollowedUser(@PathVariable Long id, @RequestBody UpdateAddFollowedUserForm form)
+	public User addFollowedUser(@PathVariable Long id, @RequestBody UpdateAddFollowedUserFormDTO form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
@@ -90,7 +90,7 @@ public class UserRestController {
 	}
 
 	@PatchMapping(path = "/update/addGame/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public User addGameLiked(@PathVariable Long id, @RequestBody UpdateAddGameLikedUserForm form)
+	public User addGameLiked(@PathVariable Long id, @RequestBody UpdateAddGameLikedUserFormDTO form)
 			throws UserNotFoundException, LoginFailedException, BadRequestException, GameNotFoundException {
 		User userLogged = userService.verifyLogin(form.getCredentials());
 		checkRequestCorrectness(id, userLogged);
@@ -98,9 +98,9 @@ public class UserRestController {
 	}
 
 	@DeleteMapping(path = "/delete/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public void deleteUser(@PathVariable Long id, @RequestBody Credentials credentials, HttpServletResponse response)
+	public void deleteUser(@PathVariable Long id, @RequestBody CredentialsDTO credentialsDTO, HttpServletResponse response)
 			throws UserNotFoundException, LoginFailedException, BadRequestException {
-		User userLogged = userService.verifyLogin(credentials);
+		User userLogged = userService.verifyLogin(credentialsDTO);
 		checkRequestCorrectness(id, userLogged);
 		userService.deleteById(id);
 		response.setStatus(HttpStatus.NO_CONTENT.value());

@@ -1,25 +1,25 @@
 package com.maurosalani.project.attsd.dto;
 
-public class UpdatePasswordUserForm {
+public class UpdatePasswordUserFormDTO {
 
-	private Credentials credentials;
+	private CredentialsDTO credentialsDTO;
 	private String newPassword;
 
-	public UpdatePasswordUserForm() {
+	public UpdatePasswordUserFormDTO() {
 	}
 
-	public UpdatePasswordUserForm(Credentials credentials, String newPassword) {
+	public UpdatePasswordUserFormDTO(CredentialsDTO credentialsDTO, String newPassword) {
 		super();
-		this.credentials = credentials;
+		this.credentialsDTO = credentialsDTO;
 		this.newPassword = newPassword;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
+	public CredentialsDTO getCredentials() {
+		return credentialsDTO;
 	}
 
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
+	public void setCredentials(CredentialsDTO credentialsDTO) {
+		this.credentialsDTO = credentialsDTO;
 	}
 
 	public String getNewPassword() {
@@ -34,7 +34,7 @@ public class UpdatePasswordUserForm {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+		result = prime * result + ((credentialsDTO == null) ? 0 : credentialsDTO.hashCode());
 		result = prime * result + ((newPassword == null) ? 0 : newPassword.hashCode());
 		return result;
 	}
@@ -47,12 +47,12 @@ public class UpdatePasswordUserForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UpdatePasswordUserForm other = (UpdatePasswordUserForm) obj;
-		if (credentials == null) {
-			if (other.credentials != null)
+		UpdatePasswordUserFormDTO other = (UpdatePasswordUserFormDTO) obj;
+		if (credentialsDTO == null) {
+			if (other.credentialsDTO != null)
 				return false;
 		}
-		else if (!credentials.equals(other.credentials))
+		else if (!credentialsDTO.equals(other.credentialsDTO))
 			return false;
 		if (newPassword == null) {
 			if (other.newPassword != null)

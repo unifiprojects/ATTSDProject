@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
@@ -436,18 +436,18 @@ public class UserServiceTest {
 	@Test
 	public void testVerifyLogin_UserSucceed() throws Exception {
 		User userToLog = new User(1L,"username","password");
-		Credentials credentials = new Credentials("username", "password"); 
+		CredentialsDTO credentialsDTO = new CredentialsDTO("username", "password"); 
 		when(userRepository.findByUsernameAndPassword("username", "password"))
 			.thenReturn(Optional.of(userToLog));
-		User userLogged = userService.verifyLogin(credentials);
+		User userLogged = userService.verifyLogin(credentialsDTO);
 		assertThat(userLogged).isEqualTo(userToLog);
 	}
 	
 	@Test
 	public void testVerifyLogin_UserDoesNotExist_ShouldThrowException() throws Exception {
-		Credentials credentials = new Credentials("username_not_existing", "password"); 
+		CredentialsDTO credentialsDTO = new CredentialsDTO("username_not_existing", "password"); 
 		when(userRepository.findByUsernameAndPassword("username_not_existing", "password"))
 			.thenReturn(Optional.empty());
-		assertThatExceptionOfType(LoginFailedException.class).isThrownBy(() -> userService.verifyLogin(credentials));
+		assertThatExceptionOfType(LoginFailedException.class).isThrownBy(() -> userService.verifyLogin(credentialsDTO));
 	}
 }

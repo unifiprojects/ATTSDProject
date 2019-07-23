@@ -1,13 +1,13 @@
 package com.maurosalani.project.attsd.dto;
 
-public class Credentials {
+public class CredentialsDTO {
 	private String username;
 	private String password;
 
-	public Credentials() {
+	public CredentialsDTO() {
 	}
 
-	public Credentials(String username, String password) {
+	public CredentialsDTO(String username, String password) {
 		super();
 		setUsername(username);
 		setPassword(password);
@@ -46,7 +46,7 @@ public class Credentials {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Credentials other = (Credentials) obj;
+		CredentialsDTO other = (CredentialsDTO) obj;
 		if (username == null) {
 			if (other.username != null)
 				return false;

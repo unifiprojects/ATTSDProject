@@ -2,26 +2,26 @@ package com.maurosalani.project.attsd.dto;
 
 import com.maurosalani.project.attsd.model.User;
 
-public class UpdateAddFollowedUserForm {
+public class UpdateAddFollowedUserFormDTO {
 
-	private Credentials credentials;
+	private CredentialsDTO credentialsDTO;
 	private User followedToAdd;
 
-	public UpdateAddFollowedUserForm() {
+	public UpdateAddFollowedUserFormDTO() {
 	}
 
-	public UpdateAddFollowedUserForm(Credentials credentials, User followedToAdd) {
+	public UpdateAddFollowedUserFormDTO(CredentialsDTO credentialsDTO, User followedToAdd) {
 		super();
-		this.credentials = credentials;
+		this.credentialsDTO = credentialsDTO;
 		this.followedToAdd = followedToAdd;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
+	public CredentialsDTO getCredentials() {
+		return credentialsDTO;
 	}
 
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
+	public void setCredentials(CredentialsDTO credentialsDTO) {
+		this.credentialsDTO = credentialsDTO;
 	}
 
 	public User getFollowedToAdd() {
@@ -36,7 +36,7 @@ public class UpdateAddFollowedUserForm {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+		result = prime * result + ((credentialsDTO == null) ? 0 : credentialsDTO.hashCode());
 		result = prime * result + ((followedToAdd == null) ? 0 : followedToAdd.hashCode());
 		return result;
 	}
@@ -49,12 +49,12 @@ public class UpdateAddFollowedUserForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UpdateAddFollowedUserForm other = (UpdateAddFollowedUserForm) obj;
-		if (credentials == null) {
-			if (other.credentials != null)
+		UpdateAddFollowedUserFormDTO other = (UpdateAddFollowedUserFormDTO) obj;
+		if (credentialsDTO == null) {
+			if (other.credentialsDTO != null)
 				return false;
 		}
-		else if (!credentials.equals(other.credentials))
+		else if (!credentialsDTO.equals(other.credentialsDTO))
 			return false;
 		if (followedToAdd == null) {
 			if (other.followedToAdd != null)

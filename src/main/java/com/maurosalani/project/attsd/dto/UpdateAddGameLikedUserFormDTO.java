@@ -2,27 +2,27 @@ package com.maurosalani.project.attsd.dto;
 
 import com.maurosalani.project.attsd.model.Game;
 
-public class UpdateAddGameLikedUserForm {
+public class UpdateAddGameLikedUserFormDTO {
 
-	private Credentials credentials;
+	private CredentialsDTO credentialsDTO;
 	private Game gameLiked;
 
-	public UpdateAddGameLikedUserForm() {
+	public UpdateAddGameLikedUserFormDTO() {
 		super();
 	}
 
-	public UpdateAddGameLikedUserForm(Credentials credentials, Game gameLiked) {
+	public UpdateAddGameLikedUserFormDTO(CredentialsDTO credentialsDTO, Game gameLiked) {
 		super();
-		this.credentials = credentials;
+		this.credentialsDTO = credentialsDTO;
 		this.gameLiked = gameLiked;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
+	public CredentialsDTO getCredentials() {
+		return credentialsDTO;
 	}
 
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
+	public void setCredentials(CredentialsDTO credentialsDTO) {
+		this.credentialsDTO = credentialsDTO;
 	}
 
 	public Game getGameLiked() {
@@ -37,7 +37,7 @@ public class UpdateAddGameLikedUserForm {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+		result = prime * result + ((credentialsDTO == null) ? 0 : credentialsDTO.hashCode());
 		result = prime * result + ((gameLiked == null) ? 0 : gameLiked.hashCode());
 		return result;
 	}
@@ -50,12 +50,12 @@ public class UpdateAddGameLikedUserForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UpdateAddGameLikedUserForm other = (UpdateAddGameLikedUserForm) obj;
-		if (credentials == null) {
-			if (other.credentials != null)
+		UpdateAddGameLikedUserFormDTO other = (UpdateAddGameLikedUserFormDTO) obj;
+		if (credentialsDTO == null) {
+			if (other.credentialsDTO != null)
 				return false;
 		}
-		else if (!credentials.equals(other.credentials))
+		else if (!credentialsDTO.equals(other.credentialsDTO))
 			return false;
 		if (gameLiked == null) {
 			if (other.gameLiked != null)
