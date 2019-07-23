@@ -7,6 +7,7 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import com.maurosalani.project.attsd.service.UserService;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Import(UserService.class)
-@AutoConfigureTestDatabase(replace=Replace.NONE)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("mysql")
 public class UserServiceRepositoryIT {
 
@@ -39,15 +40,23 @@ public class UserServiceRepositoryIT {
 	@Autowired
 	private GameRepository gameRepository;
 
+	@Before
+	public void setup() {
+		userRepository.deleteAll();
+		userRepository.flush();
+		gameRepository.deleteAll();
+		gameRepository.flush();
+	}
+
 	@Test
 	public void testServiceCanInsertIntoRepository() throws Exception {
-		User saved = userService.insertNewUser(new User(null, "user", "password"));
+		User saved = userService.insertNewUser(new User(null, "userToInsert", "password"));
 		assertTrue(userRepository.findById(saved.getId()).isPresent());
 	}
 
 	@Test
 	public void testServiceCanDeleteFromRepository() throws Exception {
-		User saved = userService.insertNewUser(new User(null, "user", "password"));
+		User saved = userService.insertNewUser(new User(null, "userToDelete", "password"));
 		assertTrue(userRepository.findById(saved.getId()).isPresent());
 		userService.deleteById(saved.getId());
 		assertFalse(userRepository.findById(saved.getId()).isPresent());
@@ -55,7 +64,7 @@ public class UserServiceRepositoryIT {
 
 	@Test
 	public void testServiceCanUpdateIntoRepository() throws Exception {
-		User userToUpdate = new User(null, "username", "password");
+		User userToUpdate = new User(null, "userToUpdate", "password");
 		userRepository.save(userToUpdate);
 		User userResulted = userService.updateUserById(userToUpdate.getId(),
 				new User(userToUpdate.getId(), "newUsername", "newPassword"));
@@ -77,14 +86,14 @@ public class UserServiceRepositoryIT {
 	@Test
 	public void testServiceCanAddGameIntoRepository() throws Exception {
 		User userToUpdate = new User(null, "username", "password");
-		Game gameToAdd = new Game(null, "name", "description", new Date(1));
+		Game gameToAdd = new Game(null, "gameToAdd", "description", new Date(1));
 		userRepository.save(userToUpdate);
 		gameRepository.save(gameToAdd);
 		User userResulted = userService.addGame(userToUpdate, gameToAdd);
 
 		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(userResulted);
 	}
-	
+
 	@Test
 	public void testServiceCanChangePasswordIntoRepository() throws Exception {
 		User userToUpdate = new User(null, "username", "password");
