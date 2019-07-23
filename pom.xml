@@ -248,10 +248,16 @@
                 getLatestReleasesGames
               </excludedMethod>
               <excludedMethod>
-                <!-- "equal to less or equal" mutations are executed in this 
+                <!-- "equal to less or equal" mutation is executed in this 
                   instruction: StringUtils.isWhitespace(password) and we don't understand the 
                   how to cope with that -->
                 checkPasswordIsCorrect
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "equal to less or equal" mutation is executed in this 
+                  instruction: Optional.isPresent() and we don't understand the 
+                  how to cope with that -->
+                checkIfUsernameAlreadyExists
               </excludedMethod>
             </excludedMethods>
             <targetTests>
