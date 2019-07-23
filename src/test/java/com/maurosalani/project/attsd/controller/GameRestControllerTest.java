@@ -29,7 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 import com.maurosalani.project.attsd.dto.GameDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
-import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
+import com.maurosalani.project.attsd.exception_handler.RestControllerExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.service.GameService;
 
@@ -59,7 +59,7 @@ public class GameRestControllerTest {
 	 */
 	private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
 		StaticApplicationContext applicationContext = new StaticApplicationContext();
-		applicationContext.registerSingleton("exceptionHandler", GlobalExceptionHandler.class);
+		applicationContext.registerSingleton("exceptionHandler", RestControllerExceptionHandler.class);
 
 		WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
 		webMvcConfigurationSupport.setApplicationContext(applicationContext);
