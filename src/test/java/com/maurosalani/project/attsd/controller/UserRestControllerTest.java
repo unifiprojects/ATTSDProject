@@ -501,6 +501,23 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
+	public void testPatch_AddGameLiked_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
+		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
+		UpdateAddGameLikedUserForm form = new UpdateAddGameLikedUserForm(null, gameLiked);
+		
+		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addGame/1").
+		then().
+			statusCode(401).
+			statusLine(containsString("Invalid username or password"));
+	}
+	
+	@Test
 	public void testDelete_removeExistingUser_UserLoginSuccess() throws Exception{
 		Credentials credentials = new Credentials("testUsername", "password");
 		User userToDelete = new User(1L, "username", "password");
