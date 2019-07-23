@@ -23,6 +23,7 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @RunWith(SpringRunner.class)
@@ -108,6 +109,22 @@ public class UserRestControllerIT {
 		User updated = response.getBody().as(User.class);
 		
 		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(updated);
+	}
+	
+	@Test
+	public void testDeleteUser() throws Exception {
+		User userToDelete = userRepository.save(new User(null, "toDelete", "pwd"));
+		CredentialsDTO credentialsDTO = new CredentialsDTO("toDelete", "pwd");
+				
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(credentialsDTO).
+		when().
+			delete("/api/users/delete/" + userToDelete.getId()).
+		then().
+			statusCode(HttpStatus.NO_CONTENT.value());
+		
+		assertThat(userRepository.findById(userToDelete.getId())).isEmpty();
 	}
 
 }
