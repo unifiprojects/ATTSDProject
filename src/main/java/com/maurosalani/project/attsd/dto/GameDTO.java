@@ -1,6 +1,6 @@
 package com.maurosalani.project.attsd.dto;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.maurosalani.project.attsd.model.Game;
 

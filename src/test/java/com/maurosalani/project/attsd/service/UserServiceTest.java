@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.Date;
+import java.sql.Date;
 import java.util.Optional;
 
 import org.junit.Test;

@@ -1,11 +1,10 @@
 package com.maurosalani.project.attsd;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.sql.Date;
 
 import org.junit.Before;
 import org.junit.Test;

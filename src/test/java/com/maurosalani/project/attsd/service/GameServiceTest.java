@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,8 +49,8 @@ public class GameServiceTest {
 
 	@Test
 	public void testFindAllWithExistingGames() {
-		Game game1 = new Game(1L, "game1", "description1", new Date());
-		Game game2 = new Game(2L, "game2", "description2", new Date());
+		Game game1 = new Game(1L, "game1", "description1", new Date(0));
+		Game game2 = new Game(2L, "game2", "description2", new Date(0));
 		when(gameRepository.findAll()).thenReturn(asList(game1, game2));
 		assertThat(gameService.getAllGames()).containsExactly(game1, game2);
 	}
@@ -63,7 +63,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testGetGameByIdWithExistingGame() throws Exception {
-		Game game = new Game(1L, "game", "description", new Date());
+		Game game = new Game(1L, "game", "description", new Date(0));
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameById(1L)).isEqualTo(game);
 	}
@@ -81,7 +81,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testGetGameByNameWithExistingGame() throws Exception {
-		Game game = new Game(1L, "game", "description", new Date());
+		Game game = new Game(1L, "game", "description", new Date(0));
 		when(gameRepository.findByName("game")).thenReturn(Optional.of(game));
 		assertThat(gameService.getGameByName("game")).isEqualTo(game);
 	}
@@ -99,8 +99,8 @@ public class GameServiceTest {
 
 	@Test
 	public void testGetGamesByNameLikeWithExistingGames() {
-		Game game1 = new Game(1L, "game1", "description1", new Date());
-		Game game2 = new Game(2L, "game2", "description2", new Date());
+		Game game1 = new Game(1L, "game1", "description1", new Date(0));
+		Game game2 = new Game(2L, "game2", "description2", new Date(0));
 		when(gameRepository.findByNameLike("name")).thenReturn(asList(game1, game2));
 		assertThat(gameService.getGamesByNameLike("name")).containsExactly(game1, game2);
 	}
@@ -134,8 +134,8 @@ public class GameServiceTest {
 	@Test
 	public void testUpdateGameById_setsIdToArgument_ShouldReturnSavedGame()
 			throws IllegalArgumentException, GameNotFoundException {
-		Game replacement = spy(new Game(null, "replacement_game", "description", new Date()));
-		Game replaced = new Game(1L, "replaced_game", "description", new Date());
+		Game replacement = spy(new Game(null, "replacement_game", "description", new Date(0)));
+		Game replaced = new Game(1L, "replaced_game", "description", new Date(0));
 		when(gameRepository.save(any(Game.class))).thenReturn(replaced);
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(replaced));
 
@@ -156,7 +156,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testUpdateGameById_IdNotFound_ShouldThrowException() {
-		Game game = new Game(1L, "name", "description", new Date());
+		Game game = new Game(1L, "name", "description", new Date(0));
 		when(gameRepository.findById(1L)).thenReturn(Optional.empty());
 		assertThatExceptionOfType(GameNotFoundException.class).isThrownBy(() -> gameService.updateGameById(1L, game));
 		verifyNoMoreInteractions(ignoreStubs(gameRepository));
@@ -164,7 +164,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testUpdateGameById_IdIsNull_ShouldThrowException() {
-		Game game = new Game(1L, "name", "description", new Date());
+		Game game = new Game(1L, "name", "description", new Date(0));
 		assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> gameService.updateGameById(null, game));
 		verifyNoMoreInteractions(gameRepository);
@@ -185,7 +185,7 @@ public class GameServiceTest {
 
 	@Test
 	public void testDeleteById_IdFound() {
-		Game game = new Game(1L, "name", "description", new Date());
+		Game game = new Game(1L, "name", "description", new Date(0));
 		when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
 		assertThatCode(() -> gameService.deleteById(1L)).doesNotThrowAnyException();
 		verify(gameRepository, times(1)).deleteById(1L);

@@ -44,6 +44,7 @@ public class User {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
+	@JsonIgnoreProperties("users")
 	private List<Game> games;
 
 	public User() {

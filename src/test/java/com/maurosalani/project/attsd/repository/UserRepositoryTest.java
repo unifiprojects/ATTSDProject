@@ -3,7 +3,7 @@ package com.maurosalani.project.attsd.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
-import com.maurosalani.project.attsd.repository.UserRepository;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -132,8 +131,8 @@ public class UserRepositoryTest {
 	@Test
 	public void testGamesListIsPersistedWhenUserIsSaved() {
 		List<Game> games = new LinkedList<Game>();
-		games.add(new Game(null, "game1", "description1", new Date()));
-		games.add(new Game(null, "game2", "description2", new Date()));
+		games.add(new Game(null, "game1", "description1", new Date(0)));
+		games.add(new Game(null, "game2", "description2", new Date(0)));
 		User user = new User(null, "test", "pwd");
 		user.setGames(games);
 
@@ -198,8 +197,8 @@ public class UserRepositoryTest {
 	@Test
 	public void testFindGamesOfUserByUsername() {
 		List<Game> games = new LinkedList<Game>();
-		games.add(new Game(null, "game1", "description1", new Date()));
-		games.add(new Game(null, "game2", "description2", new Date()));
+		games.add(new Game(null, "game1", "description1", new Date(0)));
+		games.add(new Game(null, "game2", "description2", new Date(0)));
 
 		User user = new User(null, "username_test", "pwd");
 		user.setGames(games);
