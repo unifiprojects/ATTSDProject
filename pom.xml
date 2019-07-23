@@ -226,10 +226,6 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
-            <excludedClasses>
-              <param>com.maurosalani.project.attsd.model.*</param>
-              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
-            </excludedClasses>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
@@ -237,8 +233,6 @@
               <param>com.maurosalani.project.attsd.dto.*</param>
               <param>com.maurosalani.project.attsd.model.*</param>
               <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
-              <param>com.maurosalani.project.attsd.service.*</param>
-              <param>com.maurosalani.project.attsd.exception.*</param>
             </excludedClasses>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
@@ -250,7 +244,7 @@
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>100</mutationThreshold>
+            <mutationThreshold>99</mutationThreshold>
           </configuration>
         </plugin>
 
