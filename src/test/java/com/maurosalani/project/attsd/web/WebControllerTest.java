@@ -14,8 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.sql.Date;
 import java.util.Collections;
-import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
@@ -129,7 +129,7 @@ public class WebControllerTest {
 	@Test
 	public void testVerifyLoginUser_Success_ShouldCreateSessionForUserAndRedirectToHome() throws Exception {
 		User user = new User(1L, "username", "password");
-		Credentials credentials = new Credentials("username", "password");
+		CredentialsDTO credentials = new CredentialsDTO("username", "password");
 		when(userService.verifyLogin(credentials)).thenReturn(user);
 
 		mvc.perform(post("/verifyLogin")
@@ -141,7 +141,7 @@ public class WebControllerTest {
 
 	@Test
 	public void testVerifyLoginUser_FailedWhenUsernameOrPasswordAreIncorrect_ShouldBeUnauthorized() throws Exception {
-		Credentials credentials = new Credentials("wrong_username", "wrong_password");
+		CredentialsDTO credentials = new CredentialsDTO("wrong_username", "wrong_password");
 		when(userService.verifyLogin(credentials))
 				.thenThrow(LoginFailedException.class);
 

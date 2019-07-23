@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.maurosalani.project.attsd.dto.ChangePasswordForm;
-import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.dto.RegistrationForm;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
@@ -78,12 +78,12 @@ public class WebController {
 			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
-		model.addAttribute("credentials", new Credentials());
+		model.addAttribute("credentials", new CredentialsDTO());
 		return "login";
 	}
 
 	@PostMapping(value = "/verifyLogin")
-	public String verifyLoginUser(Model model, Credentials credentials, HttpSession session)
+	public String verifyLoginUser(Model model, CredentialsDTO credentials, HttpSession session)
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute("user", result);
@@ -198,7 +198,7 @@ public class WebController {
 
 	@PostMapping("/addGame")
 	public String addGameToUser(@RequestParam(name = "gameToAdd") String gameToAdd, Model model, HttpSession session)
-			throws GameNotFoundException, UnauthorizedOperationException {
+			throws GameNotFoundException, UnauthorizedOperationException, UserNotFoundException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
@@ -211,7 +211,7 @@ public class WebController {
 
 	@PostMapping("/changePassword")
 	public String changePassword(ChangePasswordForm form, Model model, HttpSession session)
-			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException {
+			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException, UserNotFoundException, PasswordRequiredException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
