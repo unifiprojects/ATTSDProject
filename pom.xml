@@ -116,6 +116,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -226,47 +231,13 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
+            <verbose>true</verbose>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
-            <excludedClasses>
-              <param>com.maurosalani.project.attsd.dto.*</param>
-              <param>com.maurosalani.project.attsd.model.*</param>
-              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
-            </excludedClasses>
-            <excludedMethods>
-              <excludedMethod>
-                <!-- "not equals to greater than" mutation is executed in 
-                  this instruction: if (!userLogged.getId().equals(id)) and we don't understand 
-                  the how to cope with that -->
-                checkRequestCorrectness
-              </excludedMethod>
-              <excludedMethod>
-                <!-- "incremented integer local variable a++ (and also decrement)" 
-                  mutations are executed in this instruction: PageRequest.of(0, count) and 
-                  we don't understand the how to cope with that -->
-                getLatestReleasesGames
-              </excludedMethod>
-              <excludedMethod>
-                <!-- "equal to less or equal" mutation is executed in this 
-                  instruction: StringUtils.isWhitespace(password) and we don't understand the 
-                  how to cope with that -->
-                checkPasswordIsCorrect
-              </excludedMethod>
-              <excludedMethod>
-                <!-- "equal to less or equal" mutation is executed in this 
-                  instruction: Optional.isPresent() and we don't understand the 
-                  how to cope with that -->
-                checkIfUsernameAlreadyExists
-              </excludedMethod>
-            </excludedMethods>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
-            <excludedTestClasses>
-              <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
-              <param>com.maurosalani.project.attsd.*IT*</param>
-            </excludedTestClasses>
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
@@ -305,6 +276,15 @@
             <!-- configured in pluginManagement -->
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Application.*</exclude>
+                <exclude>**/model/*</exclude>
+                <exclude>**/exception/*</exclude>
+                <exclude>**/service/*</exclude>
+                <exclude>**/dto/*</exclude>
+              </excludes>
+            </configuration>
           </plugin>
 
           <plugin>

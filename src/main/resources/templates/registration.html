@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Registration</title>
+</head>
+<body>
+
+  <div>
+    <a th:href="@{/}">Go back to homepage</a>
+  </div>
+
+  <div th:unless="${message.empty}">
+    <div th:text="${message}"></div>
+  </div>
+
+  <form name="registration_form" th:action="@{/save}" th:object="${registrationForm}" method="post">
+
+    <label for="username">Username:</label> 
+    <input type="text" th:field="*{username}"
+      autofocus="autofocus" th:disabled="${disableInput}" /> 
+      
+    <label for="password">Password:</label>
+    <input type="text" th:field="*{password}" name="password" th:disabled="${disableInput}" />
+
+    <label for="confirmPassword">Confirm Password:</label> 
+    <input type="text" th:field="*{confirmPassword}"
+      name="confirmPassword" th:disabled="${disableInput}" />
+
+    <button type="submit" name="btn_submit"
+      th:disabled="${disableInput}">Register</button>
+  </form>
+
+</body>
+</html>
