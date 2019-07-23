@@ -12,6 +12,7 @@ buildNumber.properties
 HELP.md
 target/
 .attach_pid*
+*.launch
 
 ### STS ###
 .apt_generated
