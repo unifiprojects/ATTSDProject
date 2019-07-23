@@ -4,7 +4,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -128,7 +128,7 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testNameIsUpdated() {
-		Game game = new Game(null, "game_name", "game_description", new Date());
+		Game game = new Game(null, "game_name", "game_description", new Date(0));
 		Game savedAndToUpdate = entityManager.persistFlushFind(game);
 		savedAndToUpdate.setName("new_name");
 
@@ -139,7 +139,7 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testDescriptionIsUpdated() {
-		Game game = new Game(null, "game_name", "game_description", new Date());
+		Game game = new Game(null, "game_name", "game_description", new Date(0));
 		Game savedAndToUpdate = entityManager.persistFlushFind(game);
 		savedAndToUpdate.setDescription("new_description");
 
@@ -150,7 +150,7 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testDeleteByIdOfSaveGame() {
-		Game game = new Game(null, "game name", "game description", new Date());
+		Game game = new Game(null, "game name", "game description", new Date(0));
 		Game saved = entityManager.persistFlushFind(game);
 
 		repository.deleteById(saved.getId());
@@ -176,11 +176,16 @@ public class GameRepositoryTest {
 	
 	@Test
 	public void testFindTop3LatestReleaseGames() {
-		Game game1 = new Game(null, "game1", "description1", new Date(100));
-		Game game2 = new Game(null, "game2", "description2", new Date(200));
-		Game game3 = new Game(null, "game3", "description3", new Date(300));
-		Game game4 = new Game(null, "game4", "description4", new Date(400));
-		Game game5 = new Game(null, "game5", "description5", new Date(500));
+		long january2000 = 946681200000L;
+		long february2000 = 949359600000L;
+		long march2000 = 951865200000L;
+		long april2000 = 954540000000L;
+		long may2000 = 957132000000L;
+		Game game1 = new Game(null, "game1", "description1", new Date(january2000));
+		Game game2 = new Game(null, "game2", "description2", new Date(february2000));
+		Game game3 = new Game(null, "game3", "description3", new Date(march2000));
+		Game game4 = new Game(null, "game4", "description4", new Date(april2000));
+		Game game5 = new Game(null, "game5", "description5", new Date(may2000));
 		Game game1Saved = entityManager.persistFlushFind(game1);
 		Game game2Saved = entityManager.persistFlushFind(game2);
 		Game game3Saved = entityManager.persistFlushFind(game3);
@@ -189,7 +194,7 @@ public class GameRepositoryTest {
 		
 		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0,3));
 		assertThat(latest3Release.size()).isEqualTo(3);
-		assertThat(latest3Release).containsExactly(game5Saved, game4Saved, game3Saved);
+		assertThat(latest3Release).contains(game5Saved, game4Saved, game3Saved);
 		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);
 	}
 

@@ -2,7 +2,7 @@ package com.maurosalani.project.attsd.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Date;
+import java.sql.Date;
 
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class UserTest {
 	@Test
 	public void testAddGame() {
 		User user = new User(null, "user", "pwd");
-		Game game = new Game(null, "game_name", "game_description", new Date());
+		Game game = new Game(null, "game_name", "game_description", new Date(0));
 		user.addGame(game);
 		assertThat(user.getGames()).containsExactly(game);
 	}

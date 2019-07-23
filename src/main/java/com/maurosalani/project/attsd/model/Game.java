@@ -1,6 +1,6 @@
 package com.maurosalani.project.attsd.model;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -31,7 +29,6 @@ public class Game {
 
 	private String description;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	private Date releaseDate;
 
 	@ManyToMany(mappedBy = "games", cascade = CascadeType.ALL)

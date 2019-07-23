@@ -38,7 +38,8 @@
     <!-- Exclude non covered files -->
     <sonar.coverage.exclusions>
       **/*Application.*,
-      **/model/*
+      **/model/*,
+      **/dto/*
     </sonar.coverage.exclusions>
     <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
@@ -58,9 +59,9 @@
     <sonar.issue.ignore.multicriteria.e2.resourceKey>
       **/model/*.java
     </sonar.issue.ignore.multicriteria.e2.resourceKey>
-    <!-- "Return values from functions without side effects
-     should not be ignored", disabled on UserService class in methods 
-     that throw an Exception that is caught by Spring -->
+    <!-- "Return values from functions without side effects should not be 
+      ignored", disabled on UserService class in methods that throw an Exception 
+      that is caught by Spring -->
     <sonar.issue.ignore.multicriteria.e3.ruleKey>
       squid:S2201
     </sonar.issue.ignore.multicriteria.e3.ruleKey>
@@ -91,6 +92,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>spring-mock-mvc</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -179,6 +185,7 @@
             <excludes>
               <exclude>**/*Application.*</exclude>
               <exclude>**/model/*</exclude>
+              <exclude>**/dto/*</exclude>
             </excludes>
           </configuration>
           <executions>
@@ -219,13 +226,14 @@
           <artifactId>pitest-maven</artifactId>
           <version>1.4.8</version>
           <configuration>
-            <excludedClasses>
-              <param>com.maurosalani.project.attsd.model.*</param>
-              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
-            </excludedClasses>
             <targetClasses>
               <param>com.maurosalani.project.attsd.*</param>
             </targetClasses>
+            <excludedClasses>
+              <param>com.maurosalani.project.attsd.dto.*</param>
+              <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+            </excludedClasses>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
@@ -236,7 +244,7 @@
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>98</mutationThreshold>
+            <mutationThreshold>99</mutationThreshold>
           </configuration>
         </plugin>
 
@@ -316,7 +324,7 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.20.1</version>
+            <version>0.30.0</version>
             <extensions>true</extensions>
             <configuration>
               <images>
@@ -330,9 +338,9 @@
                     </wait>
                     <env>
                       <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
-                      <MYSQL_DATABASE>springdb</MYSQL_DATABASE>
-                      <MYSQL_USER>user</MYSQL_USER>
-                      <MYSQL_PASSWORD>password</MYSQL_PASSWORD>
+                      <MYSQL_DATABASE>attsd_database_test</MYSQL_DATABASE>
+                      <MYSQL_USER>springuser_test</MYSQL_USER>
+                      <MYSQL_PASSWORD>springuser_test</MYSQL_PASSWORD>
                     </env>
                     <ports>
                       <port>3306:3306</port>

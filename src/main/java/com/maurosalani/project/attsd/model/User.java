@@ -16,6 +16,8 @@ import javax.persistence.ManyToMany;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class User {
 
@@ -33,13 +35,16 @@ public class User {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
+	@JsonIgnoreProperties("followerUsers")
 	private List<User> followedUsers;
 
 	@ManyToMany(mappedBy = "followedUsers", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("followedUsers")
 	private List<User> followerUsers;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
+	@JsonIgnoreProperties("users")
 	private List<Game> games;
 
 	public User() {
@@ -47,9 +52,21 @@ public class User {
 	}
 
 	public User(Long id, String username, String password) {
+		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
+	}
+
+	public User(Long id, String username, String password, List<User> followedUsers, List<User> followerUsers,
+			List<Game> games) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.followedUsers = followedUsers;
+		this.followerUsers = followerUsers;
+		this.games = games;
 	}
 
 	public Long getId() {
@@ -163,4 +180,5 @@ public class User {
 			return false;
 		return true;
 	}
+
 }
