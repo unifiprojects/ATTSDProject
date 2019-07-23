@@ -16,6 +16,8 @@ import javax.persistence.ManyToMany;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class User {
 
@@ -33,9 +35,11 @@ public class User {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
+	@JsonIgnoreProperties("followerUsers")
 	private List<User> followedUsers;
 
 	@ManyToMany(mappedBy = "followedUsers", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("followedUsers")
 	private List<User> followerUsers;
 
 	@ManyToMany(cascade = CascadeType.ALL)

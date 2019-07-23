@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.dto.Credentials;
+import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserForm;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserForm;
 import com.maurosalani.project.attsd.dto.UpdateUserForm;
 import com.maurosalani.project.attsd.dto.UserDTO;
@@ -57,7 +58,7 @@ public class UserRestControllerIT {
 	}
 	
 	@Test
-	public void testUpdateExistingUser() throws Exception {
+	public void testUpdate_WithExistingUser() throws Exception {
 		User saved = userRepository.save(new User (null, "testUsername", "testPassword"));
 		Credentials credentials = new Credentials("testUsername", "testPassword");
 		User userReplacement = new User(null, "new_username", "new_password");
@@ -75,7 +76,7 @@ public class UserRestControllerIT {
 	}
 	
 	@Test
-	public void testUpdatePasswordOfExistingUser() throws Exception {
+	public void testUpdate_ChangedPasswordOfExistingUser() throws Exception {
 		User saved = userRepository.save(new User (null, "testUsername", "testPassword"));
 		Credentials credentials = new Credentials("testUsername", "testPassword");
 		UpdatePasswordUserForm form = new UpdatePasswordUserForm(credentials, "new_password");
@@ -89,6 +90,24 @@ public class UserRestControllerIT {
 		User updated = response.getBody().as(User.class);
 
 		assertThat(userRepository.findById(saved.getId()).get()).isEqualTo(updated);
+	}
+	
+	@Test
+	public void testUpdate_AddFollowedToExistingUser() throws Exception {
+		User userToUpdate = userRepository.save(new User(null, "testUsername", "testPassword"));
+		User followedToAdd = userRepository.save(new User(null, "followed", "password"));
+		Credentials credentials = new Credentials("testUsername", "testPassword");
+		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(credentials, followedToAdd);
+		
+		Response response =
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(form).
+				when().
+					patch("/api/users/update/addFollowedUser/" + userToUpdate.getId());
+		User updated = response.getBody().as(User.class);
+		
+		assertThat(userRepository.findById(userToUpdate.getId()).get()).isEqualTo(updated);
 	}
 
 }
