@@ -433,6 +433,23 @@ public class UserRestControllerTest {
 	}
 	
 	@Test
+	public void testPatch_AddFollowedUser_UserDoesNotProvideLogin_ShouldGetError() throws Exception {
+		User followedToAdd = new User(null, "followed", "pwd");
+		UpdateAddFollowedUserForm form = new UpdateAddFollowedUserForm(null, followedToAdd);
+		
+		when(userService.verifyLogin(null)).thenThrow(LoginFailedException.class);
+		
+		given().
+			contentType(MediaType.APPLICATION_JSON_VALUE).
+			body(form).
+		when().
+			patch("/api/users/update/addFollowedUser/1").
+		then().
+			statusCode(401).
+			statusLine(containsString("Invalid username or password"));
+	}
+	
+	@Test
 	public void testPatch_AddGameLiked_UserSuccessLogin() throws Exception {
 		Game gameLiked = new Game(null, "gameLiked", "description", new Date(1));
 		Credentials credentials = new Credentials("testUsername", "pwd");
