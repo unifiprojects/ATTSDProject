@@ -56,8 +56,8 @@ public class UserWebControllerIT {
 		gameRepository.save(gameLatestRelease2);
 		driver.get(baseUrl);
 		
-		assertThat(driver.findElement(By.linkText("Log in"))).isNotNull();
-		assertThat(driver.findElement(By.linkText("Register"))).isNotNull();
+		driver.findElement(By.linkText("Log in"));
+		driver.findElement(By.linkText("Register"));
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).
 			contains("game1", "description1", "game2","description2");
 	}
@@ -71,7 +71,7 @@ public class UserWebControllerIT {
 		driver.findElement(By.name("btn_submit")).click();
 		
 		assertThat(driver.getPageSource()).contains("Welcome back");
-		assertThat(driver.findElement(By.linkText("Logout"))).isNotNull();
+		driver.findElement(By.linkText("Logout"));
 	}
 	
 	@Test
@@ -87,5 +87,33 @@ public class UserWebControllerIT {
 		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
 	}
 	
-	
+	@Test
+	public void testSearchUsersAndGames_ShouldSeeAllTheComplyingResults() {
+		User user1 = new User(null, "someName1", "password");
+		User user2 = new User(null, "someName2", "password");
+		User userNotComplying = new User(null, "notComplying", "password");
+		Game game1 = new Game(null, "someName1", "description", null);
+		Game game2 = new Game(null, "someName2", "description", null);
+		Game gameNotComplying = new Game(null, "notComplying", "description", null);
+		userRepository.save(user1);
+		userRepository.save(user2);
+		userRepository.save(userNotComplying);
+		gameRepository.save(game1);
+		gameRepository.save(game2);
+		gameRepository.save(gameNotComplying);
+
+		driver.get(baseUrl);
+		driver.findElement(By.name("content_search")).sendKeys("Name");
+		driver.findElement(By.name("btn_submit")).click();
+		System.out.println(driver.getPageSource());
+		driver.findElement(By.cssSelector
+			("a[href*='/profile/" + user1.getUsername() + "']"));
+		driver.findElement(By.cssSelector
+			("a[href*='/profile/" + user2.getUsername() + "']"));
+		driver.findElement(By.cssSelector
+				("a[href*='/profile/" + game1.getName() + "']"));
+		driver.findElement(By.cssSelector
+				("a[href*='/profile/" + game2.getName() + "']"));
+		
+	}
 }
