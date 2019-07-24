@@ -427,17 +427,18 @@ public class WebControllerTest {
 			.andExpect(request().sessionAttribute("user", equalTo(null)))
 			.andExpect(view().name("profile404"));
 	}
-
+				
 	@Test
-	public void testGame_GameFound() throws Exception {
+	public void testGame_NoUserLogged() throws Exception {
 		Game game = new Game(1L, "gamenameTest", "gamedescription", new Date(1000));
 		when(gameService.getGameByName("gamenameTest")).thenReturn(game);
 
 		mvc.perform(get("/game/gamenameTest"))
-			.andExpect(model().attribute("game", game))
+			.andExpect(model().attribute("isLogged", false))
+			.andExpect(model().attribute("isAlreadyLiked", false))
 			.andExpect(view().name("game"));
 	}
-
+	
 	@Test
 	public void testGame_GameNotFound_ShouldRedirectToPage404() throws Exception {
 		when(gameService.getGameByName("wrong_name")).thenThrow(GameNotFoundException.class);
@@ -447,6 +448,35 @@ public class WebControllerTest {
 			.andExpect(model().attribute(MESSAGE, "Game not found."))
 			.andExpect(model().attribute("game", equalTo(null)))
 			.andExpect(view().name("game404"));
+	}
+	
+	@Test
+	public void testGame_GameNotYetFollowedFound() throws Exception {
+		User user = new User(1L, "usernameTest", "password");
+		Game game = new Game(2L, "gamenameTest", "gamedescription", new Date(1000));
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/game/gamenameTest");
+		when(gameService.getGameByName("gamenameTest")).thenReturn(game);
+
+		mvc.perform(requestToPerform)
+			.andExpect(model().attribute("game", game))
+			.andExpect(model().attribute("isLogged", true))
+			.andExpect(model().attribute("isAlreadyLiked", false))
+			.andExpect(view().name("game"));
+	}
+	
+	@Test
+	public void testGame_GameAlreadyFound() throws Exception {
+		User user = new User(1L, "usernameTest", "password");
+		Game game = new Game(2L, "gamenameTest", "gamedescription", new Date(1000));
+		game.addUser(user);
+		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/game/gamenameTest");
+		when(gameService.getGameByName("gamenameTest")).thenReturn(game);
+
+		mvc.perform(requestToPerform)
+			.andExpect(model().attribute("game", game))
+			.andExpect(model().attribute("isLogged", true))
+			.andExpect(model().attribute("isAlreadyLiked", true))
+			.andExpect(view().name("game"));
 	}
 	
 	@Test
