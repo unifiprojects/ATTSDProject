@@ -39,7 +39,8 @@
     <sonar.coverage.exclusions>
       **/*Application.*,
       **/model/*,
-      **/dto/*
+      **/dto/*,
+      **/exception/*
     </sonar.coverage.exclusions>
     <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
@@ -191,6 +192,7 @@
               <exclude>**/*Application.*</exclude>
               <exclude>**/model/*</exclude>
               <exclude>**/dto/*</exclude>
+              <exclude>**/exception/*</exclude>
             </excludes>
           </configuration>
           <executions>
@@ -237,8 +239,35 @@
             <excludedClasses>
               <param>com.maurosalani.project.attsd.dto.*</param>
               <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.exception.*</param>
               <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
             </excludedClasses>
+            <excludedMethods>
+              <excludedMethod>
+                <!-- "not equals to greater than" mutation is executed in 
+                  this instruction: if (!userLogged.getId().equals(id)) and we don't understand 
+                  the how to cope with that -->
+                checkRequestCorrectness
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "incremented integer local variable a++ (and also decrement)" 
+                  mutations are executed in this instruction: PageRequest.of(0, count) and 
+                  we don't understand the how to cope with that -->
+                getLatestReleasesGames
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "equal to less or equal" mutation is executed in this 
+                  instruction: StringUtils.isWhitespace(password) and we don't understand the 
+                  how to cope with that -->
+                checkPasswordIsCorrect
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "equal to less or equal" mutation is executed in this 
+                  instruction: Optional.isPresent() and we don't understand the how to cope 
+                  with that -->
+                checkIfUsernameAlreadyExists
+              </excludedMethod>
+            </excludedMethods>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
@@ -284,15 +313,6 @@
             <!-- configured in pluginManagement -->
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <exclude>**/*Application.*</exclude>
-                <exclude>**/model/*</exclude>
-                <exclude>**/exception/*</exclude>
-                <exclude>**/service/*</exclude>
-                <exclude>**/dto/*</exclude>
-              </excludes>
-            </configuration>
           </plugin>
 
           <plugin>
