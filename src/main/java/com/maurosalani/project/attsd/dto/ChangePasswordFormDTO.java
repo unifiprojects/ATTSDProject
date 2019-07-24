@@ -1,14 +1,14 @@
 package com.maurosalani.project.attsd.dto;
 
-public class ChangePasswordForm {
+public class ChangePasswordFormDTO {
 
 	private String oldPassword;
 	private String newPassword;
 
-	public ChangePasswordForm() {
+	public ChangePasswordFormDTO() {
 	}
 
-	public ChangePasswordForm(String oldPassword, String newPassword) {
+	public ChangePasswordFormDTO(String oldPassword, String newPassword) {
 		super();
 		this.oldPassword = oldPassword;
 		this.newPassword = newPassword;
@@ -47,16 +47,18 @@ public class ChangePasswordForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ChangePasswordForm other = (ChangePasswordForm) obj;
+		ChangePasswordFormDTO other = (ChangePasswordFormDTO) obj;
 		if (newPassword == null) {
 			if (other.newPassword != null)
 				return false;
-		} else if (!newPassword.equals(other.newPassword))
+		} 
+		else if (!newPassword.equals(other.newPassword))
 			return false;
 		if (oldPassword == null) {
 			if (other.oldPassword != null)
 				return false;
-		} else if (!oldPassword.equals(other.oldPassword))
+		} 
+		else if (!oldPassword.equals(other.oldPassword))
 			return false;
 		return true;
 	}

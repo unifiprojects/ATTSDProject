@@ -596,7 +596,7 @@ public class WebViewTest {
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
-		assertThat(page.getFormByName("like_form").getButtonByName("btn_like"));
+		assertThat(page.getFormByName("like_form").getButtonByName("btn_like").getDisabledAttribute()).isEqualTo("");
 		assertLinkPresentWithText(page, "Homepage");
 	}
 	

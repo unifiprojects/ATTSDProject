@@ -6,16 +6,16 @@ import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.PasswordsRegistrationDoNotMatchException;
 import com.maurosalani.project.attsd.exception.UsernameRequiredException;
 
-public class RegistrationForm {
+public class RegistrationFormDTO {
 
 	private String username;
 	private String password;
 	private String confirmPassword;
 
-	public RegistrationForm() {
+	public RegistrationFormDTO() {
 	}
 
-	public RegistrationForm(String username, String password, String confirmPassword) {
+	public RegistrationFormDTO(String username, String password, String confirmPassword) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -79,21 +79,24 @@ public class RegistrationForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RegistrationForm other = (RegistrationForm) obj;
+		RegistrationFormDTO other = (RegistrationFormDTO) obj;
 		if (confirmPassword == null) {
 			if (other.confirmPassword != null)
 				return false;
-		} else if (!confirmPassword.equals(other.confirmPassword))
+		} 
+		else if (!confirmPassword.equals(other.confirmPassword))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} else if (!password.equals(other.password))
+		} 
+		else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} 
+		else if (!username.equals(other.username))
 			return false;
 		return true;
 	}

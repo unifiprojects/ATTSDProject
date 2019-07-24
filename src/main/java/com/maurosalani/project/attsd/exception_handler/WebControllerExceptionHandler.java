@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
-import com.maurosalani.project.attsd.dto.RegistrationForm;
+import com.maurosalani.project.attsd.dto.RegistrationFormDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.NewPasswordRequiredException;
@@ -33,7 +33,7 @@ public class WebControllerExceptionHandler extends ResponseEntityExceptionHandle
 	public String handleUsernameAlreadyExisting(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.CONFLICT.value());
 		model.addAttribute(MESSAGE, "Username already existing. Please choose another one.");
-		model.addAttribute(REGISTRATION_FORM, new RegistrationForm());
+		model.addAttribute(REGISTRATION_FORM, new RegistrationFormDTO());
 		return REGISTRATION_VIEW;
 	}
 
@@ -41,7 +41,7 @@ public class WebControllerExceptionHandler extends ResponseEntityExceptionHandle
 	public String handleDataIntegrityViolation(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Username or password invalid.");
-		model.addAttribute(REGISTRATION_FORM, new RegistrationForm());
+		model.addAttribute(REGISTRATION_FORM, new RegistrationFormDTO());
 		return REGISTRATION_VIEW;
 	}
 
@@ -78,7 +78,7 @@ public class WebControllerExceptionHandler extends ResponseEntityExceptionHandle
 	public String handleRegistrationPasswordNotValid(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Password and Confirm Password must match.");
-		model.addAttribute(REGISTRATION_FORM, new RegistrationForm());
+		model.addAttribute(REGISTRATION_FORM, new RegistrationFormDTO());
 		return REGISTRATION_VIEW;
 	}
 
@@ -86,7 +86,7 @@ public class WebControllerExceptionHandler extends ResponseEntityExceptionHandle
 	public String handlePasswordRequired(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Password is required.");
-		model.addAttribute(REGISTRATION_FORM, new RegistrationForm());
+		model.addAttribute(REGISTRATION_FORM, new RegistrationFormDTO());
 		return REGISTRATION_VIEW;
 	}
 
@@ -94,7 +94,7 @@ public class WebControllerExceptionHandler extends ResponseEntityExceptionHandle
 	public String handleUsernameRequired(Model model, HttpServletResponse response) {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		model.addAttribute(MESSAGE, "Username is required.");
-		model.addAttribute(REGISTRATION_FORM, new RegistrationForm());
+		model.addAttribute(REGISTRATION_FORM, new RegistrationFormDTO());
 		return REGISTRATION_VIEW;
 	}
 

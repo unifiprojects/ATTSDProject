@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.maurosalani.project.attsd.dto.ChangePasswordForm;
+import com.maurosalani.project.attsd.dto.ChangePasswordFormDTO;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
-import com.maurosalani.project.attsd.dto.RegistrationForm;
+import com.maurosalani.project.attsd.dto.RegistrationFormDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.NewPasswordRequiredException;
@@ -106,12 +106,12 @@ public class WebController {
 			model.addAttribute(MESSAGE, "");
 			model.addAttribute(DISABLE_INPUT_FLAG, false);
 		}
-		model.addAttribute("registrationForm", new RegistrationForm());
+		model.addAttribute("registrationForm", new RegistrationFormDTO());
 		return "registration";
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpSession session, RegistrationForm form) throws UsernameAlreadyExistingException,
+	public String save(Model model, HttpSession session, RegistrationFormDTO form) throws UsernameAlreadyExistingException,
 			UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
 
 		if (form.isValid()) {
@@ -160,7 +160,7 @@ public class WebController {
 			model.addAttribute(IS_MY_PROFILE_FLAG, isMyProfile);
 			model.addAttribute(IS_ALREADY_FOLLOWED_FLAG, isAlreadyFollowed);
 			if(isMyProfile)
-				model.addAttribute("changePasswordForm", new ChangePasswordForm());
+				model.addAttribute("changePasswordForm", new ChangePasswordFormDTO());
 		}
 		return "profile";
 	}
@@ -210,7 +210,7 @@ public class WebController {
 	}
 
 	@PostMapping("/changePassword")
-	public String changePassword(ChangePasswordForm form, Model model, HttpSession session)
+	public String changePassword(ChangePasswordFormDTO form, Model model, HttpSession session)
 			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException, UserNotFoundException, PasswordRequiredException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
