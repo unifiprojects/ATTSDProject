@@ -140,6 +140,34 @@ public class WebViewTest {
 	}
 	
 	@Test
+	public void testHomePage_LogoutSuccess() throws Exception {
+		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
+		webClient.getPage(requestToLogin);
+		
+		HtmlPage page = webClient.getPage("/logout");				
+		assertTitleEquals(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, WELCOME_PLEASE_LOGIN);
+		assertFormPresent(page, "search_form");
+		assertInputPresent(page, "content_search");
+		assertThat(page.getAnchorByText("Log in").getHrefAttribute()).isEqualTo("/login");
+		assertThat(page.getAnchorByText("Register").getHrefAttribute()).isEqualTo("/registration");
+	}
+	
+	@Test
+	public void testHomePage_LogoutNoUserLogged() throws Exception {
+		HtmlPage page = webClient.getPage("/logout");				
+		assertTitleEquals(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTextPresent(page, WELCOME_PLEASE_LOGIN);
+		assertFormPresent(page, "search_form");
+		assertInputPresent(page, "content_search");
+		assertThat(page.getAnchorByText("Log in").getHrefAttribute()).isEqualTo("/login");
+		assertThat(page.getAnchorByText("Register").getHrefAttribute()).isEqualTo("/registration");
+	}
+	
+	@Test
 	public void testLoginPage_ShouldContainLoginForm() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
 
