@@ -17,6 +17,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.maurosalani.project.attsd.model.Game;
+import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.repository.GameRepository;
 import com.maurosalani.project.attsd.repository.UserRepository;
 
@@ -46,7 +47,7 @@ public class UserWebControllerIT {
 		gameRepository.deleteAll();
 		gameRepository.flush();
 	}
-
+	
 	@Test
 	public void testHomePage_UserShouldSeeLoginAndLatestReleasesGames() {
 		Game gameLatestRelease1 = new Game(null, "game1", "description1", new Date(1000));
@@ -55,10 +56,21 @@ public class UserWebControllerIT {
 		gameRepository.save(gameLatestRelease2);
 		driver.get(baseUrl);
 		
-		System.out.println(driver.getPageSource());
 		assertThat(driver.findElement(By.linkText("Log in"))).isNotNull();
 		assertThat(driver.findElement(By.linkText("Register"))).isNotNull();
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).
 			contains("game1", "description1", "game2","description2");
+	}
+
+	@Test
+	public void testHomePage_UserLogWithSuccess_ShouldSeeLogOutInHomepage() {
+		User userRegistered = userRepository.save(new User(null, "username", "password"));
+		driver.get(baseUrl + "/login");
+		driver.findElement(By.name("username")).sendKeys(userRegistered.getUsername());
+		driver.findElement(By.name("password")).sendKeys(userRegistered.getPassword());
+		driver.findElement(By.name("btn_submit")).click();
+		
+		assertThat(driver.getPageSource()).contains("Welcome back");
+		assertThat(driver.findElement(By.linkText("Logout"))).isNotNull();
 	}
 }
