@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -301,16 +300,6 @@ public class WebControllerTest {
 				.param("content_search", "   "))
 			.andExpect(model().attribute(MESSAGE, "Error: search field was empty."))
 			.andExpect(view().name("search"));
-	}
-
-	@Test
-	public void testSearch_ContentIsValid_ShouldBeTrimmed() throws Exception {
-		String trimmedContent = new String(" someName ").trim();
-
-		mvc.perform(get("/search").param("content_search", " someName "));
-
-		verify(userService).getUsersByUsernameLike(trimmedContent);
-		verify(gameService).getGamesByNameLike(trimmedContent);
 	}
 
 	@Test

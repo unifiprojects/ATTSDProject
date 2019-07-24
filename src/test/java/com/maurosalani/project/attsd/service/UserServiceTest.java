@@ -133,8 +133,16 @@ public class UserServiceTest {
 	public void testGetUsersByUsernameLikeWithExistingUsers() {
 		User user1 = new User(1L, "username1", "pwd1");
 		User user2 = new User(2L, "username2", "pwd2");
-		when(userRepository.findByUsernameLike("username")).thenReturn(asList(user1, user2));
+		when(userRepository.findByUsernameLike("%username%")).thenReturn(asList(user1, user2));
 		assertThat(userService.getUsersByUsernameLike("username")).containsExactly(user1, user2);
+	}
+	
+	@Test
+	public void testGetUsersByUsernameLike_verifyUsernameIsTrimmedAndWithWildcards() {
+		String content = " someName ";
+		userService.getUsersByUsernameLike(content);
+		
+		verify(userRepository).findByUsernameLike("%someName%");
 	}
 
 	@Test
