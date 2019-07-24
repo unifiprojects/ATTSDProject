@@ -39,7 +39,7 @@ import com.maurosalani.project.attsd.exception.LoginFailedException;
 import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
-import com.maurosalani.project.attsd.exception_handler.GlobalExceptionHandler;
+import com.maurosalani.project.attsd.exception_handler.RestControllerExceptionHandler;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.UserService;
@@ -70,7 +70,7 @@ public class UserRestControllerTest {
 	 */
 	private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
 		StaticApplicationContext applicationContext = new StaticApplicationContext();
-		applicationContext.registerSingleton("exceptionHandler", GlobalExceptionHandler.class);
+		applicationContext.registerSingleton("exceptionHandler", RestControllerExceptionHandler.class);
 
 		WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
 		webMvcConfigurationSupport.setApplicationContext(applicationContext);

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+  <div>
+    <a th:href="@{/}">Go back to homepage</a>
+  </div>
+  <div th:unless="${message.empty}">
+    <div th:text="${message}"></div>
+  </div>
+  <form name="login_form" th:action="@{/verifyLogin}" th:object="${credentials}" method="post">
+
+    <label for="username">Username:</label> 
+    <input type="text" autofocus="autofocus" th:field="*{username}" th:disabled="${disableInput}" /> 
+      
+    <label for="password">Password:</label>
+    <input type="text" th:field="*{password}" th:disabled="${disableInput}" />
+
+    <button type="submit" name="btn_submit"
+      th:disabled="${disableInput}">Log in</button>
+  </form>
+</body>
+</html>

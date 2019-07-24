@@ -16,8 +16,8 @@ import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
 import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 
-@ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+@ControllerAdvice("com.maurosalani.project.attsd.controller")
+public class RestControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public void handleUserNotFound(HttpServletResponse response) throws IOException {
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public void handePasswordIsRequired(HttpServletResponse response) throws IOException {
 		response.sendError(HttpStatus.BAD_REQUEST.value(), "Password required");
 	}
-	
+
 	@ExceptionHandler(UsernameAlreadyExistingException.class)
 	public void handeUsernameAlreadyExist(HttpServletResponse response) throws IOException {
 		response.sendError(HttpStatus.BAD_REQUEST.value(), "Username already exist");

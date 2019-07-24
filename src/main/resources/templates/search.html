@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Search</title>
+</head>
+<body>
+  <div>
+    <div>
+      <a th:href="@{/}">Go back to homepage</a>
+    </div>
+    <div th:if="${!message.empty}">
+      <div th:text="${message}"></div>
+    </div>
+    <div th:if="${message.empty}">
+      <!-- Table of Users result -->
+      <table id="userSearchResults">
+        <thead>
+          <tr>
+            <th>
+              <h3>Users</h3>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${usersList.empty}">
+            <td>No Users</td>
+          </tr>
+          <tr th:unless="${usersList.empty}"
+            th:each="user : ${usersList}">
+            <td>
+              <a th:href="@{'/profile/' + ${user.username}}">
+                <span th:text="${user.username}"></span>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Table of Games result -->
+      <table id="gameSearchResults">
+        <thead>
+          <tr>
+            <th>
+              <h3>Games</h3>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${gamesList.empty}">
+            <td>No Games</td>
+          </tr>
+          <tr th:unless="${gamesList.empty}"
+            th:each="game : ${gamesList}">
+            <td>
+              <a th:href="@{'/game/' + ${game.name}}">
+                <span th:text="${game.name}"></span>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

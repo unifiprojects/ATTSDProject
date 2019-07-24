@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ATTSD-Project: Social Games</title>
+</head>
+<body>
+  <h1>ATTSD-Project: Social Games</h1>
+  <div>
+    <!-- search form -->
+    <form name="search_form" th:action="@{/search}" method="get">
+      <input type="text" name="content_search"
+        placeholder="Search users and games..." />
+      <button type="submit" name="btn_submit">Search</button>
+    </form>
+  </div>
+  <!-- Login/Registration section -->
+  <div th:if="${username == null}">
+    <!-- The user is not logged -->
+    <div>
+      Welcome! Please <a th:href="@{/login}">Log in</a> or <a
+        th:href="@{/registration}">Register</a>
+    </div>
+  </div>
+  <div th:unless="${username == null}">
+    <!-- The user is logged -->
+    <div>
+      Welcome back <a th:href="@{'/profile/' + ${username}}"> <label
+        th:text="${username}"> </label>
+      </a>
+      <div>
+        <a th:href="@{/logout}">Logout</a>
+      </div>
+    </div>
+  </div>
+  <!-- Latest releases -->
+  <div>
+    <div th:if="${latestReleases.empty}">
+      <h2>No latest releases...</h2>
+    </div>
+    <div th:unless="${latestReleases.empty}">
+      <h1>Latest releases!</h1>
+      <table id="latestReleases">
+        <tr th:each="game : ${latestReleases}">
+          <td th:text="${game.name}"></td>
+          <td th:text="${game.description}"></td>
+          <td th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

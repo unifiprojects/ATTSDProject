@@ -101,8 +101,16 @@ public class GameServiceTest {
 	public void testGetGamesByNameLikeWithExistingGames() {
 		Game game1 = new Game(1L, "game1", "description1", new Date(0));
 		Game game2 = new Game(2L, "game2", "description2", new Date(0));
-		when(gameRepository.findByNameLike("name")).thenReturn(asList(game1, game2));
+		when(gameRepository.findByNameLike("%name%")).thenReturn(asList(game1, game2));
 		assertThat(gameService.getGamesByNameLike("name")).containsExactly(game1, game2);
+	}
+
+	@Test
+	public void testGetGamesByNameLike_verifyNameIsTrimmedAndWithWildcards() {
+		String content = " someName ";
+		gameService.getGamesByNameLike(content);
+		
+		verify(gameRepository).findByNameLike("%someName%");
 	}
 	
 	@Test

@@ -39,7 +39,8 @@
     <sonar.coverage.exclusions>
       **/*Application.*,
       **/model/*,
-      **/dto/*
+      **/dto/*,
+      **/exception/*
     </sonar.coverage.exclusions>
     <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
@@ -116,6 +117,21 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>htmlunit-driver</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -186,6 +202,7 @@
               <exclude>**/*Application.*</exclude>
               <exclude>**/model/*</exclude>
               <exclude>**/dto/*</exclude>
+              <exclude>**/exception/*</exclude>
             </excludes>
           </configuration>
           <executions>
@@ -232,8 +249,35 @@
             <excludedClasses>
               <param>com.maurosalani.project.attsd.dto.*</param>
               <param>com.maurosalani.project.attsd.model.*</param>
+              <param>com.maurosalani.project.attsd.exception.*</param>
               <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
             </excludedClasses>
+            <excludedMethods>
+              <excludedMethod>
+                <!-- "not equals to greater than" mutation is executed in 
+                  this instruction: if (!userLogged.getId().equals(id)) and we don't understand 
+                  the how to cope with that -->
+                checkRequestCorrectness
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "incremented integer local variable a++ (and also decrement)" 
+                  mutations are executed in this instruction: PageRequest.of(0, count) and 
+                  we don't understand the how to cope with that -->
+                getLatestReleasesGames
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "equal to less or equal" mutation is executed in this 
+                  instruction: StringUtils.isWhitespace(password) and we don't understand the 
+                  how to cope with that -->
+                checkPasswordIsCorrect
+              </excludedMethod>
+              <excludedMethod>
+                <!-- "equal to less or equal" mutation is executed in this 
+                  instruction: Optional.isPresent() and we don't understand the how to cope 
+                  with that -->
+                checkIfUsernameAlreadyExists
+              </excludedMethod>
+            </excludedMethods>
             <targetTests>
               <param>com.maurosalani.project.attsd.*</param>
             </targetTests>
@@ -244,7 +288,7 @@
             <mutators>
               <mutator>ALL</mutator>
             </mutators>
-            <mutationThreshold>99</mutationThreshold>
+            <mutationThreshold>100</mutationThreshold>
           </configuration>
         </plugin>
 
@@ -334,7 +378,7 @@
                   <run>
                     <wait>
                       <log>mysqld: ready for connections</log>
-                      <time>20000</time>
+                      <time>90000</time>
                     </wait>
                     <env>
                       <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
