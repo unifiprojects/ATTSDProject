@@ -52,7 +52,7 @@
           <tr th:unless="${gamesList.empty}"
             th:each="game : ${gamesList}">
             <td>
-              <a th:href="@{'/profile/' + ${game.name}}">
+              <a th:href="@{'/game/' + ${game.name}}">
                 <span th:text="${game.name}"></span>
               </a>
             </td>

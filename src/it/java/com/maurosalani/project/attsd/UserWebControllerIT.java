@@ -112,9 +112,9 @@ public class UserWebControllerIT {
 		driver.findElement(By.cssSelector
 			("a[href*='/profile/" + user2.getUsername() + "']"));
 		driver.findElement(By.cssSelector
-				("a[href*='/profile/" + game1.getName() + "']"));
+				("a[href*='/game/" + game1.getName() + "']"));
 		driver.findElement(By.cssSelector
-				("a[href*='/profile/" + game2.getName() + "']"));
+				("a[href*='/game/" + game2.getName() + "']"));
 	}
 	
 	@Test
@@ -143,14 +143,16 @@ public class UserWebControllerIT {
 		assertThat(driver.getPageSource()).contains(user.getUsername());
 		assertThat(driver.findElement(By.id("userFollowed")).getText()).
 			doesNotContain("No Users");
+		assertThat(driver.findElement(By.id("games")).getText()).
+			doesNotContain("No Games");
 		driver.findElement(By.cssSelector
 				("a[href*='/profile/" + user1.getUsername() + "']"));
 			driver.findElement(By.cssSelector
 				("a[href*='/profile/" + user2.getUsername() + "']"));
 			driver.findElement(By.cssSelector
-					("a[href*='/profile/" + game1.getName() + "']"));
+					("a[href*='/game/" + game1.getName() + "']"));
 			driver.findElement(By.cssSelector
-					("a[href*='/profile/" + game2.getName() + "']"));
+					("a[href*='/game/" + game2.getName() + "']"));
 	}
 	
 	
