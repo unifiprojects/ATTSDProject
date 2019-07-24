@@ -111,13 +111,13 @@ public class WebController {
 	}
 
 	@PostMapping("/save")
-	public String save(Model model, HttpSession session, RegistrationFormDTO form) throws UsernameAlreadyExistingException,
-			UsernameRequiredException, PasswordRequiredException, PasswordsRegistrationDoNotMatchException {
+	public String save(Model model, HttpSession session, RegistrationFormDTO form)
+			throws UsernameAlreadyExistingException, UsernameRequiredException, PasswordRequiredException,
+			PasswordsRegistrationDoNotMatchException {
 
-		if (form.isValid()) {
-			User userSaved = userService.insertNewUser(new User(null, form.getUsername(), form.getPassword()));
-			model.addAttribute("user", userSaved);
-		}
+		form.checkValidity();
+		User userSaved = userService.insertNewUser(new User(null, form.getUsername(), form.getPassword()));
+		model.addAttribute("user", userSaved);
 		return "registrationSuccess";
 	}
 
@@ -159,7 +159,7 @@ public class WebController {
 			model.addAttribute(IS_LOGGED_FLAG, true);
 			model.addAttribute(IS_MY_PROFILE_FLAG, isMyProfile);
 			model.addAttribute(IS_ALREADY_FOLLOWED_FLAG, isAlreadyFollowed);
-			if(isMyProfile)
+			if (isMyProfile)
 				model.addAttribute("changePasswordForm", new ChangePasswordFormDTO());
 		}
 		return "profile";
@@ -175,7 +175,7 @@ public class WebController {
 		} else {
 			User loggedUser = (User) session.getAttribute("user");
 			boolean isAlreadyLiked = false;
-			if(game.getUsers() != null)
+			if (game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
 			model.addAttribute(IS_LOGGED_FLAG, true);
 			model.addAttribute(IS_ALREADY_LIKED_FLAG, isAlreadyLiked);
@@ -211,7 +211,8 @@ public class WebController {
 
 	@PostMapping("/changePassword")
 	public String changePassword(ChangePasswordFormDTO form, Model model, HttpSession session)
-			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException, UserNotFoundException, PasswordRequiredException {
+			throws UnauthorizedOperationException, OldPasswordErrorException, NewPasswordRequiredException,
+			UserNotFoundException, PasswordRequiredException {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
