@@ -43,8 +43,8 @@ public class GameService {
 	public List<Game> getGamesByNameLike(String name) {
 		if (name == null)
 			throw new IllegalArgumentException();
-		
-		return gameRepository.findByNameLike(name);
+		String nameValid = '%' + name.trim() + '%';
+		return gameRepository.findByNameLike(nameValid);
 	}
 
 	public Game insertNewGame(Game game) {

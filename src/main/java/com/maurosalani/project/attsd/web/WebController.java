@@ -128,9 +128,8 @@ public class WebController {
 			model.addAttribute(MESSAGE, "Error: search field was empty.");
 		} else {
 			model.addAttribute(MESSAGE, "");
-			String trimmedContent = content.trim();
-			List<User> usersFound = userService.getUsersByUsernameLike(trimmedContent);
-			List<Game> gamesFound = gameService.getGamesByNameLike(trimmedContent);
+			List<User> usersFound = userService.getUsersByUsernameLike(content);
+			List<Game> gamesFound = gameService.getGamesByNameLike(content);
 			model.addAttribute(USERS_LIST, usersFound);
 			model.addAttribute(GAMES_LIST, gamesFound);
 		}

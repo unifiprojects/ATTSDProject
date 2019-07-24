@@ -57,8 +57,8 @@ public class UserService {
 	public List<User> getUsersByUsernameLike(String username) {
 		if (username == null)
 			throw new IllegalArgumentException();
-
-		return userRepository.findByUsernameLike(username);
+		String usernameValid = '%' + username.trim() + '%';
+		return userRepository.findByUsernameLike(usernameValid);
 	}
 
 	public User insertNewUser(User user) throws UsernameAlreadyExistingException, PasswordRequiredException {
