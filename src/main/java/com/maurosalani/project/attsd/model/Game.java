@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,12 @@ import javax.persistence.ManyToMany;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-public class Game {
+public class Game implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

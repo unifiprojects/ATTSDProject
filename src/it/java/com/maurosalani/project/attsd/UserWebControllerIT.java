@@ -105,7 +105,8 @@ public class UserWebControllerIT {
 		driver.get(baseUrl);
 		driver.findElement(By.name("content_search")).sendKeys("Name");
 		driver.findElement(By.name("btn_submit")).click();
-		System.out.println(driver.getPageSource());
+		
+		assertThat(driver.getPageSource()).doesNotContain("No Users", "No Games");
 		driver.findElement(By.cssSelector
 			("a[href*='/profile/" + user1.getUsername() + "']"));
 		driver.findElement(By.cssSelector
@@ -116,4 +117,6 @@ public class UserWebControllerIT {
 				("a[href*='/profile/" + game2.getName() + "']"));
 		
 	}
+	
+	
 }
