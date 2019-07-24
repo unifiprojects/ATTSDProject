@@ -307,6 +307,19 @@ public class WebViewTest {
 		assertThat(pageAfterRegistration.getBody().getTextContent())
 				.contains("Password and Confirm Password must match.");
 	}
+	
+	@Test
+	public void testRegistration_UserAlreadyLogged() throws Exception {
+		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
+		webClient.getPage(requestToLogin);
+		
+		HtmlPage page = webClient.getPage("/registration");
+
+		assertTextPresent( page, "You are already logged! Try to log out from homepage.");
+		assertLinkPresentWithText(page, "Go back to homepage");
+		assertTextPresent(page, "Register");
+	}
 
 	@Test
 	public void testSearchBar_WhenUserAndGameExist_ShouldShowLists() throws Exception {
@@ -354,6 +367,16 @@ public class WebViewTest {
 
 		assertTextPresent(searchPage, "No Users");
 		assertTextPresent(searchPage, "No Games");
+	}
+	
+	@Test
+	public void testSearch_WithEmptyString_ShouldShowErrorMessage() throws Exception {
+		HtmlPage page = webClient.getPage("/");
+		final HtmlForm searchForm = page.getFormByName("search_form");
+		searchForm.getInputByName("content_search").setValueAttribute("  ");
+		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
+
+		assertTextPresent(searchPage, "Error: search field was empty.");
 	}
 
 	@Test
