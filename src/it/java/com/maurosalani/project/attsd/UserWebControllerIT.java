@@ -73,4 +73,19 @@ public class UserWebControllerIT {
 		assertThat(driver.getPageSource()).contains("Welcome back");
 		assertThat(driver.findElement(By.linkText("Logout"))).isNotNull();
 	}
+	
+	@Test
+	public void testRegistration_UserRegisterWithSuccess() {
+		User userToRegister = new User(null, "username", "password");
+		driver.get(baseUrl + "/registration");
+		driver.findElement(By.name("username")).sendKeys(userToRegister.getUsername());
+		driver.findElement(By.name("password")).sendKeys(userToRegister.getPassword());
+		driver.findElement(By.name("confirmPassword")).sendKeys(userToRegister.getPassword());
+		driver.findElement(By.name("btn_submit")).click();
+		
+		assertThat(userRepository.findByUsername(userToRegister.getUsername())).isPresent();
+		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
+	}
+	
+	
 }
