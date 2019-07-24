@@ -155,5 +155,28 @@ public class UserWebControllerIT {
 					("a[href*='/game/" + game2.getName() + "']"));
 	}
 	
+	@Test
+	public void testShowGameProfile_ShouldSeeNameDescriptionAndList() {
+		Game game = new Game(null, "Name1", "description", new Date(1000));
+		User user1 = new User(null, "UsernameTest1", "PasswordTest1");
+		User user2 = new User(null, "UsernameTest2", "PasswordTest2");
+		game.addUser(user1);
+		game.addUser(user2);
+		user1.addGame(game);
+		user2.addGame(game);
+		userRepository.save(user1);
+		userRepository.save(user2);
+		gameRepository.save(game);
+		
+		driver.get(baseUrl + "/game/" + game.getName());
+		
+		assertThat(driver.getPageSource()).contains(game.getName(),game.getDescription());
+		assertThat(driver.getPageSource()).doesNotContain("No users like this game yet...");
+		driver.findElement(By.cssSelector
+				("a[href*='/profile/" + user1.getUsername() + "']"));
+			driver.findElement(By.cssSelector
+				("a[href*='/profile/" + user2.getUsername() + "']"));
+	}
+	
 	
 }
