@@ -115,7 +115,42 @@ public class UserWebControllerIT {
 				("a[href*='/profile/" + game1.getName() + "']"));
 		driver.findElement(By.cssSelector
 				("a[href*='/profile/" + game2.getName() + "']"));
+	}
+	
+	@Test
+	public void testShowProfile_ShouldSeeUsernameAndLists() {
+		User user = new User(null, "UsernameTest", "PasswordTest");
+		User user1 = new User(null, "UsernameTest1", "PasswordTest1");
+		User user2 = new User(null, "UsernameTest2", "PasswordTest2");
+		user.addFollowedUser(user1);
+		user.addFollowedUser(user2);
+		user1.addFollowedUser(user);
+		user2.addFollowedUser(user);
+		Game game1 = new Game(null, "Name1", "description", null);
+		Game game2 = new Game(null, "Name2", "description", null);
+		user.addGame(game1);
+		user.addGame(game2);
+		game1.addUser(user);
+		game2.addUser(user);
+		userRepository.save(user1);
+		userRepository.save(user2);
+		gameRepository.save(game1);
+		gameRepository.save(game2);
+		userRepository.save(user);
 		
+		driver.get(baseUrl + "/profile/" + user.getUsername());
+		
+		assertThat(driver.getPageSource()).contains(user.getUsername());
+		assertThat(driver.findElement(By.id("userFollowed")).getText()).
+			doesNotContain("No Users");
+		driver.findElement(By.cssSelector
+				("a[href*='/profile/" + user1.getUsername() + "']"));
+			driver.findElement(By.cssSelector
+				("a[href*='/profile/" + user2.getUsername() + "']"));
+			driver.findElement(By.cssSelector
+					("a[href*='/profile/" + game1.getName() + "']"));
+			driver.findElement(By.cssSelector
+					("a[href*='/profile/" + game2.getName() + "']"));
 	}
 	
 	
