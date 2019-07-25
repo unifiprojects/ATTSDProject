@@ -43,11 +43,9 @@ public class UserWebControllerE2E {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--no-sandbox");
 		driver = new ChromeDriver(options);
-		try (
-			Connection conn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/attsd_database?allowPublicKeyRetrieval=true&useSSL=false",
-				"springuser", "springuser");
-			Statement stmt = conn.createStatement();) {
+		try (Connection conn = DriverManager.getConnection(
+				"jdbc:mysql://localhost:3306/attsd_database?allowPublicKeyRetrieval=true&useSSL=false", "springuser",
+				"springuser"); Statement stmt = conn.createStatement();) {
 			String strDelete = "delete from followers_relation";
 			stmt.executeUpdate(strDelete);
 			strDelete = "delete from user_game_relation";
@@ -82,7 +80,21 @@ public class UserWebControllerE2E {
 		driver.get(baseUrl);
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).contains(name1, "Game Description 1");
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).contains(name2, "Game Description 2");
-	}	
+	}
+
+	private String postUser(String username, String password) throws JSONException {
+		JSONObject body = new JSONObject();
+		body.put("username", username);
+		body.put("password", password);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<String>(body.toString(), headers);
+		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/users/new", entity,
+				String.class);
+
+		return new JSONObject(answer.getBody()).get("username").toString();
+	}
 
 	private String postGame(String name, String description, Date date) throws JSONException {
 		JSONObject body = new JSONObject();
