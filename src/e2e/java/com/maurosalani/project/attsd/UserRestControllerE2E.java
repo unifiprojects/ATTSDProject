@@ -28,13 +28,10 @@ public class UserRestControllerE2E {
 	public void setup() {
 		RestAssured.port = port;
 		try (
-			// Step 1: Allocate a database 'Connection' object
 			Connection conn = DriverManager.getConnection(
 				"jdbc:mysql://localhost:3306/attsd_database?allowPublicKeyRetrieval=true&useSSL=false",
 				"springuser", "springuser");
-			// Step 2: Allocate a 'Statement' object in the Connection
 			Statement stmt = conn.createStatement();) {
-			// Step 3: Execute a SQL SELECT query.
 			String strSelect = "delete from user";
 			stmt.executeUpdate(strSelect);
 			strSelect = "delete from game";
