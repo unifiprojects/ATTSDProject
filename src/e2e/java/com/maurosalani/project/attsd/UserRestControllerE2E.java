@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
+
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.model.User;
@@ -34,10 +35,14 @@ public class UserRestControllerE2E {
 				"jdbc:mysql://localhost:3306/attsd_database?allowPublicKeyRetrieval=true&useSSL=false",
 				"springuser", "springuser");
 			Statement stmt = conn.createStatement();) {
-			String strSelect = "delete from user";
-			stmt.executeUpdate(strSelect);
-			strSelect = "delete from game";
-			stmt.executeUpdate(strSelect);
+			String strDelete = "delete from followers_relation";
+			stmt.executeUpdate(strDelete);
+			strDelete = "delete from user_game_relation";
+			stmt.executeUpdate(strDelete);
+			strDelete = "delete from user";
+			stmt.executeUpdate(strDelete);
+			strDelete = "delete from game";
+			stmt.executeUpdate(strDelete);
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -132,4 +137,5 @@ public class UserRestControllerE2E {
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseFind.getBody().as(User.class).getPassword()).isEqualTo("newPassword");
 	}
+	
 }
