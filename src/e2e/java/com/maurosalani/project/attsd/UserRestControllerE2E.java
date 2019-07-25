@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import com.maurosalani.project.attsd.dto.CredentialsDTO;
+import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
 import com.maurosalani.project.attsd.model.User;
 
@@ -46,7 +48,7 @@ public class UserRestControllerE2E {
 		Response response = 
 				given().
 				when().
-				get(baseUrl + "/api/users");
+					get(baseUrl + "/api/users");
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 	}
@@ -57,14 +59,15 @@ public class UserRestControllerE2E {
 		Response responseNew = 
 				given().
 					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).when()
-				.post("/api/users/new");
+					body(userDto).
+				when().
+					post("/api/users/new");
 		User saved = responseNew.getBody().as(User.class);
 
 		Response responseFind = 
 				given().
 				when().
-				get("/api/users/id/" + saved.getId());
+					get("/api/users/id/" + saved.getId());
 
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseFind.getBody().as(User.class)).isEqualTo(saved);
@@ -78,7 +81,7 @@ public class UserRestControllerE2E {
 					contentType(MediaType.APPLICATION_JSON_VALUE).
 					body(userDto).
 				when().
-				post("/api/users/new");
+					post("/api/users/new");
 		User saved = responseNew.getBody().as(User.class);
 		
 		Response responseDelete = 
@@ -93,8 +96,40 @@ public class UserRestControllerE2E {
 		Response responseFind = 
 				given().
 				when().
-				get("/api/users/id/" + saved.getId());
+					get("/api/users/id/" + saved.getId());
 
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+	}
+	
+	@Test
+	public void testChangePassword_ShouldBeUpdatedWithSuccess() {
+		UserDTO userDto = new UserDTO(null, "username", "password");
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+					post("/api/users/new");
+		User saved = responseNew.getBody().as(User.class);
+		
+		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO();
+		form.setCredentials(new CredentialsDTO("username", "password"));
+		form.setNewPassword("newPassword");
+		Response responseChangePassword = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(form).
+				when().
+					patch("/api/users/update/password/" + saved.getId());
+		
+		assertThat(responseChangePassword.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+		
+		Response responseFind = 
+				given().
+				when().
+					get("/api/users/id/" + saved.getId());
+		
+		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+		assertThat(responseFind.getBody().as(User.class).getPassword()).isEqualTo("newPassword");
 	}
 }
