@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,9 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
+import com.maurosalani.project.attsd.dto.GameDTO;
 import com.maurosalani.project.attsd.dto.UpdateAddFollowedUserFormDTO;
+import com.maurosalani.project.attsd.dto.UpdateAddGameLikedUserFormDTO;
 import com.maurosalani.project.attsd.dto.UpdatePasswordUserFormDTO;
 import com.maurosalani.project.attsd.dto.UserDTO;
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 
 import io.restassured.RestAssured;
@@ -178,7 +182,49 @@ public class UserRestControllerE2E {
 		
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		User updated = responseFind.getBody().as(User.class);
-		assertThat(updated.getPassword()).isEqualTo("password");
 		assertThat(updated.getFollowedUsers().get(0).getUsername()).isEqualTo("followed");
+	}
+	
+	@Test
+	public void testAddGameLiked_ShouldBeUpdatedWithSuccess() {
+		UserDTO userDto = new UserDTO(null, "username", "password");
+		UpdateAddGameLikedUserFormDTO form = new UpdateAddGameLikedUserFormDTO();
+		form.setCredentials(new CredentialsDTO("username", "password"));
+		GameDTO gameLikedDTO = new GameDTO(null, "gameLiked", "description", new Date(1000));
+		
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+					post("/api/users/new");
+		User saved = responseNew.getBody().as(User.class);
+		
+		Response responseNewGame = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(gameLikedDTO).
+				when().
+					post("/api/games/new");
+		Game savedGame = responseNewGame.getBody().as(Game.class);
+		form.setGameLiked(savedGame);
+		
+		Response responseAddGame = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(form).
+				when().
+					patch("/api/users/update/addGame/" + saved.getId());
+		
+		assertThat(responseAddGame.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+		
+		Response responseFind = 
+				given().
+				when().
+					get("/api/users/id/" + saved.getId());
+		
+		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+		User updated = responseFind.getBody().as(User.class);
+		assertThat(updated.getGames().get(0).getName()).isEqualTo("gameLiked");
 	}
 }
