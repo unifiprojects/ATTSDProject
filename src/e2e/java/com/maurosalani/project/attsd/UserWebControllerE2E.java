@@ -106,7 +106,7 @@ public class UserWebControllerE2E {
 		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
 		driver.findElement(By.linkText("Homepage"));
 	}
-	
+
 	@Test
 	public void testLoginSuccess() throws JSONException {
 		String userLogged = postUser("usernameLogged", "password");
@@ -123,8 +123,27 @@ public class UserWebControllerE2E {
 		driver.findElement(By.name("btn_submit")).click();
 
 		assertThat(driver.getPageSource()).contains("Welcome back");
-		driver.findElement(By.linkText(userLogged)); 
-		driver.findElement(By.linkText("Logout")); 
+		driver.findElement(By.linkText(userLogged));
+		driver.findElement(By.linkText("Logout"));
+	}
+
+	@Test
+	public void testSearchSuccess() throws JSONException {
+		String user1 = postUser("username 1", "password 1");
+		String user2 = postUser("username 2", "password 2");
+		String game1 = postGame("name 1", "description 1", new Date(1000));
+		String game2 = postGame("name 2", "description 2", new Date(1000));
+
+		driver.get(baseUrl);
+		final WebElement usernameField = driver.findElement(By.name("content_search"));
+		usernameField.clear();
+		usernameField.sendKeys("name");
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.findElement(By.id("userSearchResults")).getText()).contains(user1);
+		assertThat(driver.findElement(By.id("userSearchResults")).getText()).contains(user2);
+		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game1);
+		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game2);
 	}
 
 	private String postUser(String username, String password) throws JSONException {
