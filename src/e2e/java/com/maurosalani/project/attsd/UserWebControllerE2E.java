@@ -86,7 +86,7 @@ public class UserWebControllerE2E {
 	}
 
 	@Test
-	public void testRegistrationSuccess() throws JSONException {
+	public void testRegistrationSuccess_ShouldGoToSuccessPage() throws JSONException {
 		User toRegister = new User(null, "usernameRegistered", "passwordRegistered");
 
 		driver.get(baseUrl);
@@ -128,7 +128,7 @@ public class UserWebControllerE2E {
 	}
 
 	@Test
-	public void testSearchSuccess() throws JSONException {
+	public void testSearch_ShouldShowUsersAndGames() throws JSONException {
 		String user1 = postUser("username 1", "password 1");
 		String user2 = postUser("username 2", "password 2");
 		String game1 = postGame("name 1", "description 1", new Date(1000));
