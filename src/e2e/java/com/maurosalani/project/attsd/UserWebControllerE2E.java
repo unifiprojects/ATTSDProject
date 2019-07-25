@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.http.HttpEntity;
@@ -23,6 +24,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import com.maurosalani.project.attsd.model.User;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -80,6 +83,28 @@ public class UserWebControllerE2E {
 		driver.get(baseUrl);
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).contains(name1, "Game Description 1");
 		assertThat(driver.findElement(By.id("latestReleases")).getText()).contains(name2, "Game Description 2");
+	}
+
+	@Test
+	public void testRegistrationAndLogin() throws JSONException {
+		User toRegister = new User(null, "usernameRegistered", "passwordRegistered");
+
+		driver.get(baseUrl);
+		driver.findElement(By.linkText("Register")).click();
+
+		final WebElement usernameField = driver.findElement(By.name("username"));
+		usernameField.clear();
+		usernameField.sendKeys(toRegister.getUsername());
+		final WebElement password = driver.findElement(By.name("password"));
+		password.clear();
+		password.sendKeys(toRegister.getPassword());
+		final WebElement confirmPassword = driver.findElement(By.name("confirmPassword"));
+		confirmPassword.clear();
+		confirmPassword.sendKeys(toRegister.getPassword());
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
+		driver.findElement(By.linkText("Homepage"));
 	}
 
 	private String postUser(String username, String password) throws JSONException {
