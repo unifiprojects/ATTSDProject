@@ -43,21 +43,58 @@ public class UserRestControllerE2E {
 
 	@Test
 	public void testHomePage() {
-		Response response = given().when().get(baseUrl + "/api/users");
+		Response response = 
+				given().
+				when().
+				get(baseUrl + "/api/users");
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 	}
 
 	@Test
-	public void testNewUser() {
+	public void testNewUser_ShouldBeRetrievedCorrectly() {
 		UserDTO userDto = new UserDTO(null, "username", "password");
-		Response responseNew = given().contentType(MediaType.APPLICATION_JSON_VALUE).body(userDto).when()
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).when()
 				.post("/api/users/new");
 		User saved = responseNew.getBody().as(User.class);
 
-		Response responseFind = given().when().get("/api/users/id/" + saved.getId());
+		Response responseFind = 
+				given().
+				when().
+				get("/api/users/id/" + saved.getId());
 
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseFind.getBody().as(User.class)).isEqualTo(saved);
+	}
+	
+	@Test
+	public void testDeleteUser_ShouldNotBeAvailableAnymore() {
+		UserDTO userDto = new UserDTO(null, "username", "password");
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+				post("/api/users/new");
+		User saved = responseNew.getBody().as(User.class);
+		
+		Response responseDelete = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+					delete("/api/users/delete/" + saved.getId());
+		
+		assertThat(responseDelete.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+		
+		Response responseFind = 
+				given().
+				when().
+				get("/api/users/id/" + saved.getId());
+
+		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}
 }
