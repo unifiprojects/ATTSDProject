@@ -53,11 +53,11 @@ public class UserRestControllerE2E {
 	}
 
 	@Test
-	public void testHomePage() {
+	public void testBaseUrl() {
 		Response response = 
 				given().
 				when().
-					get(baseUrl + "/api/users");
+					get(baseUrl);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 	}
