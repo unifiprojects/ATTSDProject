@@ -86,7 +86,7 @@ public class UserWebControllerE2E {
 	}
 
 	@Test
-	public void testRegistrationAndLogin() throws JSONException {
+	public void testRegistrationSuccess() throws JSONException {
 		User toRegister = new User(null, "usernameRegistered", "passwordRegistered");
 
 		driver.get(baseUrl);
@@ -105,6 +105,26 @@ public class UserWebControllerE2E {
 
 		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
 		driver.findElement(By.linkText("Homepage"));
+	}
+	
+	@Test
+	public void testLoginSuccess() throws JSONException {
+		String userLogged = postUser("usernameLogged", "password");
+
+		driver.get(baseUrl);
+		driver.findElement(By.linkText("Log in")).click();
+
+		final WebElement usernameField = driver.findElement(By.name("username"));
+		usernameField.clear();
+		usernameField.sendKeys(userLogged);
+		final WebElement password = driver.findElement(By.name("password"));
+		password.clear();
+		password.sendKeys("password");
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.getPageSource()).contains("Welcome back");
+		driver.findElement(By.linkText(userLogged)); 
+		driver.findElement(By.linkText("Logout")); 
 	}
 
 	private String postUser(String username, String password) throws JSONException {
