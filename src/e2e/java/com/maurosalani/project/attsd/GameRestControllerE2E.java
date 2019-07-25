@@ -47,7 +47,7 @@ public class GameRestControllerE2E {
 	}
 
 	@Test
-	public void testGetAllGamesEmpty() {
+	public void testBaseUrl() {
 		Response response = 
 				given().
 				when().
@@ -57,15 +57,26 @@ public class GameRestControllerE2E {
 	}
 
 	@Test
-	public void testNewGame_ShouldBeRetrievedCorrectly() {
-		GameDTO gameDto = new GameDTO(null, "name", "description", new Date(1000));
-		Response responseNew = 
+	public void testGetAllUsers() {
+		Game saved1 = insertGameInDatabase(new GameDTO(null, "name1", "description", new Date(1000)));
+		Game saved2 = insertGameInDatabase(new GameDTO(null, "name2", "description", new Date(1000)));
+		
+		Game[] games =  
 				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(gameDto).
 				when().
-					post("/api/games/new");
-		Game saved = responseNew.getBody().as(Game.class);
+					get("/api/games").
+				then().
+					statusCode(200).
+					extract().
+					as(Game[].class);
+		assertThat(games[0]).matches(game -> game.equals(saved1) || game.equals(saved2));
+		assertThat(games[1]).matches(game -> game.equals(saved1) || game.equals(saved2));
+
+	}
+	
+	@Test
+	public void testNewGame_ShouldBeRetrievedCorrectly() {
+		Game saved = insertGameInDatabase(new GameDTO(null, "name", "description", new Date(1000)));
 
 		Response responseFind = 
 				given().
@@ -79,13 +90,7 @@ public class GameRestControllerE2E {
 	@Test
 	public void testDeleteGame_ShouldNotBeAvailableAnymore() {
 		GameDTO gameDto = new GameDTO(null, "name", "description", new Date(1000));
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(gameDto).
-				when().
-					post("/api/games/new");
-		Game saved = responseNew.getBody().as(Game.class);
+		Game saved = insertGameInDatabase(gameDto);
 		
 		Response responseDelete = 
 				given().
@@ -106,14 +111,7 @@ public class GameRestControllerE2E {
 	
 	@Test
 	public void testUpdateGame_ShouldBeUpdatedWithSuccess() {
-		GameDTO GameDto = new GameDTO(null, "name", "description", new Date(1000));
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(GameDto).
-				when().
-					post("/api/games/new");
-		Game saved = responseNew.getBody().as(Game.class);
+		Game saved = insertGameInDatabase(new GameDTO(null, "name", "description", new Date(1000)));
 		
 		GameDTO replacement = new GameDTO(null, "name", "new_description", new Date(1000));
 		Response responseUpdateGame = 
@@ -132,5 +130,16 @@ public class GameRestControllerE2E {
 		
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		assertThat(responseFind.getBody().as(Game.class).getDescription()).isEqualTo("new_description");
+	}
+	
+	private Game insertGameInDatabase(GameDTO gameDto) {
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(gameDto).
+				when().
+				post("/api/games/new");
+		Game saved = responseNew.getBody().as(Game.class);
+		return saved;
 	}
 }

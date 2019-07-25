@@ -63,15 +63,26 @@ public class UserRestControllerE2E {
 	}
 
 	@Test
-	public void testNewUser_ShouldBeRetrievedCorrectly() {
-		UserDTO userDto = new UserDTO(null, "username", "password");
-		Response responseNew = 
+	public void testGetAllUsers() {
+		User saved1 = insertUserInDatabase(new UserDTO(null, "username1", "password"));
+		User saved2 = insertUserInDatabase(new UserDTO(null, "username2", "password"));
+		
+		User[] users =  
 				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).
 				when().
-					post("/api/users/new");
-		User saved = responseNew.getBody().as(User.class);
+					get("/api/users").
+				then().
+					statusCode(200).
+					extract().
+					as(User[].class);
+		assertThat(users[0]).matches(user -> user.equals(saved1) || user.equals(saved2));
+		assertThat(users[1]).matches(user -> user.equals(saved1) || user.equals(saved2));
+
+	}
+	
+	@Test
+	public void testNewUser_ShouldBeRetrievedCorrectly() {
+		User saved = insertUserInDatabase(new UserDTO(null, "username", "password"));
 
 		Response responseFind = 
 				given().
@@ -85,13 +96,7 @@ public class UserRestControllerE2E {
 	@Test
 	public void testDeleteUser_ShouldNotBeAvailableAnymore() {
 		UserDTO userDto = new UserDTO(null, "username", "password");
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).
-				when().
-					post("/api/users/new");
-		User saved = responseNew.getBody().as(User.class);
+		User saved = insertUserInDatabase(userDto);
 		
 		Response responseDelete = 
 				given().
@@ -112,18 +117,12 @@ public class UserRestControllerE2E {
 	
 	@Test
 	public void testChangePassword_ShouldBeUpdatedWithSuccess() {
-		UserDTO userDto = new UserDTO(null, "username", "password");
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).
-				when().
-					post("/api/users/new");
-		User saved = responseNew.getBody().as(User.class);
+		User saved = insertUserInDatabase(new UserDTO(null, "username", "password"));
 		
 		UpdatePasswordUserFormDTO form = new UpdatePasswordUserFormDTO();
 		form.setCredentials(new CredentialsDTO("username", "password"));
 		form.setNewPassword("newPassword");
+		
 		Response responseChangePassword = 
 				given().
 					contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -143,27 +142,12 @@ public class UserRestControllerE2E {
 	}
 	
 	@Test
-	public void testAddFollowedUser_ShouldBeUpdatedWithSuccess() {
-		UserDTO userDto = new UserDTO(null, "username", "password");
+	public void testAddFollowedUser_ShouldBeUpdatedWithSuccess() {		
+		User saved = insertUserInDatabase(new UserDTO(null, "username", "password"));
+		User savedFollowed = insertUserInDatabase(new UserDTO(null, "followed", "followed_pwd"));
+		 
 		UpdateAddFollowedUserFormDTO form = new UpdateAddFollowedUserFormDTO();
 		form.setCredentials(new CredentialsDTO("username", "password"));
-		UserDTO followedToAddDTO = new UserDTO(null, "followed", "followed_pwd");
-		
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).
-				when().
-					post("/api/users/new");
-		User saved = responseNew.getBody().as(User.class);
-		 
-		Response responseNewFollowed = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(followedToAddDTO).
-				when().
-					post("/api/users/new");
-		User savedFollowed = responseNewFollowed.getBody().as(User.class);
 		form.setFollowedToAdd(savedFollowed);
 		
 		Response responseAddFollowed = 
@@ -186,27 +170,12 @@ public class UserRestControllerE2E {
 	}
 	
 	@Test
-	public void testAddGameLiked_ShouldBeUpdatedWithSuccess() {
-		UserDTO userDto = new UserDTO(null, "username", "password");
+	public void testAddGameLiked_ShouldBeUpdatedWithSuccess() {		
+		User savedUser = insertUserInDatabase(new UserDTO(null, "username", "password"));
+		Game savedGame = insertGameInDatabase(new GameDTO(null, "gameLiked", "description", new Date(1000)));
+		
 		UpdateAddGameLikedUserFormDTO form = new UpdateAddGameLikedUserFormDTO();
 		form.setCredentials(new CredentialsDTO("username", "password"));
-		GameDTO gameLikedDTO = new GameDTO(null, "gameLiked", "description", new Date(1000));
-		
-		Response responseNew = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(userDto).
-				when().
-					post("/api/users/new");
-		User saved = responseNew.getBody().as(User.class);
-		
-		Response responseNewGame = 
-				given().
-					contentType(MediaType.APPLICATION_JSON_VALUE).
-					body(gameLikedDTO).
-				when().
-					post("/api/games/new");
-		Game savedGame = responseNewGame.getBody().as(Game.class);
 		form.setGameLiked(savedGame);
 		
 		Response responseAddGame = 
@@ -214,17 +183,39 @@ public class UserRestControllerE2E {
 					contentType(MediaType.APPLICATION_JSON_VALUE).
 					body(form).
 				when().
-					patch("/api/users/update/addGame/" + saved.getId());
+					patch("/api/users/update/addGame/" + savedUser.getId());
 		
 		assertThat(responseAddGame.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		
 		Response responseFind = 
 				given().
 				when().
-					get("/api/users/id/" + saved.getId());
+					get("/api/users/id/" + savedUser.getId());
 		
 		assertThat(responseFind.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 		User updated = responseFind.getBody().as(User.class);
 		assertThat(updated.getGames().get(0).getName()).isEqualTo("gameLiked");
+	}
+	
+	private User insertUserInDatabase(UserDTO userDto) {
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(userDto).
+				when().
+					post("/api/users/new");
+		User saved = responseNew.getBody().as(User.class);
+		return saved;
+	}
+	
+	private Game insertGameInDatabase(GameDTO gameDto) {
+		Response responseNew = 
+				given().
+					contentType(MediaType.APPLICATION_JSON_VALUE).
+					body(gameDto).
+				when().
+				post("/api/games/new");
+		Game saved = responseNew.getBody().as(Game.class);
+		return saved;
 	}
 }
