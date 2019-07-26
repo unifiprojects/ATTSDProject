@@ -168,7 +168,7 @@ public class UserWebControllerE2E {
 		assertThat(driver.getPageSource()).contains("Password changed successfully.");
 		driver.findElement(By.linkText("Homepage"));
 	}
-	
+
 	@Test
 	public void testProfile_LoggedUserFollowAnotherUser() throws JSONException {
 		User userLogged = new User(null, "usernameLogged", "password");
@@ -181,7 +181,7 @@ public class UserWebControllerE2E {
 		driver.findElement(By.name("btn_add")).click();
 		driver.findElement(By.linkText("Homepage")).click();
 		driver.findElement(By.linkText(userLogged.getUsername())).click();
-		
+
 		assertThat(driver.findElement(By.id("userFollowed")).getText()).contains(userToFollow.getUsername());
 	}
 
@@ -189,8 +189,7 @@ public class UserWebControllerE2E {
 	public void testGameProfile_ShowGameProfile() throws JSONException {
 		Game game = new Game(null, "name 1", "description 1", new Date(1000));
 		User userLogged = new User(null, "usernameLogged", "password");
-
-		postGame(game.getName(),game.getDescription(), game.getReleaseDate());
+		postGame(game.getName(), game.getDescription(), game.getReleaseDate());
 		postUser(userLogged.getUsername(), userLogged.getPassword());
 		logUser(userLogged);
 		searchContent("name");
@@ -199,6 +198,23 @@ public class UserWebControllerE2E {
 		assertThat(driver.getPageSource()).contains("No users like this game yet...");
 		assertThat(driver.findElement(By.id("description")).getText()).contains("description 1");
 		assertThat(driver.findElement(By.name("btn_like")).getText()).contains("Like");
+	}
+
+	@Test
+	public void testProfile_LoggedUserLikeGame() throws JSONException {
+		Game game = new Game(null, "name 1", "description 1", new Date(1000));
+		User userLogged = new User(null, "usernameLogged", "password");
+		postGame(game.getName(), game.getDescription(), game.getReleaseDate());
+		postUser(userLogged.getUsername(), userLogged.getPassword());
+		logUser(userLogged);
+		searchContent("name");
+		driver.findElement(By.linkText(game.getName())).click();
+
+		driver.findElement(By.name("btn_like")).click();
+		driver.findElement(By.linkText("Homepage")).click();
+		driver.findElement(By.linkText(userLogged.getUsername())).click();
+
+		assertThat(driver.findElement(By.id("games")).getText()).contains(game.getName());
 	}
 
 	private void logUser(User userToLog) {
