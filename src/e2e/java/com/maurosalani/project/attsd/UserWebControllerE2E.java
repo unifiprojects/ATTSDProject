@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -148,13 +149,12 @@ public class UserWebControllerE2E {
 		assertThat(driver.findElement(By.id("games")).getText()).contains("No Games");
 		assertThat(driver.findElement(By.name("btn_add")).getText()).contains("Follow");
 	}
-	
+
 	@Test
 	public void testProfile_LoggedUserChangeHisPassword() throws JSONException {
 		User userLogged = new User(null, "usernameLogged", "password");
 		postUser(userLogged.getUsername(), userLogged.getPassword());
 		logUser(userLogged);
-		searchContent(userLogged.getUsername());
 		driver.findElement(By.linkText(userLogged.getUsername())).click();
 
 		final WebElement oldPassword = driver.findElement(By.name("oldPassword"));
@@ -164,9 +164,25 @@ public class UserWebControllerE2E {
 		newPassword.clear();
 		newPassword.sendKeys("newPassword");
 		driver.findElement(By.name("btn_change")).click();
-		
+
 		assertThat(driver.getPageSource()).contains("Password changed successfully.");
 		driver.findElement(By.linkText("Homepage"));
+	}
+
+	@Test
+	public void testGameProfile_ShowGameProfile() throws JSONException {
+		Game game = new Game(null, "name 1", "description 1", new Date(1000));
+		User userLogged = new User(null, "usernameLogged", "password");
+
+		postGame(game.getName(),game.getDescription(), game.getReleaseDate());
+		postUser(userLogged.getUsername(), userLogged.getPassword());
+		logUser(userLogged);
+		searchContent("name");
+		driver.findElement(By.linkText(game.getName())).click();
+
+		assertThat(driver.getPageSource()).contains("No users like this game yet...");
+		assertThat(driver.findElement(By.id("description")).getText()).contains("description 1");
+		assertThat(driver.findElement(By.name("btn_like")).getText()).contains("Like");
 	}
 
 	private void logUser(User userToLog) {
