@@ -133,14 +133,6 @@ public class UserWebControllerE2E {
 		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game2);
 	}
 
-	private void searchContent(String content) {
-		driver.get(baseUrl);
-		final WebElement usernameField = driver.findElement(By.name("content_search"));
-		usernameField.clear();
-		usernameField.sendKeys(content);
-		driver.findElement(By.name("btn_submit")).click();
-	}
-
 	@Test
 	public void testProfile_LoggedUserAccessAnotherProfile() throws JSONException {
 		User userLogged = new User(null, "usernameLogged", "password");
@@ -152,10 +144,29 @@ public class UserWebControllerE2E {
 		driver.findElement(By.linkText(userToShow.getUsername())).click();
 
 		assertThat(driver.getPageSource()).contains(userToShow.getUsername());
-		assertThat(driver.getPageSource()).contains("");
 		assertThat(driver.findElement(By.id("userFollowed")).getText()).contains("No Users");
 		assertThat(driver.findElement(By.id("games")).getText()).contains("No Games");
 		assertThat(driver.findElement(By.name("btn_add")).getText()).contains("Follow");
+	}
+	
+	@Test
+	public void testProfile_LoggedUserChangeHisPassword() throws JSONException {
+		User userLogged = new User(null, "usernameLogged", "password");
+		postUser(userLogged.getUsername(), userLogged.getPassword());
+		logUser(userLogged);
+		searchContent(userLogged.getUsername());
+		driver.findElement(By.linkText(userLogged.getUsername())).click();
+
+		final WebElement oldPassword = driver.findElement(By.name("oldPassword"));
+		oldPassword.clear();
+		oldPassword.sendKeys(userLogged.getPassword());
+		final WebElement newPassword = driver.findElement(By.name("newPassword"));
+		newPassword.clear();
+		newPassword.sendKeys("newPassword");
+		driver.findElement(By.name("btn_change")).click();
+		
+		assertThat(driver.getPageSource()).contains("Password changed successfully.");
+		driver.findElement(By.linkText("Homepage"));
 	}
 
 	private void logUser(User userToLog) {
@@ -169,6 +180,14 @@ public class UserWebControllerE2E {
 		password.clear();
 		password.sendKeys(userToLog.getPassword());
 
+		driver.findElement(By.name("btn_submit")).click();
+	}
+
+	private void searchContent(String content) {
+		driver.get(baseUrl);
+		final WebElement usernameField = driver.findElement(By.name("content_search"));
+		usernameField.clear();
+		usernameField.sendKeys(content);
 		driver.findElement(By.name("btn_submit")).click();
 	}
 
