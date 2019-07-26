@@ -125,16 +125,20 @@ public class UserWebControllerE2E {
 		String game1 = postGame("name 1", "description 1", new Date(1000));
 		String game2 = postGame("name 2", "description 2", new Date(1000));
 
-		driver.get(baseUrl);
-		final WebElement usernameField = driver.findElement(By.name("content_search"));
-		usernameField.clear();
-		usernameField.sendKeys("name");
-		driver.findElement(By.name("btn_submit")).click();
+		searchContent("name");
 
 		assertThat(driver.findElement(By.id("userSearchResults")).getText()).contains(user1);
 		assertThat(driver.findElement(By.id("userSearchResults")).getText()).contains(user2);
 		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game1);
 		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game2);
+	}
+
+	private void searchContent(String content) {
+		driver.get(baseUrl);
+		final WebElement usernameField = driver.findElement(By.name("content_search"));
+		usernameField.clear();
+		usernameField.sendKeys(content);
+		driver.findElement(By.name("btn_submit")).click();
 	}
 
 	private void logUser(User userToLog) {
