@@ -168,6 +168,22 @@ public class UserWebControllerE2E {
 		assertThat(driver.getPageSource()).contains("Password changed successfully.");
 		driver.findElement(By.linkText("Homepage"));
 	}
+	
+	@Test
+	public void testProfile_LoggedUserFollowAnotherUser() throws JSONException {
+		User userLogged = new User(null, "usernameLogged", "password");
+		User userToFollow = new User(null, "usernameToFollow", "password");
+		postUser(userLogged.getUsername(), userLogged.getPassword());
+		postUser(userToFollow.getUsername(), userToFollow.getPassword());
+		logUser(userLogged);
+		searchContent(userToFollow.getUsername());
+		driver.findElement(By.linkText(userToFollow.getUsername())).click();
+		driver.findElement(By.name("btn_add")).click();
+		driver.findElement(By.linkText("Homepage")).click();
+		driver.findElement(By.linkText(userLogged.getUsername())).click();
+		
+		assertThat(driver.findElement(By.id("userFollowed")).getText()).contains(userToFollow.getUsername());
+	}
 
 	@Test
 	public void testGameProfile_ShowGameProfile() throws JSONException {
