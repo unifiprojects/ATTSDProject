@@ -109,21 +109,12 @@ public class UserWebControllerE2E {
 
 	@Test
 	public void testLoginSuccess() throws JSONException {
-		String userLogged = postUser("usernameLogged", "password");
-
-		driver.get(baseUrl);
-		driver.findElement(By.linkText("Log in")).click();
-
-		final WebElement usernameField = driver.findElement(By.name("username"));
-		usernameField.clear();
-		usernameField.sendKeys(userLogged);
-		final WebElement password = driver.findElement(By.name("password"));
-		password.clear();
-		password.sendKeys("password");
-		driver.findElement(By.name("btn_submit")).click();
+		User userToLog = new User(null, "usernameLogged", "password");
+		postUser(userToLog.getUsername(), userToLog.getPassword());
+		logUser(userToLog);
 
 		assertThat(driver.getPageSource()).contains("Welcome back");
-		driver.findElement(By.linkText(userLogged));
+		driver.findElement(By.linkText(userToLog.getPassword()));
 		driver.findElement(By.linkText("Logout"));
 	}
 
@@ -144,6 +135,20 @@ public class UserWebControllerE2E {
 		assertThat(driver.findElement(By.id("userSearchResults")).getText()).contains(user2);
 		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game1);
 		assertThat(driver.findElement(By.id("gameSearchResults")).getText()).contains(game2);
+	}
+
+	private void logUser(User userToLog) {
+		driver.get(baseUrl);
+		driver.findElement(By.linkText("Log in")).click();
+
+		final WebElement usernameField = driver.findElement(By.name("username"));
+		usernameField.clear();
+		usernameField.sendKeys(userToLog.getUsername());
+		final WebElement password = driver.findElement(By.name("password"));
+		password.clear();
+		password.sendKeys(userToLog.getPassword());
+
+		driver.findElement(By.name("btn_submit")).click();
 	}
 
 	private String postUser(String username, String password) throws JSONException {
