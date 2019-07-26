@@ -114,7 +114,7 @@ public class UserWebControllerE2E {
 		logUser(userToLog);
 
 		assertThat(driver.getPageSource()).contains("Welcome back");
-		driver.findElement(By.linkText(userToLog.getPassword()));
+		driver.findElement(By.linkText(userToLog.getUsername()));
 		driver.findElement(By.linkText("Logout"));
 	}
 
@@ -139,6 +139,23 @@ public class UserWebControllerE2E {
 		usernameField.clear();
 		usernameField.sendKeys(content);
 		driver.findElement(By.name("btn_submit")).click();
+	}
+
+	@Test
+	public void testProfile_LoggedUserAccessAnotherProfile() throws JSONException {
+		User userLogged = new User(null, "usernameLogged", "password");
+		User userToShow = new User(null, "usernameToShow", "password");
+		postUser(userLogged.getUsername(), userLogged.getPassword());
+		postUser(userToShow.getUsername(), userToShow.getPassword());
+		logUser(userLogged);
+		searchContent(userToShow.getUsername());
+		driver.findElement(By.linkText(userToShow.getUsername())).click();
+
+		assertThat(driver.getPageSource()).contains(userToShow.getUsername());
+		assertThat(driver.getPageSource()).contains("");
+		assertThat(driver.findElement(By.id("userFollowed")).getText()).contains("No Users");
+		assertThat(driver.findElement(By.id("games")).getText()).contains("No Games");
+		assertThat(driver.findElement(By.name("btn_add")).getText()).contains("Follow");
 	}
 
 	private void logUser(User userToLog) {
