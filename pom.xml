@@ -474,11 +474,6 @@
       </properties>
       <build>
         <plugins>
-          <plugin>
-            <!-- configured in pluginManagement -->
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-          </plugin>
 
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
