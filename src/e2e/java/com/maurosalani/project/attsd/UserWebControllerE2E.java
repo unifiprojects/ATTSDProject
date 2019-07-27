@@ -74,6 +74,8 @@ public class UserWebControllerE2E {
 
 		driver.findElement(By.cssSelector("a[href*='/login"));
 		driver.findElement(By.cssSelector("a[href*='/registration"));
+		assertThat(driver.getPageSource()).contains("ATTSD-Project: Social Games");
+		assertThat(driver.getPageSource()).contains("No latest releases...");
 	}
 
 	@Test
