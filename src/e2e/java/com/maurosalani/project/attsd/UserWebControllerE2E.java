@@ -257,7 +257,7 @@ public class UserWebControllerE2E {
 		JSONObject body = new JSONObject();
 		body.put("name", name);
 		body.put("description", description);
-		body.put("date", date);
+		body.put("releaseDate", date);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
