@@ -31,9 +31,6 @@ cache:
     - $HOME/.m2
     - $HOME/.sonar/cache
 
-env:
-  - DISPLAY=:99.0
-
 before_script:
   - sh -e ./before_script.sh
 
