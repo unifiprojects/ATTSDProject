@@ -19,7 +19,7 @@ matrix:
       env: MAVEN_ARGS="-Pjacoco,it coveralls:report sonar:sonar"
     - jdk: openjdk8
       if: type IN (pull_request)
-      env: MAVEN_ARGS="-Pe2e"
+      env: MAVEN_ARGS="-Pe2e" DISPLAY:=99.0
     - jdk: openjdk8
       if: type IN (pull_request)
       env: MAVEN_ARGS="-Ppit"
@@ -30,9 +30,6 @@ cache:
   directories:
     - $HOME/.m2
     - $HOME/.sonar/cache
-
-env:
-  - DISPLAY=:99.0
 
 before_script:
   - sh -e ./before_script.sh
