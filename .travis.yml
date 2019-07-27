@@ -33,4 +33,4 @@ cache:
     - $HOME/.sonar/cache
 
 script:
-  - ./mvnw clean verify $MAVEN_ARGS
+  - travis_wait 60 ./mvnw clean verify $MAVEN_ARGS
