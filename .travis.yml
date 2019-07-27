@@ -35,7 +35,7 @@ env:
   - DISPLAY=:99.0
 
 before_script:
-  - sh -e /etc/init.d/xvfb start
+  - sh -e ./before_script.sh
 
 script:
   - ./mvnw clean verify $MAVEN_ARGS
