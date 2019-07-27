@@ -37,7 +37,7 @@ public class Game implements Serializable {
 	
 	private Date releaseDate;
 
-	@ManyToMany(mappedBy = "games", cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.DETACH, mappedBy = "games")
 	private List<User> users;
 
 	public Game() {

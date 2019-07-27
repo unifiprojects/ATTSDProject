@@ -41,15 +41,15 @@ public class User implements Serializable {
 	@Basic(optional = false)
 	private String password;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
 	private List<User> followedUsers;
 
-	@ManyToMany(mappedBy = "followedUsers", cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.DETACH, mappedBy = "followedUsers")
 	@JsonIgnore
 	private List<User> followerUsers;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
 	@JsonIgnoreProperties("users")
 	private List<Game> games;
