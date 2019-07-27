@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -44,9 +42,6 @@ public class UserWebControllerE2E {
 	@Before
 	public void setup() {
 		baseUrl = "http://localhost:" + port;
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--no-sandbox");
-		driver = new ChromeDriver(options);
 		try (Connection conn = DriverManager.getConnection(
 				"jdbc:mysql://localhost:3306/attsd_database?allowPublicKeyRetrieval=true&useSSL=false", "springuser",
 				"springuser"); Statement stmt = conn.createStatement();) {
