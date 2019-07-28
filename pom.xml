@@ -46,7 +46,7 @@
       **/dto/*,
       **/exception/*
     </sonar.coverage.exclusions>
-    <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria>e1,e2,e3,e4</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
       *ApplicationTests which just checks that the Spring application can start, 
       without any assertion -->
@@ -73,6 +73,15 @@
     <sonar.issue.ignore.multicriteria.e3.resourceKey>
       **/UserService.java
     </sonar.issue.ignore.multicriteria.e3.resourceKey>
+    <!-- "Using command line arguments is security-sensitive", disabled on 
+      AttsdProjectApplication class because we do not use any options (just the 
+      profile e2e uses 'spring.application.admin.enabled' and 'server.port' ) -->
+    <sonar.issue.ignore.multicriteria.e4.ruleKey>
+      squid:S4823
+    </sonar.issue.ignore.multicriteria.e4.ruleKey>
+    <sonar.issue.ignore.multicriteria.e4.resourceKey>
+      **/AttsdProjectApplication.java
+    </sonar.issue.ignore.multicriteria.e4.resourceKey>
   </properties>
 
   <dependencies>
