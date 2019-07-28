@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AttsdProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AttsdProjectApplication.class, "spring.output.ansi.enabled=[always]");
+		SpringApplication.run(AttsdProjectApplication.class, args);
 	}
 }
