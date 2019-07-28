@@ -223,6 +223,7 @@ public class WebViewTest {
 	public void testRegistrationPage_ShouldContainRegistrationForm() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 
+		assertTextPresent(page, "Registration");
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "registration_form");
 		final HtmlForm registrationForm = page.getFormByName("registration_form");

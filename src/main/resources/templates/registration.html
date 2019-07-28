@@ -3,33 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <title>Registration</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+  rel="stylesheet">
+<link rel="stylesheet" th:href="@{/card.css}" href="../../card.css" />
+<link rel="stylesheet" th:href="@{/font.css}" href="../../font.css" />
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
+  <div class="container">
+    <h2 class="font-weight-bold my-5">Registration</h2>
+    <div class="text-center text-danger">
+      <div th:unless="${message.empty}">
+        <div th:text="${message}"></div>
+      </div>
+      <div th:if="${message.empty}">&nbsp;</div>
+    </div>
+    <form name="registration_form" th:action="@{/save}"
+      th:object="${registrationForm}" method="post" class="card mt-1">
+      <div>
+        <label for="username">Username:</label> <input name="username"
+          type="text" th:field="*{username}" autofocus="autofocus"
+          th:disabled="${disableInput}" placeholder="Username"
+          class="form-control" />
+      </div>
+      <div class="mt-4">
+        <label for="password">Password:</label> <input type="text"
+          th:field="*{password}" name="password"
+          th:disabled="${disableInput}" placeholder="Password"
+          class="form-control" />
+      </div>
+      <div class="mt-4">
+        <label for="confirmPassword">Confirm Password:</label> <input
+          type="text" th:field="*{confirmPassword}"
+          name="confirmPassword" th:disabled="${disableInput}"
+          placeholder="Password" class="form-control" />
+      </div>
 
-  <div>
-    <a th:href="@{/}">Go back to homepage</a>
+      <div class="text-right mt-4">
+        <button type="submit" name="btn_submit"
+          th:disabled="${disableInput}" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+
+    <div class="mt-4 ml-3">
+      <a class="btn btn-primary" th:href="@{/}">Go back to homepage</a>
+    </div>
+
   </div>
-
-  <div th:unless="${message.empty}">
-    <div th:text="${message}"></div>
-  </div>
-
-  <form name="registration_form" th:action="@{/save}" th:object="${registrationForm}" method="post">
-
-    <label for="username">Username:</label> 
-    <input name="username" type="text" th:field="*{username}"
-      autofocus="autofocus" th:disabled="${disableInput}" /> 
-      
-    <label for="password">Password:</label>
-    <input type="text" th:field="*{password}" name="password" th:disabled="${disableInput}" />
-
-    <label for="confirmPassword">Confirm Password:</label> 
-    <input type="text" th:field="*{confirmPassword}"
-      name="confirmPassword" th:disabled="${disableInput}" />
-
-    <button type="submit" name="btn_submit"
-      th:disabled="${disableInput}">Register</button>
-  </form>
-
 </body>
 </html>
