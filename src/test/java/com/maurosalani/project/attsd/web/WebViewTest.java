@@ -247,7 +247,7 @@ public class WebViewTest {
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 		assertTitleEquals(returnedPage, "Registration Success");
 		assertTextPresent(returnedPage, "Your registration has been successful!");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 	}
 
 	@Test

@@ -3,11 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Registration Success</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+  rel="stylesheet">
+<link rel="stylesheet" th:href="@{/card.css}" href="../../card.css" />
+<link rel="stylesheet" th:href="@{/font.css}" href="../../font.css" />
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <div>Your registration has been successful!</div>
-  <div>
-    Return to <a th:href="@{/}">Homepage</a>
+  <div class="container">
+    <h2 class="font-weight-bold my-5">Registration</h2>
+    <div class="card">
+      <h3 class="text-center">Your registration has been
+        successful!</h3>
+      <div class="mt-4 ml-3">
+        <a class="btn btn-primary" th:href="@{/}">Go back to
+          homepage</a>
+      </div>
+    </div>
   </div>
 </body>
 </html>
