@@ -388,6 +388,9 @@
             inside profile e2e to be executed in this order -->
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <mainClass>com.maurosalani.project.attsd.AttsdProjectApplication</mainClass>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
