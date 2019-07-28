@@ -14,10 +14,10 @@
   <form name="login_form" th:action="@{/verifyLogin}" th:object="${credentials}" method="post">
 
     <label for="username">Username:</label> 
-    <input type="text" autofocus="autofocus" th:field="*{username}" th:disabled="${disableInput}" /> 
+    <input name="username" type="text" autofocus="autofocus" th:field="*{username}" th:disabled="${disableInput}" /> 
       
     <label for="password">Password:</label>
-    <input type="text" th:field="*{password}" th:disabled="${disableInput}" />
+    <input name="password" type="text" th:field="*{password}" th:disabled="${disableInput}" />
 
     <button type="submit" name="btn_submit"
       th:disabled="${disableInput}">Log in</button>

@@ -1,29 +1,30 @@
 language: java
-
 addons:
   sonarcloud:
     organization: unifiprojects
-    token: 
+    token:
       secure: $SONAR_TOKEN
-
-services:
-  - docker
-
 matrix:
   include:
-    - jdk: openjdk8
-      if: type IN (push) AND type NOT IN (pull_request)
-      env: MAVEN_ARGS="-Pjacoco coveralls:report sonar:sonar"
-    - jdk: openjdk8
-      if: type IN (pull_request)
-      env: MAVEN_ARGS="-Pjacoco,pit,it coveralls:report sonar:sonar"
-          
+  - jdk: openjdk8
+    if: type IN (push) AND type NOT IN (pull_request)
+    env: MAVEN_ARGS="-Pjacoco coveralls:report sonar:sonar"
+  - jdk: openjdk8
+    if: type IN (pull_request)
+    env: MAVEN_ARGS="-Pjacoco,it coveralls:report sonar:sonar"
+  - jdk: openjdk8
+    if: type IN (pull_request)
+    env: MAVEN_ARGS="-Pe2e"
+  - jdk: openjdk8
+    if: type IN (pull_request)
+    env: MAVEN_ARGS="-Ppit"
+services:
+- docker
+- xvfb
 install: true
-
 cache:
   directories:
-    - $HOME/.m2
-    - $HOME/.sonar/cache
-
+  - $HOME/.m2
+  - $HOME/.sonar/cache
 script:
 - ./mvnw clean verify $MAVEN_ARGS

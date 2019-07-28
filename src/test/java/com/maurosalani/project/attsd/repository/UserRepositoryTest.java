@@ -120,6 +120,8 @@ public class UserRepositoryTest {
 		User user = new User(null, "test", "pwd");
 		user.setFollowedUsers(followed);
 
+		entityManager.persistAndFlush(followed.get(0));
+		entityManager.persistAndFlush(followed.get(1));
 		User saved = entityManager.persistFlushFind(user);
 
 		List<User> follower1 = saved.getFollowedUsers().get(0).getFollowerUsers();
@@ -149,6 +151,8 @@ public class UserRepositoryTest {
 		User user = new User(null, "user", "pwd");
 		user.setFollowedUsers(followed);
 
+		entityManager.persistAndFlush(followed.get(0));
+		entityManager.persistAndFlush(followed.get(1));
 		User savedAndToBeUpdated = entityManager.persistFlushFind(user);
 
 		List<User> replacementFollowedUsers = new LinkedList<User>();
@@ -202,6 +206,8 @@ public class UserRepositoryTest {
 
 		User user = new User(null, "username_test", "pwd");
 		user.setGames(games);
+		entityManager.persistAndFlush(games.get(0));
+		entityManager.persistAndFlush(games.get(1));
 		User saved = entityManager.persistFlushFind(user);
 
 		List<Game> retrievedGames = repository.findGamesOfUserByUsername("username_test");
@@ -216,6 +222,8 @@ public class UserRepositoryTest {
 		User user = new User(null, "test", "pwd");
 		user.setFollowedUsers(followed);
 
+		entityManager.persistAndFlush(followed.get(0));
+		entityManager.persistAndFlush(followed.get(1));
 		User saved = entityManager.persistFlushFind(user);
 		List<User> found = repository.findFollowedOfUserByUsername("test");
 

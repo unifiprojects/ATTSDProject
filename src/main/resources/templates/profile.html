@@ -73,9 +73,9 @@
       th:object="${changePasswordForm}" method="post">
       <p>Change password:</p>
       <label for="oldPassword">Old password:</label>
-      <input type="text" th:field="*{oldPassword}" />
+      <input name="oldPassword" type="text" th:field="*{oldPassword}" />
       <label for="newPassword">New password:</label>
-      <input type="text" th:field="*{newPassword}" />
+      <input name="newPassword" type="text" th:field="*{newPassword}" />
       <button type="submit" name="btn_change">Change password</button>
     </form>
   </div>

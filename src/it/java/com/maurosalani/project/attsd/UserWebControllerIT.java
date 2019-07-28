@@ -124,14 +124,10 @@ public class UserWebControllerIT {
 		User user2 = new User(null, "UsernameTest2", "PasswordTest2");
 		user.addFollowedUser(user1);
 		user.addFollowedUser(user2);
-		user1.addFollowedUser(user);
-		user2.addFollowedUser(user);
 		Game game1 = new Game(null, "Name1", "description", null);
 		Game game2 = new Game(null, "Name2", "description", null);
 		user.addGame(game1);
 		user.addGame(game2);
-		game1.addUser(user);
-		game2.addUser(user);
 		userRepository.save(user1);
 		userRepository.save(user2);
 		gameRepository.save(game1);
@@ -160,13 +156,11 @@ public class UserWebControllerIT {
 		Game game = new Game(null, "Name1", "description", new Date(1000));
 		User user1 = new User(null, "UsernameTest1", "PasswordTest1");
 		User user2 = new User(null, "UsernameTest2", "PasswordTest2");
-		game.addUser(user1);
-		game.addUser(user2);
 		user1.addGame(game);
 		user2.addGame(game);
+		gameRepository.save(game);
 		userRepository.save(user1);
 		userRepository.save(user2);
-		gameRepository.save(game);
 		
 		driver.get(baseUrl + "/game/" + game.getName());
 		
@@ -177,6 +171,4 @@ public class UserWebControllerIT {
 			driver.findElement(By.cssSelector
 				("a[href*='/profile/" + user2.getUsername() + "']"));
 	}
-	
-	
 }

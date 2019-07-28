@@ -17,7 +17,7 @@
   <form name="registration_form" th:action="@{/save}" th:object="${registrationForm}" method="post">
 
     <label for="username">Username:</label> 
-    <input type="text" th:field="*{username}"
+    <input name="username" type="text" th:field="*{username}"
       autofocus="autofocus" th:disabled="${disableInput}" /> 
       
     <label for="password">Password:</label>

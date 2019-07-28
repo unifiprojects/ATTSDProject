@@ -19,6 +19,10 @@
     <java.version>1.8</java.version>
 
     <skip.unit-tests>false</skip.unit-tests>
+    <skip.integration-tests>true</skip.integration-tests>
+    <attsd.MYSQL_DATABASE>attsd_database</attsd.MYSQL_DATABASE>
+    <attsd.MYSQL_USER>springuser</attsd.MYSQL_USER>
+    <attsd.MYSQL_PASSWORD>springuser</attsd.MYSQL_PASSWORD>
 
     <!-- For SonarQube -->
     <sonar.coverage.jacoco.xmlReportPaths>
@@ -132,14 +136,22 @@
       <artifactId>selenium-support</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>3.5.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
+  <!-- PLUGINS -->
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -165,6 +177,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <skipTests>${skip.unit-tests}</skipTests>
           <excludes>
             <exclude>**/AttsdProjectApplicationTests.java</exclude>
           </excludes>
@@ -172,6 +185,7 @@
       </plugin>
     </plugins>
 
+    <!-- PLUGIN MANAGEMENT -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -180,9 +194,10 @@
           <executions>
             <execution>
               <configuration>
+                <skipTests>${skip.integration-tests}</skipTests>
                 <includes>
                   <include>**/*IT.java</include>
-                  <include>**/AttsdProjectApplicationTests.java</include>
+                  <include>**/*AttsdProjectApplicationTests.java</include>
                 </includes>
               </configuration>
               <goals>
@@ -284,6 +299,7 @@
             <excludedTestClasses>
               <param>com.maurosalani.project.attsd.AttsdProjectApplicationTests</param>
               <param>com.maurosalani.project.attsd.*IT*</param>
+              <param>com.maurosalani.project.attsd.*E2E*</param>
             </excludedTestClasses>
             <mutators>
               <mutator>ALL</mutator>
@@ -306,10 +322,64 @@
           <version>3.6.0.1398</version>
         </plugin>
 
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.30.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <images>
+              <image>
+                <alias>database</alias>
+                <name>mysql:8.0.16</name>
+                <run>
+                  <wait>
+                    <log>mysqld: ready for connections</log>
+                    <time>200000</time>
+                  </wait>
+                  <env>
+                    <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
+                    <MYSQL_DATABASE>${attsd.MYSQL_DATABASE}</MYSQL_DATABASE>
+                    <MYSQL_USER>${attsd.MYSQL_USER}</MYSQL_USER>
+                    <MYSQL_PASSWORD>${attsd.MYSQL_PASSWORD}</MYSQL_PASSWORD>
+                  </env>
+                  <ports>
+                    <port>3306:3306</port>
+                  </ports>
+                </run>
+              </image>
+            </images>
+          </configuration>
+          <executions>
+            <execution>
+              <id>docker:start</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>start</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>docker:stop</id>
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>stop</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <!-- This plugin must be defined after docker plugin, to allow 
+            the goals 'docker-maven-plugin:<version>:start' and 'spring-boot-maven-plugin:<version>:start' 
+            inside profile e2e to be executed in this order -->
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
+  <!-- PROFILES -->
   <profiles>
     <profile>
       <id>jacoco</id>
@@ -318,7 +388,6 @@
       </activation>
       <build>
         <plugins>
-
           <plugin>
             <!-- configured in pluginManagement -->
             <groupId>org.jacoco</groupId>
@@ -335,6 +404,9 @@
 
     <profile>
       <id>pit</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -356,6 +428,12 @@
 
     <profile>
       <id>it</id>
+      <properties>
+        <skip.integration-tests>false</skip.integration-tests>
+        <attsd.MYSQL_DATABASE>attsd_database_test</attsd.MYSQL_DATABASE>
+        <attsd.MYSQL_USER>springuser_test</attsd.MYSQL_USER>
+        <attsd.MYSQL_PASSWORD>springuser_test</attsd.MYSQL_PASSWORD>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -366,54 +444,104 @@
             </configuration>
           </plugin>
           <plugin>
+            <!-- configured in pluginManagement -->
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.30.0</version>
-            <extensions>true</extensions>
-            <configuration>
-              <images>
-                <image>
-                  <alias>database</alias>
-                  <name>mysql:8.0.16</name>
-                  <run>
-                    <wait>
-                      <log>mysqld: ready for connections</log>
-                      <time>90000</time>
-                    </wait>
-                    <env>
-                      <MYSQL_ROOT_PASSWORD>root</MYSQL_ROOT_PASSWORD>
-                      <MYSQL_DATABASE>attsd_database_test</MYSQL_DATABASE>
-                      <MYSQL_USER>springuser_test</MYSQL_USER>
-                      <MYSQL_PASSWORD>springuser_test</MYSQL_PASSWORD>
-                    </env>
-                    <ports>
-                      <port>3306:3306</port>
-                    </ports>
-                  </run>
-                </image>
-              </images>
-            </configuration>
+          </plugin>
+          <plugin>
+            <!-- Configured in pluginManagement -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>e2e</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <skip.unit-tests>true</skip.unit-tests>
+        <skip.integration-tests>false</skip.integration-tests>
+        <attsd.MYSQL_DATABASE>attsd_database</attsd.MYSQL_DATABASE>
+        <attsd.MYSQL_USER>springuser</attsd.MYSQL_USER>
+        <attsd.MYSQL_PASSWORD>springuser</attsd.MYSQL_PASSWORD>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- configured in pluginManagement -->
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
               <execution>
-                <id>docker:start</id>
-                <phase>pre-integration-test</phase>
+                <id>reserve-tomcat-port</id>
+                <goals>
+                  <goal>reserve-network-port</goal>
+                </goals>
+                <phase>process-resources</phase>
+                <configuration>
+                  <portNames>
+                    <portName>tomcat.http.port</portName>
+                  </portNames>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <!-- configured in pluginManagement -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>pre-integration-test</id>
                 <goals>
                   <goal>start</goal>
                 </goals>
+                <configuration>
+                  <wait>100000</wait>
+                  <arguments>
+                    <argument>--server.port=${tomcat.http.port}</argument>
+                  </arguments>
+                </configuration>
               </execution>
               <execution>
-                <id>docker:stop</id>
-                <phase>post-integration-test</phase>
+                <id>post-integration-test</id>
                 <goals>
                   <goal>stop</goal>
                 </goals>
               </execution>
             </executions>
           </plugin>
+
           <plugin>
+            <!-- configured in pluginManagement -->
             <groupId>org.apache.maven.plugins</groupId>
-            <!-- Configured in pluginManagement -->
             <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <configuration>
+                  <excludes>
+                    <exclude>**/*IT.java</exclude>
+                    <exclude>**/AttsdProjectApplicationTests.java</exclude>
+                  </excludes>
+                  <includes>
+                    <include>**/*E2E.java</include>
+                  </includes>
+                  <systemPropertyVariables>
+                    <server.port>${tomcat.http.port}</server.port>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
