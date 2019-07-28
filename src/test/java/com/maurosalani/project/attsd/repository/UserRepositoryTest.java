@@ -105,7 +105,8 @@ public class UserRepositoryTest {
 		followed.add(new User(null, "one", "pwd"));
 		followed.add(new User(null, "two", "pwd"));
 		User user = new User(null, "test", "pwd");
-		user.setFollowedUsers(followed);
+		user.addFollowedUser(followed.get(0));
+		user.addFollowedUser(followed.get(1));
 
 		User saved = repository.save(user);
 
@@ -114,20 +115,16 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testFollowerListIsPersistedWhenUserIsSaved() {
-		List<User> followed = new LinkedList<User>();
-		followed.add(new User(null, "one", "pwd"));
-		followed.add(new User(null, "two", "pwd"));
+		List<User> follower = new LinkedList<User>();
+		follower.add(new User(null, "one", "pwd"));
+		follower.add(new User(null, "two", "pwd"));
 		User user = new User(null, "test", "pwd");
-		user.setFollowedUsers(followed);
+		user.addFollowerUser(follower.get(0));
+		user.addFollowerUser(follower.get(1));
 
-		entityManager.persistAndFlush(followed.get(0));
-		entityManager.persistAndFlush(followed.get(1));
-		User saved = entityManager.persistFlushFind(user);
+		User saved = repository.save(user);
 
-		List<User> follower1 = saved.getFollowedUsers().get(0).getFollowerUsers();
-		List<User> follower2 = saved.getFollowedUsers().get(1).getFollowerUsers();
-		assertThat(follower1).containsExactly(saved);
-		assertThat(follower2).containsExactly(saved);
+		assertThat(follower).isEqualTo(saved.getFollowerUsers());
 	}
 
 	@Test
