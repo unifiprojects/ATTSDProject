@@ -27,4 +27,5 @@ cache:
   - $HOME/.m2
   - $HOME/.sonar/cache
 script:
+- git fetch --unshallow
 - ./mvnw clean verify $MAVEN_ARGS

@@ -3,24 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <title>Login</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+  rel="stylesheet">
+<link rel="stylesheet" th:href="@{/card.css}" href="../../card.css" />
+<link rel="stylesheet" th:href="@{/font.css}" href="../../font.css" />
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <div>
-    <a th:href="@{/}">Go back to homepage</a>
-  </div>
-  <div th:unless="${message.empty}">
-    <div th:text="${message}"></div>
-  </div>
-  <form name="login_form" th:action="@{/verifyLogin}" th:object="${credentials}" method="post">
 
-    <label for="username">Username:</label> 
-    <input name="username" type="text" autofocus="autofocus" th:field="*{username}" th:disabled="${disableInput}" /> 
-      
-    <label for="password">Password:</label>
-    <input name="password" type="text" th:field="*{password}" th:disabled="${disableInput}" />
+  <div class="container">
 
-    <button type="submit" name="btn_submit"
-      th:disabled="${disableInput}">Log in</button>
-  </form>
+
+    <h2 class="font-weight-bold my-5">Login</h2>
+    <div class="text-center text-danger">
+      <div th:unless="${message.empty}">
+        <div th:text="${message}"></div>
+      </div>
+      <div th:if="${message.empty}">&nbsp;</div>
+    </div>
+
+
+    <form name="login_form" th:action="@{/verifyLogin}"
+      th:object="${credentials}" method="post" class="card mt-1">
+      <div>
+        <label for="username">Username:</label> <input name="username"
+          type="text" autofocus="autofocus" th:field="*{username}"
+          th:disabled="${disableInput}" class="form-control" />
+      </div>
+      <div class="mt-4">
+        <label for="password">Password:</label> <input name="password"
+          type="text" th:field="*{password}"
+          th:disabled="${disableInput}" class="form-control" />
+      </div>
+      <div class="text-right mt-4">
+        <button type="submit" name="btn_submit"
+          th:disabled="${disableInput}" class="btn btn-primary">Log
+          in</button>
+      </div>
+    </form>
+
+    <div class="mt-4 ml-3">
+      <a class="btn btn-primary" th:href="@{/}">Go back to homepage</a>
+    </div>
+
+  </div>
+
+
+
+
 </body>
 </html>
