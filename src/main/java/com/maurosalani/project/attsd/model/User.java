@@ -18,7 +18,6 @@ import javax.persistence.ManyToMany;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -41,15 +40,16 @@ public class User implements Serializable {
 	@Basic(optional = false)
 	private String password;
 
-	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
+	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followedUsers;
 
-	@ManyToMany(cascade = CascadeType.DETACH, mappedBy = "followedUsers")
-	@JsonIgnore
+	@ManyToMany(mappedBy = "followedUsers")
+	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followerUsers;
 
-	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
 	@JsonIgnoreProperties("users")
 	private List<Game> games;
