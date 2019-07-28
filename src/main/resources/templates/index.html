@@ -42,17 +42,15 @@
             <div class="text-center">
               <h4 class="font-weight-bold">Welcome!</h4>
               <p class="mt-3">
-                <a th:href="@{/login}">Log in</a>
-                or
-                <a th:href="@{/registration}">Register</a>
+                <a th:href="@{/login}">Log in</a> or <a
+                  th:href="@{/registration}">Register</a>
               </p>
             </div>
           </div>
           <div th:unless="${username == null}">
             <div class="text-center">
               <h4 class="font-weight-bold">
-                Welcome back
-                <a th:href="@{'/profile/' + ${username}}">
+                Welcome back <a th:href="@{'/profile/' + ${username}}">
                   <label th:text="${username}"> </label>
                 </a>
               </h4>
@@ -77,15 +75,18 @@
             releases!</h2>
           <div id="latestReleases" class="d-flex">
             <div class="card my-card" th:each="game : ${latestReleases}">
-              <h3 th:text="${game.name}"></h3>
-              <p th:text="${game.description}"></p>
-              <p
-                th:text="${#dates.format(game.releaseDate, 'dd-MM-yyyy')}"></p>
-              <div class="align-self-end">
+              <div class="pb-5">
+                <h3 th:text="${game.name}"></h3>
+                <p th:text="${game.description}"></p>
+                <p
+                  th:text="${#dates.format(game.releaseDate, 'dd-MM-yyyy')}"></p>
+              </div>
+              <div class="go-link">
                 <a th:href="@{'/game/' + ${game.name}}"> Go to page
                 </a>
               </div>
             </div>
+
           </div>
         </div>
       </div>
