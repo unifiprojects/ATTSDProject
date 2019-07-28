@@ -3,67 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <title>Search</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+  rel="stylesheet">
+<link rel="stylesheet" th:href="@{/card.css}" href="../../card.css" />
+<link rel="stylesheet" th:href="@{/font.css}" href="../../font.css" />
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <div>
+  <div class="container">
+  
+  
+    <h2 class="font-weight-bold my-5">Search</h2>
+    <div class="card">
     
-    <div th:if="${!message.empty}">
-      <div th:text="${message}"></div>
-    </div>
-    <div th:if="${message.empty}">
-      <!-- Table of Users result -->
-      <table id="userSearchResults">
-        <thead>
-          <tr>
-            <th>
-              <h3>Users</h3>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:if="${usersList.empty}">
-            <td>No Users</td>
-          </tr>
-          <tr th:unless="${usersList.empty}"
+    
+      <div th:if="${!message.empty}">
+        <h3 class="text-center text-danger" th:text="${message}"></h3>
+      </div>
+      
+      
+      <div class="row" th:if="${message.empty}">
+        <!-- Table of Users result -->
+        <div class="col col-6" id="userSearchResults">
+          <h3>Users</h3>
+          <div th:if="${usersList.empty}">
+            <h4>No Users</h4>
+          </div>
+          <div th:unless="${usersList.empty}"
             th:each="user : ${usersList}">
-            <td>
-              <a th:href="@{'/profile/' + ${user.username}}">
-                <span th:text="${user.username}"></span>
+            <h4>
+              <a th:href="@{'/profile/' + ${user.username}}"> <span
+                th:text="${user.username}"></span>
               </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </h4>
+          </div>
+        </div>
       <!-- Table of Games result -->
-      <table id="gameSearchResults">
-        <thead>
-          <tr>
-            <th>
-              <h3>Games</h3>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:if="${gamesList.empty}">
-            <td>No Games</td>
-          </tr>
-          <tr th:unless="${gamesList.empty}"
-            th:each="game : ${gamesList}">
-            <td>
-              <a th:href="@{'/game/' + ${game.name}}">
-                <span th:text="${game.name}"></span>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="col col-6" id="gameSearchResults">
+        <h3>Games</h3>
+        <div th:if="${gamesList.empty}">
+          <h4>No Games</h4>
+        </div>
+        <h4 th:unless="${gamesList.empty}" th:each="game : ${gamesList}">
+          <a th:href="@{'/game/' + ${game.name}}"> <span
+            th:text="${game.name}"></span>
+          </a>
+        </h4>
+      </div>
     </div>
   </div>
   
-  <div>
-      <a th:href="@{/}">Go back to homepage</a>
-    </div>
-  
-  
+  <div class="mt-4 ml-3">
+    <a class="btn btn-primary" th:href="@{/}">Go back to homepage</a>
+  </div>
+  </div>
+
 </body>
 </html>

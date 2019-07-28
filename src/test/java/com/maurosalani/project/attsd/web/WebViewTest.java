@@ -247,6 +247,7 @@ public class WebViewTest {
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 		assertTitleEquals(returnedPage, "Registration Success");
 		assertTextPresent(returnedPage, "Your registration has been successful!");
+		assertTextPresent(returnedPage, "Registration");
 		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 	}
 
@@ -339,13 +340,14 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute(content);
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
-		HtmlTable tableUsers = searchPage.getHtmlElementById("userSearchResults");
-		assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo("Users\n" + " user1_nameTest\n" + "user2_nameTest");
-		HtmlTable tableGames = searchPage.getHtmlElementById("gameSearchResults");
-		assertThat(removeWindowsCR(tableGames.asText())).isEqualTo("Games\n" + " game1_nameTest\n" + "game2_nameTest");
+		assertThat(searchPage.getElementById("userSearchResults").getTextContent()).contains("Users", "user1_nameTest",
+				"user2_nameTest");
+		assertThat(searchPage.getElementById("gameSearchResults").getTextContent()).contains("Games", "game1_nameTest",
+				"game2_nameTest");
 
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
+		assertTextPresent(page, "Search");
 		assertLinkPresentWithText(searchPage, "user1_nameTest");
 		assertLinkPresentWithText(searchPage, "user2_nameTest");
 		assertLinkPresentWithText(searchPage, "game1_nameTest");
@@ -362,6 +364,8 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute("name_not_existing");
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
+		assertTextPresent(page, "Search");
+
 		assertTextPresent(searchPage, "No Users");
 		assertTextPresent(searchPage, "No Games");
 	}
@@ -373,6 +377,7 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute("  ");
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
+		assertTextPresent(page, "Search");
 		assertTextPresent(searchPage, "Error: search field was empty.");
 	}
 
