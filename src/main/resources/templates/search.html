@@ -6,9 +6,7 @@
 </head>
 <body>
   <div>
-    <div>
-      <a th:href="@{/}">Go back to homepage</a>
-    </div>
+    
     <div th:if="${!message.empty}">
       <div th:text="${message}"></div>
     </div>
@@ -61,5 +59,11 @@
       </table>
     </div>
   </div>
+  
+  <div>
+      <a th:href="@{/}">Go back to homepage</a>
+    </div>
+  
+  
 </body>
 </html>
