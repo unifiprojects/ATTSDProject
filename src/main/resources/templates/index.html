@@ -47,9 +47,11 @@
           </div>
           <div th:unless="${username == null}">
             <div class="text-center">
-              <h4 class="font-weight-bold">
-                Welcome back <a th:href="@{'/profile/' + ${username}}">
-                  <label th:text="${username}"> </label>
+              <h4 class="font-weight-bold mb-2">Welcome back</h4>
+              <h4>
+                <a class="font-weight-bold"
+                  th:href="@{'/profile/' + ${username}}"> <label
+                  th:text="${username}"> </label>
                 </a>
               </h4>
               <div>

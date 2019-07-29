@@ -25,29 +25,29 @@
         <div class="col col-6 text-center" id="userSearchResults">
           <h3 class="mb-4">Users</h3>
           <div th:if="${usersList.empty}">
-            <h4>No Users</h4>
+            <h5>No Users</h5>
           </div>
           <div th:unless="${usersList.empty}"
             th:each="user : ${usersList}">
-            <h4>
+            <h5>
               <a th:href="@{'/profile/' + ${user.username}}"> <span
                 th:text="${user.username}"></span>
               </a>
-            </h4>
+            </h5>
           </div>
         </div>
         <!-- Table of Games result -->
         <div class="col col-6 text-center" id="gameSearchResults">
           <h3 class="mb-4">Games</h3>
           <div th:if="${gamesList.empty}">
-            <h4>No Games</h4>
+            <h5>No Games</h5>
           </div>
-          <h4 th:unless="${gamesList.empty}"
+          <h5 th:unless="${gamesList.empty}"
             th:each="game : ${gamesList}">
             <a th:href="@{'/game/' + ${game.name}}"> <span
               th:text="${game.name}"></span>
             </a>
-          </h4>
+          </h5>
         </div>
       </div>
     </div>

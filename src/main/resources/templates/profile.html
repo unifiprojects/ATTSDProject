@@ -15,57 +15,53 @@
 <body>
   <div class="container">
 
-    <h3 class="font-weight-bold my-5" th:text="${user.username}"></h3>
+    <h2 class="font-weight-bold my-5" th:text="${user.username}"></h2>
 
-    <!-- Table of Followed list -->
-    <table id="userFollowed">
-      <thead>
-        <tr>
-          <th>
-            <h3>Users followed</h3>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          th:if="${user.followedUsers == null or user.followedUsers.empty}">
-          <td>No Users</td>
-        </tr>
-        <tr
-          th:unless="${user.followedUsers == null or user.followedUsers.empty}"
-          th:each="followed : ${user.followedUsers}">
-          <td><a th:href="@{'/profile/' + ${followed.username}}">
-              <span th:text="${followed.username}"></span>
-          </a></td>
-        </tr>
-      </tbody>
-    </table>
-    <!-- Table of Games list -->
-    <table id="games">
-      <thead>
-        <tr>
-          <th>
-            <h3>Games</h3>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:if="${user.games == null or user.games.empty}">
-          <td>No Games</td>
-        </tr>
-        <tr th:unless="${user.games == null or user.games.empty}"
-          th:each="game : ${user.games}">
-          <td><a th:href="@{'/game/' + ${game.name}}"> <span
-              th:text="${game.name}"></span>
-          </a></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card">
+      <div class="row">
+        <!-- Table of Followed list -->
+        <div class="col col-6 text-center" id="userFollowed">
+          <div>
+            <h3 class="mb-4">Users followed</h3>
+          </div>
+          <div>
+            <div
+              th:if="${user.followedUsers == null or user.followedUsers.empty}">
+              <h5>No Users</h5>
+            </div>
+            <div
+              th:unless="${user.followedUsers == null or user.followedUsers.empty}"
+              th:each="followed : ${user.followedUsers}">
+              <h5>
+                <a th:href="@{'/profile/' + ${followed.username}}">
+                  <span th:text="${followed.username}"></span>
+                </a>
+              </h5>
+            </div>
+          </div>
+        </div>
+        <!-- Table of Games list -->
+        <div class="col col-6 text-center" id="games">
+          <div>
+            <h3 class="mb-4">Games</h3>
+          </div>
+          <div>
+            <div th:if="${user.games == null or user.games.empty}">
+              <h5>No Games</h5>
+            </div>
+            <div th:unless="${user.games == null or user.games.empty}"
+              th:each="game : ${user.games}">
+              <h5>
+                <a th:href="@{'/game/' + ${game.name}}"> <span
+                  th:text="${game.name}"></span>
+                </a>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-
-
-
-    <a th:href="@{/}">Homepage</a>
     <div th:if="${isLogged and not isMyProfile}">
       <div th:if="${!isAlreadyFollowed}">
         <form name="addToFollowed_form" th:action="@{/addUser}"
@@ -88,5 +84,12 @@
       </form>
     </div>
   </div>
+
+
+  <div class="mt-4 ml-3">
+    <a class="btn btn-primary" th:href="@{/}">Go back to homepage</a>
+  </div>
+
+
 </body>
 </html>
