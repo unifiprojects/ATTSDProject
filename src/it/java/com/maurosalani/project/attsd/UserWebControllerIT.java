@@ -47,7 +47,7 @@ public class UserWebControllerIT {
 		gameRepository.deleteAll();
 		gameRepository.flush();
 	}
-	
+
 	@Test
 	public void testHomePage_UserShouldSeeLoginAndLatestReleasesGames() {
 		Game gameLatestRelease1 = new Game(null, "game1", "description1", new Date(1000));
@@ -55,11 +55,11 @@ public class UserWebControllerIT {
 		gameRepository.save(gameLatestRelease1);
 		gameRepository.save(gameLatestRelease2);
 		driver.get(baseUrl);
-		
+
 		driver.findElement(By.linkText("Log in"));
 		driver.findElement(By.linkText("Register"));
-		assertThat(driver.findElement(By.id("latestReleases")).getText()).
-			contains("game1", "description1", "game2","description2");
+		assertThat(driver.findElement(By.id("latestReleases")).getText()).contains("game1", "description1", "game2",
+				"description2");
 	}
 
 	@Test
@@ -69,11 +69,11 @@ public class UserWebControllerIT {
 		driver.findElement(By.name("username")).sendKeys(userRegistered.getUsername());
 		driver.findElement(By.name("password")).sendKeys(userRegistered.getPassword());
 		driver.findElement(By.name("btn_submit")).click();
-		
+
 		assertThat(driver.getPageSource()).contains("Welcome back");
 		driver.findElement(By.linkText("Logout"));
 	}
-	
+
 	@Test
 	public void testRegistration_UserRegisterWithSuccess() {
 		User userToRegister = new User(null, "username", "password");
@@ -82,11 +82,11 @@ public class UserWebControllerIT {
 		driver.findElement(By.name("password")).sendKeys(userToRegister.getPassword());
 		driver.findElement(By.name("confirmPassword")).sendKeys(userToRegister.getPassword());
 		driver.findElement(By.name("btn_submit")).click();
-		
+
 		assertThat(userRepository.findByUsername(userToRegister.getUsername())).isPresent();
-		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
+		assertThat(driver.getPageSource()).contains("Your registration", "has been", "successful!");
 	}
-	
+
 	@Test
 	public void testSearchUsersAndGames_ShouldSeeAllTheComplyingResults() {
 		User user1 = new User(null, "someName1", "password");
@@ -105,18 +105,14 @@ public class UserWebControllerIT {
 		driver.get(baseUrl);
 		driver.findElement(By.name("content_search")).sendKeys("Name");
 		driver.findElement(By.name("btn_submit")).click();
-		
+
 		assertThat(driver.getPageSource()).doesNotContain("No Users", "No Games");
-		driver.findElement(By.cssSelector
-			("a[href*='/profile/" + user1.getUsername() + "']"));
-		driver.findElement(By.cssSelector
-			("a[href*='/profile/" + user2.getUsername() + "']"));
-		driver.findElement(By.cssSelector
-				("a[href*='/game/" + game1.getName() + "']"));
-		driver.findElement(By.cssSelector
-				("a[href*='/game/" + game2.getName() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user1.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user2.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/game/" + game1.getName() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/game/" + game2.getName() + "']"));
 	}
-	
+
 	@Test
 	public void testShowProfile_ShouldSeeUsernameAndLists() {
 		User user = new User(null, "UsernameTest", "PasswordTest");
@@ -133,24 +129,18 @@ public class UserWebControllerIT {
 		gameRepository.save(game1);
 		gameRepository.save(game2);
 		userRepository.save(user);
-		
+
 		driver.get(baseUrl + "/profile/" + user.getUsername());
-		
+
 		assertThat(driver.getPageSource()).contains(user.getUsername());
-		assertThat(driver.findElement(By.id("userFollowed")).getText()).
-			doesNotContain("No Users");
-		assertThat(driver.findElement(By.id("games")).getText()).
-			doesNotContain("No Games");
-		driver.findElement(By.cssSelector
-				("a[href*='/profile/" + user1.getUsername() + "']"));
-			driver.findElement(By.cssSelector
-				("a[href*='/profile/" + user2.getUsername() + "']"));
-			driver.findElement(By.cssSelector
-					("a[href*='/game/" + game1.getName() + "']"));
-			driver.findElement(By.cssSelector
-					("a[href*='/game/" + game2.getName() + "']"));
+		assertThat(driver.findElement(By.id("userFollowed")).getText()).doesNotContain("No Users");
+		assertThat(driver.findElement(By.id("games")).getText()).doesNotContain("No Games");
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user1.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user2.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/game/" + game1.getName() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/game/" + game2.getName() + "']"));
 	}
-	
+
 	@Test
 	public void testShowGameProfile_ShouldSeeNameDescriptionAndList() {
 		Game game = new Game(null, "Name1", "description", new Date(1000));
@@ -161,14 +151,12 @@ public class UserWebControllerIT {
 		gameRepository.save(game);
 		userRepository.save(user1);
 		userRepository.save(user2);
-		
+
 		driver.get(baseUrl + "/game/" + game.getName());
-		
-		assertThat(driver.getPageSource()).contains(game.getName(),game.getDescription());
+
+		assertThat(driver.getPageSource()).contains(game.getName(), game.getDescription());
 		assertThat(driver.getPageSource()).doesNotContain("No users like this game yet...");
-		driver.findElement(By.cssSelector
-				("a[href*='/profile/" + user1.getUsername() + "']"));
-			driver.findElement(By.cssSelector
-				("a[href*='/profile/" + user2.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user1.getUsername() + "']"));
+		driver.findElement(By.cssSelector("a[href*='/profile/" + user2.getUsername() + "']"));
 	}
 }

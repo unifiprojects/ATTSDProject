@@ -106,8 +106,8 @@ public class UserWebControllerE2E {
 		confirmPassword.sendKeys(toRegister.getPassword());
 		driver.findElement(By.name("btn_submit")).click();
 
-		assertThat(driver.getPageSource()).contains("Your registration has been successful!");
-		driver.findElement(By.linkText("Homepage"));
+		assertThat(driver.getPageSource()).contains("Your registration", "has been", "successful!");
+		driver.findElement(By.linkText("Go back to homepage"));
 	}
 
 	@Test

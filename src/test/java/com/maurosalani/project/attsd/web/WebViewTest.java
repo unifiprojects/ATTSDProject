@@ -423,7 +423,7 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/profile/username");
 
-		assertTextPresent(page, "Username: " + user.getUsername());
+		assertTextPresent(page, user.getUsername());
 
 		HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
 		assertThat(removeWindowsCR(tableUsers.asText()))
@@ -450,7 +450,7 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/profile/someUser");
 
-		assertTextPresent(page, "Username: " + user.getUsername());
+		assertTextPresent(page, user.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 		assertLinkPresentWithText(page, "Homepage");
@@ -474,7 +474,7 @@ public class WebViewTest {
 		when(userService.getUserByUsername("usernameFollowed")).thenReturn(userFollowed);
 		HtmlPage page = webClient.getPage("/profile/usernameFollowed");
 
-		assertTextPresent(page, "Username: " + userFollowed.getUsername());
+		assertTextPresent(page, userFollowed.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
@@ -492,7 +492,7 @@ public class WebViewTest {
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
 
-		assertTextPresent(page, "Username: " + userLogged.getUsername());
+		assertTextPresent(page, userLogged.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
@@ -521,7 +521,7 @@ public class WebViewTest {
 		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
 		HtmlPage returnedPage = addToFollowedForm.getButtonByName("btn_add").click();
 
-		assertTextPresent(returnedPage, "Username: " + userFollowed.getUsername());
+		assertTextPresent(returnedPage, userFollowed.getUsername());
 		assertTextPresent(returnedPage, "No Users");
 		assertTextPresent(returnedPage, "No Games");
 		assertLinkPresentWithText(returnedPage, "Homepage");
