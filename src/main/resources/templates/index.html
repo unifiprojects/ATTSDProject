@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>ATTSD-Project: Social Games</title>
-<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
-  rel="stylesheet">
-<link rel="stylesheet" th:href="@{/card.css}" href="../../card.css" />
-<link rel="stylesheet" th:href="@{/font.css}" href="../../font.css" />
 <link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/card.css}">
+<link rel="stylesheet" th:href="@{/css/font.css}">
 <link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
   rel="stylesheet">
 <meta name="viewport"
@@ -71,8 +69,7 @@
           <h2 class="font-weight-bold mb-4">No latest releases...</h2>
         </div>
         <div th:unless="${latestReleases.empty}">
-          <h2 class="font-weight-bold mb-4 card-body">Latest
-            releases!</h2>
+          <h2 class="font-weight-bold mb-4">Latest releases!</h2>
           <div id="latestReleases" class="d-flex">
             <div class="card my-card" th:each="game : ${latestReleases}">
               <div class="pb-5">

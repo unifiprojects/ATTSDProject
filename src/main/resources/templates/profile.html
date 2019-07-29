@@ -3,81 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <title th:text=${user.username}></title>
+<link rel="stylesheet"
+  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/card.css}">
+<link rel="stylesheet" th:href="@{/css/font.css}">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <div>
-    Username:
-    <label th:text="${user.username}"></label>
-  </div>
-  <!-- Table of Followed list -->
-  <table id="userFollowed">
-    <thead>
-      <tr>
-        <th>
-          <h3>Users followed</h3>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        th:if="${user.followedUsers == null or user.followedUsers.empty}">
-        <td>No Users</td>
-      </tr>
-      <tr
-        th:unless="${user.followedUsers == null or user.followedUsers.empty}"
-        th:each="followed : ${user.followedUsers}">
-        <td>
-          <a th:href="@{'/profile/' + ${followed.username}}">
-            <span th:text="${followed.username}"></span>
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <!-- Table of Games list -->
-  <table id="games">
-    <thead>
-      <tr>
-        <th>
-          <h3>Games</h3>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:if="${user.games == null or user.games.empty}">
-        <td>No Games</td>
-      </tr>
-      <tr th:unless="${user.games == null or user.games.empty}"
-        th:each="game : ${user.games}">
-        <td>
-          <a th:href="@{'/game/' + ${game.name}}">
-            <span th:text="${game.name}"></span>
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <a th:href="@{/}">Homepage</a>
-  <div th:if="${isLogged and not isMyProfile}">
-    <div th:if="${!isAlreadyFollowed}">
-      <form name="addToFollowed_form" th:action="@{/addUser}"
-        method="post">
-        <input type="hidden" th:value="${user.username}"
-          name="followedToAdd" />
-        <button type="submit" name="btn_add">Follow</button>
+  <div class="container">
+
+    <h3 class="font-weight-bold my-5" th:text="${user.username}"></h3>
+
+    <!-- Table of Followed list -->
+    <table id="userFollowed">
+      <thead>
+        <tr>
+          <th>
+            <h3>Users followed</h3>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          th:if="${user.followedUsers == null or user.followedUsers.empty}">
+          <td>No Users</td>
+        </tr>
+        <tr
+          th:unless="${user.followedUsers == null or user.followedUsers.empty}"
+          th:each="followed : ${user.followedUsers}">
+          <td><a th:href="@{'/profile/' + ${followed.username}}">
+              <span th:text="${followed.username}"></span>
+          </a></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Table of Games list -->
+    <table id="games">
+      <thead>
+        <tr>
+          <th>
+            <h3>Games</h3>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${user.games == null or user.games.empty}">
+          <td>No Games</td>
+        </tr>
+        <tr th:unless="${user.games == null or user.games.empty}"
+          th:each="game : ${user.games}">
+          <td><a th:href="@{'/game/' + ${game.name}}"> <span
+              th:text="${game.name}"></span>
+          </a></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+
+    <a th:href="@{/}">Homepage</a>
+    <div th:if="${isLogged and not isMyProfile}">
+      <div th:if="${!isAlreadyFollowed}">
+        <form name="addToFollowed_form" th:action="@{/addUser}"
+          method="post">
+          <input type="hidden" th:value="${user.username}"
+            name="followedToAdd" />
+          <button type="submit" name="btn_add">Follow</button>
+        </form>
+      </div>
+    </div>
+    <div th:if="${isLogged and isMyProfile}">
+      <form name="changePassword_form" th:action="@{/changePassword}"
+        th:object="${changePasswordForm}" method="post">
+        <p>Change password:</p>
+        <label for="oldPassword">Old password:</label> <input
+          name="oldPassword" type="text" th:field="*{oldPassword}" /> <label
+          for="newPassword">New password:</label> <input
+          name="newPassword" type="text" th:field="*{newPassword}" />
+        <button type="submit" name="btn_change">Change password</button>
       </form>
     </div>
-  </div>
-  <div th:if="${isLogged and isMyProfile}">
-    <form name="changePassword_form" th:action="@{/changePassword}"
-      th:object="${changePasswordForm}" method="post">
-      <p>Change password:</p>
-      <label for="oldPassword">Old password:</label>
-      <input name="oldPassword" type="text" th:field="*{oldPassword}" />
-      <label for="newPassword">New password:</label>
-      <input name="newPassword" type="text" th:field="*{newPassword}" />
-      <button type="submit" name="btn_change">Change password</button>
-    </form>
   </div>
 </body>
 </html>

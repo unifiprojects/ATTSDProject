@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title th:text=${game.name}></title>
+<link rel="stylesheet"
+  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/card.css}">
+<link rel="stylesheet" th:href="@{/css/font.css}">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
   <h1 id="nameOfGame" th:text="${game.name}"></h1>
@@ -30,11 +38,9 @@
     <h2>Users who liked this game:</h2>
     <table id="usersFans">
       <tr th:each="user : ${game.users}">
-        <td>
-          <a th:href="@{'/profile/' + ${user.username}}">
-            <span th:text="${user.username}"></span>
-          </a>
-        </td>
+        <td><a th:href="@{'/profile/' + ${user.username}}"> <span
+            th:text="${user.username}"></span>
+        </a></td>
       </tr>
     </table>
   </div>
