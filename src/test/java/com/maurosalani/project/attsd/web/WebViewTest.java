@@ -401,8 +401,9 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	@Test
@@ -579,8 +580,9 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	@Test
@@ -682,8 +684,9 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	private WebRequest createWebRequestToLogin(CredentialsDTO credentials, boolean loginShouldSuccess)
