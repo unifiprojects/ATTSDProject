@@ -425,18 +425,18 @@ public class WebViewTest {
 
 		assertTextPresent(page, user.getUsername());
 
-		HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
-		assertThat(removeWindowsCR(tableUsers.asText()))
-				.isEqualTo("Users followed\n" + " user1_nameTest\n" + "user2_nameTest");
-		HtmlTable tableGames = page.getHtmlElementById("games");
-		assertThat(removeWindowsCR(tableGames.asText())).isEqualTo("Games\n" + " game1_nameTest\n" + "game2_nameTest");
+		assertThat(page.getElementById("userFollowed").getTextContent()).contains("Users followed", " user1_nameTest",
+				"user2_nameTest");
+		assertThat(page.getElementById("games").getTextContent()).contains("Games", " game1_nameTest",
+				"game2_nameTest");
+
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
 		assertLinkPresentWithText(page, "user1_nameTest");
 		assertLinkPresentWithText(page, "user2_nameTest");
 		assertLinkPresentWithText(page, "game1_nameTest");
 		assertLinkPresentWithText(page, "game2_nameTest");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
 
 	@Test
@@ -453,7 +453,7 @@ public class WebViewTest {
 		assertTextPresent(page, user.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 
 		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
 		assertThat(addToFollowedForm.getInputByName("followedToAdd").getDisabledAttribute()).isEqualTo("");
@@ -478,7 +478,7 @@ public class WebViewTest {
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 		assertTextNotPresent(page, "Add to followed");
 	}
 
@@ -496,7 +496,7 @@ public class WebViewTest {
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 		assertTextNotPresent(page, "Add to followed");
 
 		final HtmlForm addToFollowedForm = page.getFormByName("changePassword_form");
@@ -524,7 +524,7 @@ public class WebViewTest {
 		assertTextPresent(returnedPage, userFollowed.getUsername());
 		assertTextPresent(returnedPage, "No Users");
 		assertTextPresent(returnedPage, "No Games");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 		assertTextNotPresent(returnedPage, "Add to followed");
 	}
 

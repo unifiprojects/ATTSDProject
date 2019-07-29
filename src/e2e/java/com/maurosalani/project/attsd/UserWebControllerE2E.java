@@ -181,7 +181,7 @@ public class UserWebControllerE2E {
 		searchContent(userToFollow.getUsername());
 		driver.findElement(By.linkText(userToFollow.getUsername())).click();
 		driver.findElement(By.name("btn_add")).click();
-		driver.findElement(By.linkText("Homepage")).click();
+		driver.findElement(By.linkText("Go back to homepage")).click();
 		driver.findElement(By.linkText(userLogged.getUsername())).click();
 
 		assertThat(driver.findElement(By.id("userFollowed")).getText()).contains(userToFollow.getUsername());
