@@ -389,7 +389,7 @@ public class WebViewTest {
 		HtmlPage page = webClient.getPage("/profile/username_wrong");
 		assertTitleEquals(page, "Profile not found");
 		assertTextPresent(page, "Profile not found.");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	@Test
@@ -425,10 +425,9 @@ public class WebViewTest {
 
 		assertTextPresent(page, user.getUsername());
 
-		assertThat(page.getElementById("userFollowed").getTextContent()).contains("Users followed", " user1_nameTest",
+		assertThat(page.getElementById("userFollowed").getTextContent()).contains("Users followed", "user1_nameTest",
 				"user2_nameTest");
-		assertThat(page.getElementById("games").getTextContent()).contains("Games", " game1_nameTest",
-				"game2_nameTest");
+		assertThat(page.getElementById("games").getTextContent()).contains("Games", "game1_nameTest", "game2_nameTest");
 
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
@@ -546,7 +545,7 @@ public class WebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "Password is required.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go to homepage");
 	}
 
 	@Test
@@ -567,7 +566,7 @@ public class WebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "Old password do not match.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go to homepage");
 	}
 
 	@Test
@@ -603,7 +602,7 @@ public class WebViewTest {
 
 		assertTitleEquals(returnedPage, "Password changed");
 		assertTextPresent(returnedPage, "Password changed successfully.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 	}
 
 	@Test
@@ -617,8 +616,7 @@ public class WebViewTest {
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 
-		HtmlTable tableUsers = page.getHtmlElementById("usersFans");
-		assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo("user1_nameTest\n" + "user2_nameTest");
+		assertThat(page.getElementById("usersFans").getTextContent()).contains("user1_nameTest", "user2_nameTest");
 
 		String pattern = "dd-mm-yyyy";
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -630,7 +628,7 @@ public class WebViewTest {
 		assertTextNotPresent(page, "No users like this game yet...");
 		assertLinkPresentWithText(page, "user1_nameTest");
 		assertLinkPresentWithText(page, "user2_nameTest");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
 
 	@Test
@@ -644,7 +642,7 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 		assertThat(page.getFormByName("like_form").getButtonByName("btn_like").getDisabledAttribute()).isEqualTo("");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
 
 	@Test
@@ -661,7 +659,7 @@ public class WebViewTest {
 		HtmlPage pageGameAfterUserPutLike = page.getFormByName("like_form").getButtonByName("btn_like").click();
 
 		assertFormNotPresent(pageGameAfterUserPutLike, "like_form");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
 
 	@Test
@@ -672,7 +670,7 @@ public class WebViewTest {
 		HtmlPage page = webClient.getPage("/game/name_wrong");
 		assertTitleEquals(page, "Game not found");
 		assertTextPresent(page, "Game not found.");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	@Test

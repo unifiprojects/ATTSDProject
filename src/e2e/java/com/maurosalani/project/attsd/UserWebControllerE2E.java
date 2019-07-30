@@ -168,7 +168,7 @@ public class UserWebControllerE2E {
 		driver.findElement(By.name("btn_change")).click();
 
 		assertThat(driver.getPageSource()).contains("Password changed successfully.");
-		driver.findElement(By.linkText("Homepage"));
+		driver.findElement(By.linkText("Go back to homepage"));
 	}
 
 	@Test
@@ -213,7 +213,7 @@ public class UserWebControllerE2E {
 		driver.findElement(By.linkText(game.getName())).click();
 
 		driver.findElement(By.name("btn_like")).click();
-		driver.findElement(By.linkText("Homepage")).click();
+		driver.findElement(By.linkText("Go back to homepage")).click();
 		driver.findElement(By.linkText(userLogged.getUsername())).click();
 
 		assertThat(driver.findElement(By.id("games")).getText()).contains(game.getName());
