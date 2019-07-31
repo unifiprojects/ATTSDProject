@@ -1,0 +1,33 @@
+.card {
+  padding: 2rem 1rem;
+}
+
+.my-card {
+  flex: 1;
+  flex-basis: 100%;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+@media screen and (min-width: 992px) {
+  .my-card {
+    flex-basis: 49%; 
+    max-width: 49%;
+  }
+}
+
+.go-link {
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+}
+
+.margin-mobile-card {
+  margin-top: 2rem;
+}
+
+@media screen and (min-width: 992px) {
+  .margin-mobile-card {
+    margin-top: 0rem;
+  }
+}

@@ -3,11 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Game not found</title>
+<link rel="stylesheet"
+  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/card.css}">
+<link rel="stylesheet" th:href="@{/css/font.css}">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <p>Game not found.</p>
-  <div>
-    Return to <a th:href="@{/}">Homepage</a>
+  <div class="container">
+    <div class="text-center">
+      <h2 class="font-weight-bold my-5">Game not found.</h2>
+    </div>
+    <div class="mt-4 ml-3">
+      <a class="btn btn-primary" th:href="@{/}">Go to homepage</a>
+    </div>
   </div>
 </body>
 </html>

@@ -3,51 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <title>ATTSD-Project: Social Games</title>
+<link rel="stylesheet"
+  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/card.css}">
+<link rel="stylesheet" th:href="@{/css/font.css}">
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+  rel="stylesheet">
+<meta name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <h1>ATTSD-Project: Social Games</h1>
-  <div>
-    <!-- search form -->
-    <form name="search_form" th:action="@{/search}" method="get">
-      <input type="text" name="content_search"
-        placeholder="Search users and games..." />
-      <button type="submit" name="btn_submit">Search</button>
-    </form>
-  </div>
-  <!-- Login/Registration section -->
-  <div th:if="${username == null}">
-    <!-- The user is not logged -->
-    <div>
-      Welcome! Please <a th:href="@{/login}">Log in</a> or <a
-        th:href="@{/registration}">Register</a>
-    </div>
-  </div>
-  <div th:unless="${username == null}">
-    <!-- The user is logged -->
-    <div>
-      Welcome back <a th:href="@{'/profile/' + ${username}}"> <label
-        th:text="${username}"> </label>
-      </a>
-      <div>
-        <a th:href="@{/logout}">Logout</a>
+  <div class="container">
+    <h1 class="font-weight-bold my-5">ATTSD-Project: Social Games</h1>
+    <div class="row justify-content-between">
+      <div class="col col-12 col-md-8">
+        <!-- search form -->
+        <div class="card">
+          <form name="search_form" th:action="@{/search}" method="get">
+            <div class="d-flex align-items-end"></div>
+            <div class="form-group">
+              <h2 class="font-weight-bold">Search</h2>
+              <input type="text" name="content_search"
+                placeholder="Search users and games..."
+                class="form-control mt-3" />
+            </div>
+            <button type="submit" name="btn_submit"
+              class="btn btn-primary center-block mt-2">Search</button>
+          </form>
+        </div>
+      </div>
+      <div class="col col-12 col-md-4 justify-content-center margin-mobile-card">
+        <!-- Login/Registration section -->
+        <div class="card">
+          <!-- The user is not logged -->
+          <div th:if="${username == null}">
+            <div class="text-center">
+              <h3 class="font-weight-bold">Welcome!</h3>
+              <p class="mt-3">
+                <a th:href="@{/login}">Log in</a> or <a
+                  th:href="@{/registration}">Register</a>
+              </p>
+            </div>
+          </div>
+          <div th:unless="${username == null}">
+            <div class="text-center">
+              <h4 class="font-weight-bold mb-2">Welcome back</h4>
+              <h4>
+                <a class="font-weight-bold"
+                  th:href="@{'/profile/' + ${username}}"> <label
+                  th:text="${username}"> </label>
+                </a>
+              </h4>
+              <div>
+                <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <!-- Latest releases -->
-  <div>
-    <div th:if="${latestReleases.empty}">
-      <h2>No latest releases...</h2>
-    </div>
-    <div th:unless="${latestReleases.empty}">
-      <h1>Latest releases!</h1>
-      <table id="latestReleases">
-        <tr th:each="game : ${latestReleases}">
-          <td th:text="${game.name}"></td>
-          <td th:text="${game.description}"></td>
-          <td th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></td>
-        </tr>
-      </table>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col col-12">
+        <div th:if="${latestReleases.empty}">
+          <h2 class="font-weight-bold mb-4">No latest releases...</h2>
+        </div>
+        <div th:unless="${latestReleases.empty}">
+          <h2 class="font-weight-bold mb-4">Latest releases!</h2>
+          <div id="latestReleases" class="d-flex flex-wrap justify-content-between">
+            <div class="card my-card" th:each="game : ${latestReleases}">
+              <div class="pb-5">
+                <h3 th:text="${game.name}"></h3>
+                <p th:text="${game.description}"></p>
+                <p
+                  th:text="${#dates.format(game.releaseDate, 'dd-MM-yyyy')}"></p>
+              </div>
+              <div class="go-link">
+                <a th:href="@{'/game/' + ${game.name}}"> Go to page
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
-</html>

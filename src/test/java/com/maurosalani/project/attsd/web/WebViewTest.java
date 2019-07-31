@@ -1,6 +1,13 @@
 package com.maurosalani.project.attsd.web;
 
-import static com.gargoylesoftware.htmlunit.WebAssert.*;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertFormNotPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertFormPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertInputPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkNotPresentWithText;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkPresentWithText;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTextNotPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTextPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTitleEquals;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +37,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
@@ -49,7 +55,7 @@ public class WebViewTest {
 
 	private static final String NO_LATEST_RELEASES_MESSAGE = "No latest releases...";
 
-	private static final String WELCOME_PLEASE_LOGIN = "Welcome! Please Log in or Register";
+	private static final String WELCOME_LOGIN = "Log in or Register";
 
 	private static final String WELCOME_BACK_USER = "Welcome back";
 
@@ -70,7 +76,7 @@ public class WebViewTest {
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 		webClient.getCookieManager().clearCookies();
 	}
-	
+
 	@Test
 	public void testHomePageTitle() throws Exception {
 		HtmlPage page = webClient.getPage("/");
@@ -83,7 +89,7 @@ public class WebViewTest {
 
 		assertTitleEquals(page, "ATTSD-Project: Social Games");
 		assertTextPresent(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, WELCOME_PLEASE_LOGIN);
+		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
 	}
@@ -105,15 +111,17 @@ public class WebViewTest {
 		when(gameService.getLatestReleasesGames(anyInt())).thenReturn(asList(game1, game2, game3, game4));
 		HtmlPage page = webClient.getPage("/");
 
-		String pattern = "dd-mm-yyyy";
+		String pattern = "dd-MM-yyyy";
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-		HtmlTable table = page.getHtmlElementById("latestReleases");
-		assertThat(removeWindowsCR(table.asText())).isEqualTo(
-				"Game1	Description1	" + dateFormat.format(new Date(1)) + "\n" + 
-				"Game2	Description2	" + dateFormat.format(new Date(2)) + "\n" + 
-				"Game3	Description3	" + dateFormat.format(new Date(3)) + "\n" + 
-				"Game4	Description4	" + dateFormat.format(new Date(4)));
+		assertThat(page.getElementById("latestReleases").getTextContent()).contains("Game1", "Description1",
+				dateFormat.format(new Date(1)));
+		assertThat(page.getElementById("latestReleases").getTextContent()).contains("Game2", "Description2",
+				dateFormat.format(new Date(2)));
+		assertThat(page.getElementById("latestReleases").getTextContent()).contains("Game3", "Description3",
+				dateFormat.format(new Date(3)));
+		assertThat(page.getElementById("latestReleases").getTextContent()).contains("Game4", "Description4",
+				dateFormat.format(new Date(4)));
 		assertTextPresent(page, LATEST_RELEASES_EXISTING_MESSAGE);
 		assertTextNotPresent(page, NO_LATEST_RELEASES_MESSAGE);
 	}
@@ -131,42 +139,42 @@ public class WebViewTest {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		HtmlPage page = webClient.getPage(requestToLogin);
-		
+
 		assertTextPresent(page, WELCOME_BACK_USER);
 		assertLinkPresentWithText(page, "Logout");
-		assertTextNotPresent(page, WELCOME_PLEASE_LOGIN);
+		assertTextNotPresent(page, WELCOME_LOGIN);
 		assertLinkNotPresentWithText(page, "Log in");
 		assertLinkNotPresentWithText(page, "Register");
 	}
-	
+
 	@Test
 	public void testHomePage_LogoutSuccess() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
-		HtmlPage page = webClient.getPage("/logout");				
+
+		HtmlPage page = webClient.getPage("/logout");
 		assertTitleEquals(page, "ATTSD-Project: Social Games");
 		assertTextPresent(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, WELCOME_PLEASE_LOGIN);
+		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
 		assertThat(page.getAnchorByText("Log in").getHrefAttribute()).isEqualTo("/login");
 		assertThat(page.getAnchorByText("Register").getHrefAttribute()).isEqualTo("/registration");
 	}
-	
+
 	@Test
 	public void testHomePage_LogoutNoUserLogged() throws Exception {
-		HtmlPage page = webClient.getPage("/logout");				
+		HtmlPage page = webClient.getPage("/logout");
 		assertTitleEquals(page, "ATTSD-Project: Social Games");
 		assertTextPresent(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, WELCOME_PLEASE_LOGIN);
+		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
 		assertThat(page.getAnchorByText("Log in").getHrefAttribute()).isEqualTo("/login");
 		assertThat(page.getAnchorByText("Register").getHrefAttribute()).isEqualTo("/registration");
 	}
-	
+
 	@Test
 	public void testLoginPage_ShouldContainLoginForm() throws Exception {
 		HtmlPage page = webClient.getPage("/login");
@@ -187,7 +195,7 @@ public class WebViewTest {
 		loginForm.getInputByName("username").setValueAttribute("username");
 		loginForm.getInputByName("password").setValueAttribute("pwd");
 		loginForm.getButtonByName("btn_submit").click();
-		
+
 		verify(userService).verifyLogin(new CredentialsDTO("username", "pwd"));
 	}
 
@@ -221,6 +229,7 @@ public class WebViewTest {
 	public void testRegistrationPage_ShouldContainRegistrationForm() throws Exception {
 		HtmlPage page = webClient.getPage("/registration");
 
+		assertTextPresent(page, "Registration");
 		assertThat(page.getAnchorByText("Go back to homepage").getHrefAttribute()).isEqualTo("/");
 		assertFormPresent(page, "registration_form");
 		final HtmlForm registrationForm = page.getFormByName("registration_form");
@@ -244,7 +253,8 @@ public class WebViewTest {
 		verify(userService).insertNewUser(new User(null, "username", "pwd"));
 		assertTitleEquals(returnedPage, "Registration Success");
 		assertTextPresent(returnedPage, "Your registration has been successful!");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertTextPresent(returnedPage, "Registration");
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 	}
 
 	@Test
@@ -307,16 +317,16 @@ public class WebViewTest {
 		assertThat(pageAfterRegistration.getBody().getTextContent())
 				.contains("Password and Confirm Password must match.");
 	}
-	
+
 	@Test
 	public void testRegistration_UserAlreadyLogged() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
+
 		HtmlPage page = webClient.getPage("/registration");
 
-		assertTextPresent( page, "You are already logged! Try to log out from homepage.");
+		assertTextPresent(page, "You are already logged! Try to log out from homepage.");
 		assertLinkPresentWithText(page, "Go back to homepage");
 		assertTextPresent(page, "Register");
 	}
@@ -336,19 +346,14 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute(content);
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
-		HtmlTable tableUsers = searchPage.getHtmlElementById("userSearchResults");
-		assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo(
-				"Users\n" + 
-				" user1_nameTest\n" + 
+		assertThat(searchPage.getElementById("userSearchResults").getTextContent()).contains("Users", "user1_nameTest",
 				"user2_nameTest");
-		HtmlTable tableGames = searchPage.getHtmlElementById("gameSearchResults");
-		assertThat(removeWindowsCR(tableGames.asText())).isEqualTo(
-				"Games\n" + 
-				" game1_nameTest\n" + 
+		assertThat(searchPage.getElementById("gameSearchResults").getTextContent()).contains("Games", "game1_nameTest",
 				"game2_nameTest");
 
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
+		assertTextPresent(page, "Search");
 		assertLinkPresentWithText(searchPage, "user1_nameTest");
 		assertLinkPresentWithText(searchPage, "user2_nameTest");
 		assertLinkPresentWithText(searchPage, "game1_nameTest");
@@ -365,10 +370,12 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute("name_not_existing");
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
+		assertTextPresent(page, "Search");
+
 		assertTextPresent(searchPage, "No Users");
 		assertTextPresent(searchPage, "No Games");
 	}
-	
+
 	@Test
 	public void testSearch_WithEmptyString_ShouldShowErrorMessage() throws Exception {
 		HtmlPage page = webClient.getPage("/");
@@ -376,6 +383,7 @@ public class WebViewTest {
 		searchForm.getInputByName("content_search").setValueAttribute("  ");
 		HtmlPage searchPage = searchForm.getButtonByName("btn_submit").click();
 
+		assertTextPresent(page, "Search");
 		assertTextPresent(searchPage, "Error: search field was empty.");
 	}
 
@@ -387,20 +395,21 @@ public class WebViewTest {
 		HtmlPage page = webClient.getPage("/profile/username_wrong");
 		assertTitleEquals(page, "Profile not found");
 		assertTextPresent(page, "Profile not found.");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
-	
+
 	@Test
 	public void testProfile_AddUserWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/addUser"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("followedToAdd", "followedToAdd"));
-	
+
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
 	@Test
@@ -420,25 +429,19 @@ public class WebViewTest {
 
 		HtmlPage page = webClient.getPage("/profile/username");
 
-		assertTextPresent(page, "Username: " + user.getUsername());
+		assertTextPresent(page, user.getUsername());
 
-		HtmlTable tableUsers = page.getHtmlElementById("userFollowed");
-		assertThat(removeWindowsCR(tableUsers.asText())).isEqualTo(
-				"Users followed\n" + 
-				" user1_nameTest\n" + 
+		assertThat(page.getElementById("userFollowed").getTextContent()).contains("Users followed", "user1_nameTest",
 				"user2_nameTest");
-		HtmlTable tableGames = page.getHtmlElementById("games");
-		assertThat(removeWindowsCR(tableGames.asText())).isEqualTo(
-				"Games\n" + 
-				" game1_nameTest\n" + 
-				"game2_nameTest");
+		assertThat(page.getElementById("games").getTextContent()).contains("Games", "game1_nameTest", "game2_nameTest");
+
 		assertTextNotPresent(page, "No Users");
 		assertTextNotPresent(page, "No Games");
 		assertLinkPresentWithText(page, "user1_nameTest");
 		assertLinkPresentWithText(page, "user2_nameTest");
 		assertLinkPresentWithText(page, "game1_nameTest");
 		assertLinkPresentWithText(page, "game2_nameTest");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
 
 	@Test
@@ -446,16 +449,16 @@ public class WebViewTest {
 		CredentialsDTO credentials = new CredentialsDTO("userLogged", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
+
 		User user = new User(2L, "someUser", "pwd");
 		when(userService.getUserByUsername("someUser")).thenReturn(user);
 
 		HtmlPage page = webClient.getPage("/profile/someUser");
 
-		assertTextPresent(page, "Username: " + user.getUsername());
+		assertTextPresent(page, user.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 
 		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
 		assertThat(addToFollowedForm.getInputByName("followedToAdd").getDisabledAttribute()).isEqualTo("");
@@ -476,11 +479,11 @@ public class WebViewTest {
 		when(userService.getUserByUsername("usernameFollowed")).thenReturn(userFollowed);
 		HtmlPage page = webClient.getPage("/profile/usernameFollowed");
 
-		assertTextPresent(page, "Username: " + userFollowed.getUsername());
+		assertTextPresent(page, userFollowed.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 		assertTextNotPresent(page, "Add to followed");
 	}
 
@@ -494,11 +497,11 @@ public class WebViewTest {
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
 
-		assertTextPresent(page, "Username: " + userLogged.getUsername());
+		assertTextPresent(page, userLogged.getUsername());
 		assertTextPresent(page, "No Users");
 		assertTextPresent(page, "No Games");
 
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 		assertTextNotPresent(page, "Add to followed");
 
 		final HtmlForm addToFollowedForm = page.getFormByName("changePassword_form");
@@ -523,13 +526,13 @@ public class WebViewTest {
 		final HtmlForm addToFollowedForm = page.getFormByName("addToFollowed_form");
 		HtmlPage returnedPage = addToFollowedForm.getButtonByName("btn_add").click();
 
-		assertTextPresent(returnedPage, "Username: " + userFollowed.getUsername());
+		assertTextPresent(returnedPage, userFollowed.getUsername());
 		assertTextPresent(returnedPage, "No Users");
 		assertTextPresent(returnedPage, "No Games");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
 		assertTextNotPresent(returnedPage, "Add to followed");
 	}
-	
+
 	@Test
 	public void testProfile_UserLoggedAndPressChangePassword_NewPasswordIsEmpty() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwd");
@@ -548,19 +551,19 @@ public class WebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "Password is required.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
+		assertLinkPresentWithText(returnedPage, "Go to homepage");
 	}
-	
+
 	@Test
-    public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
+	public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwdLogged");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
+
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
 		final HtmlForm changePasswordForm = page.getFormByName("changePassword_form");
 		changePasswordForm.getInputByName("oldPassword").setValueAttribute("oldPassword_wrong");
@@ -569,9 +572,9 @@ public class WebViewTest {
 
 		assertTitleEquals(returnedPage, "Password error");
 		assertTextPresent(returnedPage, "Old password do not match.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
-    }
-	
+		assertLinkPresentWithText(returnedPage, "Go to homepage");
+	}
+
 	@Test
 	public void testProfile_ChangePasswordWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -579,34 +582,35 @@ public class WebViewTest {
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("oldPassword", "oldPassword"));
 		requestSettings.getRequestParameters().add(new NameValuePair("newPassword", "newPassword"));
-	
+
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
-	
+
 	@Test
-    public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
+	public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwd");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
+
 		when(userService.getUserByUsername("usernameLogged")).thenReturn(userLogged);
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		
+
 		HtmlPage page = webClient.getPage("/profile/usernameLogged");
 		final HtmlForm changePasswordForm = page.getFormByName("changePassword_form");
 		changePasswordForm.getInputByName("oldPassword").setValueAttribute("pwd");
 		changePasswordForm.getInputByName("newPassword").setValueAttribute("newPassword");
 		HtmlPage returnedPage = changePasswordForm.getButtonByName("btn_change").click();
-		
+
 		assertTitleEquals(returnedPage, "Password changed");
 		assertTextPresent(returnedPage, "Password changed successfully.");
-		assertLinkPresentWithText(returnedPage, "Homepage");
-    }
-	
+		assertLinkPresentWithText(returnedPage, "Go back to homepage");
+	}
+
 	@Test
 	public void testProfileGame_ProfileGameFound_ShouldShowCorrectly() throws Exception {
 		Game game = new Game(1L, "game_nameTest", "description", new Date(1));
@@ -614,16 +618,12 @@ public class WebViewTest {
 		User user2 = new User(2L, "user2_nameTest", "pwd");
 		game.addUser(user1);
 		game.addUser(user2);
-		
+
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 
-		HtmlTable tableUsers = page.getHtmlElementById("usersFans");
-		assertThat(removeWindowsCR(tableUsers.asText()))
-				.isEqualTo( 
-						"user1_nameTest\n" +
-						"user2_nameTest");
-		
+		assertThat(page.getElementById("usersFans").getTextContent()).contains("user1_nameTest", "user2_nameTest");
+
 		String pattern = "dd-mm-yyyy";
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
@@ -634,40 +634,40 @@ public class WebViewTest {
 		assertTextNotPresent(page, "No users like this game yet...");
 		assertLinkPresentWithText(page, "user1_nameTest");
 		assertLinkPresentWithText(page, "user2_nameTest");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
-	
+
 	@Test
 	public void testProfileGame_LoggedUserShouldSeeLikeButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
-		Game game = new Game(1L, "game_nameTest", "description", new Date(1));		
+
+		Game game = new Game(1L, "game_nameTest", "description", new Date(1));
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 		assertThat(page.getFormByName("like_form").getButtonByName("btn_like").getDisabledAttribute()).isEqualTo("");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
-	
+
 	@Test
 	public void testProfileGame_LoggedUserAlreadyLikeThisGame_ShouldNotSeeButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
-		
-		Game game = new Game(1L, "game_nameTest", "description", new Date(1));		
-		game.addUser(new User(1L, credentials.getUsername(),credentials.getPassword()));
+
+		Game game = new Game(1L, "game_nameTest", "description", new Date(1));
+		game.addUser(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
 		HtmlPage pageGameAfterUserPutLike = page.getFormByName("like_form").getButtonByName("btn_like").click();
-		
+
 		assertFormNotPresent(pageGameAfterUserPutLike, "like_form");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go back to homepage");
 	}
-	
+
 	@Test
 	public void testProfileGame_WhenProfileNotFound_ShouldShowGame404() throws Exception {
 		when(gameService.getGameByName("name_wrong")).thenThrow(GameNotFoundException.class);
@@ -676,25 +676,28 @@ public class WebViewTest {
 		HtmlPage page = webClient.getPage("/game/name_wrong");
 		assertTitleEquals(page, "Game not found");
 		assertTextPresent(page, "Game not found.");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
-	
+
 	@Test
 	public void testProfileGame_AddGameWhenNoLoggedUser_ShouldShowUnauthorized401() throws Exception {
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/addGame"), HttpMethod.POST);
 		requestSettings.setRequestParameters(new ArrayList<>());
 		requestSettings.getRequestParameters().add(new NameValuePair("gameToAdd", "gameToAdd"));
-	
+
 		HtmlPage page = webClient.getPage(requestSettings);
 		assertTitleEquals(page, "Unauthorized");
+		assertTextPresent(page, "Unauthorized");
 		assertTextPresent(page, "Unauthorized Operation. You are not logged in!");
-		assertLinkPresentWithText(page, "Homepage");
+		assertLinkPresentWithText(page, "Go to homepage");
 	}
 
-	private WebRequest createWebRequestToLogin(CredentialsDTO credentials, boolean loginShouldSuccess) throws LoginFailedException, FailingHttpStatusCodeException, IOException {
-		if(loginShouldSuccess)
-			when(userService.verifyLogin(credentials)).thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
+	private WebRequest createWebRequestToLogin(CredentialsDTO credentials, boolean loginShouldSuccess)
+			throws LoginFailedException, FailingHttpStatusCodeException, IOException {
+		if (loginShouldSuccess)
+			when(userService.verifyLogin(credentials))
+					.thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));
 		else
 			when(userService.verifyLogin(credentials)).thenThrow(LoginFailedException.class);
 		WebRequest requestSettings = new WebRequest(new URL("http://localhost/verifyLogin"), HttpMethod.POST);
@@ -702,10 +705,6 @@ public class WebViewTest {
 		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
 		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		return requestSettings;
-	}
-
-	private String removeWindowsCR(String s) {
-		return s.replaceAll("\r", "");
 	}
 
 }

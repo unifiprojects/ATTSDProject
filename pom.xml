@@ -156,6 +156,11 @@
       <version>3.5.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>4.3.1</version>
+    </dependency>
   </dependencies>
 
   <!-- PLUGINS -->
@@ -245,9 +250,6 @@
                 <rules>
                   <rule>
                     <element>CLASS</element>
-                    <excludes>
-                      <exclude>*Test*.*</exclude>
-                    </excludes>
                     <limits>
                       <limit>
                         <counter>LINE</counter>
@@ -275,6 +277,7 @@
               <param>com.maurosalani.project.attsd.model.*</param>
               <param>com.maurosalani.project.attsd.exception.*</param>
               <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+              <param>com.maurosalani.project.attsd.web_config.*</param>
             </excludedClasses>
             <excludedMethods>
               <excludedMethod>
@@ -383,6 +386,9 @@
             inside profile e2e to be executed in this order -->
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <mainClass>com.maurosalani.project.attsd.AttsdProjectApplication</mainClass>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -446,13 +452,6 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-              <executable>true</executable>
-            </configuration>
-          </plugin>
-          <plugin>
             <!-- configured in pluginManagement -->
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
@@ -474,9 +473,6 @@
       <properties>
         <skip.unit-tests>true</skip.unit-tests>
         <skip.integration-tests>false</skip.integration-tests>
-        <attsd.MYSQL_DATABASE>attsd_database</attsd.MYSQL_DATABASE>
-        <attsd.MYSQL_USER>springuser</attsd.MYSQL_USER>
-        <attsd.MYSQL_PASSWORD>springuser</attsd.MYSQL_PASSWORD>
       </properties>
       <build>
         <plugins>
