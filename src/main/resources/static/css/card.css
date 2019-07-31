@@ -4,12 +4,15 @@
 
 .my-card {
   flex: 1;
-  flex-basis: 33%;
-  margin-right: 1rem;
+  flex-basis: 100%;
   margin-bottom: 2rem;
   position: relative;
-  @media(min-width: 992px){
-    flex-basis: 100%;
+}
+
+@media screen and (min-width: 992px) {
+  .my-card {
+    flex-basis: 49%; 
+    max-width: 49%;
   }
 }
 
@@ -17,4 +20,14 @@
   position: absolute;
   bottom: 2rem;
   right: 1rem;
+}
+
+.margin-mobile-card {
+  margin-top: 2rem;
+}
+
+@media screen and (min-width: 992px) {
+  .margin-mobile-card {
+    margin-top: 0rem;
+  }
 }

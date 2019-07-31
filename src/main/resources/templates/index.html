@@ -16,7 +16,7 @@
   <div class="container">
     <h1 class="font-weight-bold my-5">ATTSD-Project: Social Games</h1>
     <div class="row justify-content-between">
-      <div class="col col-md-8">
+      <div class="col col-12 col-md-8">
         <!-- search form -->
         <div class="card">
           <form name="search_form" th:action="@{/search}" method="get">
@@ -32,7 +32,7 @@
           </form>
         </div>
       </div>
-      <div class="col col-md-4  justify-content-center">
+      <div class="col col-12 col-md-4 justify-content-center margin-mobile-card">
         <!-- Login/Registration section -->
         <div class="card">
           <!-- The user is not logged -->
@@ -72,7 +72,7 @@
         </div>
         <div th:unless="${latestReleases.empty}">
           <h2 class="font-weight-bold mb-4">Latest releases!</h2>
-          <div id="latestReleases" class="d-flex">
+          <div id="latestReleases" class="d-flex flex-wrap justify-content-between">
             <div class="card my-card" th:each="game : ${latestReleases}">
               <div class="pb-5">
                 <h3 th:text="${game.name}"></h3>
