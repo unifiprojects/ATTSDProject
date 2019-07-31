@@ -1,4 +1,4 @@
-package com.maurosalani.project.attsd.web;
+package com.maurosalani.project.attsd.web_config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

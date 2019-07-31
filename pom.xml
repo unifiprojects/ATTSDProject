@@ -277,6 +277,7 @@
               <param>com.maurosalani.project.attsd.model.*</param>
               <param>com.maurosalani.project.attsd.exception.*</param>
               <param>com.maurosalani.project.attsd.AttsdProjectApplication</param>
+              <param>com.maurosalani.project.attsd.web_config.*</param>
             </excludedClasses>
             <excludedMethods>
               <excludedMethod>
