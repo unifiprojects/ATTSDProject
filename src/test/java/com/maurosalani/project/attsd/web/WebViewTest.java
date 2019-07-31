@@ -1,6 +1,13 @@
 package com.maurosalani.project.attsd.web;
 
-import static com.gargoylesoftware.htmlunit.WebAssert.*;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertFormNotPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertFormPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertInputPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkNotPresentWithText;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertLinkPresentWithText;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTextNotPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTextPresent;
+import static com.gargoylesoftware.htmlunit.WebAssert.assertTitleEquals;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +37,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
@@ -699,10 +705,6 @@ public class WebViewTest {
 		requestSettings.getRequestParameters().add(new NameValuePair("username", credentials.getUsername()));
 		requestSettings.getRequestParameters().add(new NameValuePair("password", credentials.getPassword()));
 		return requestSettings;
-	}
-
-	private String removeWindowsCR(String s) {
-		return s.replaceAll("\r", "");
 	}
 
 }
