@@ -472,9 +472,6 @@
       <properties>
         <skip.unit-tests>true</skip.unit-tests>
         <skip.integration-tests>false</skip.integration-tests>
-        <attsd.MYSQL_DATABASE>attsd_database</attsd.MYSQL_DATABASE>
-        <attsd.MYSQL_USER>springuser</attsd.MYSQL_USER>
-        <attsd.MYSQL_PASSWORD>springuser</attsd.MYSQL_PASSWORD>
       </properties>
       <build>
         <plugins>
