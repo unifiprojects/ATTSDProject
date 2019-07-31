@@ -4,6 +4,7 @@ addons:
     organization: unifiprojects
     token:
       secure: $SONAR_TOKEN
+      
 matrix:
   include:
   - jdk: openjdk8
@@ -18,14 +19,18 @@ matrix:
   - jdk: openjdk8
     if: type IN (pull_request)
     env: MAVEN_ARGS="-Ppit"
+    
 services:
-- docker
-- xvfb
+  - docker
+  - xvfb
+
 install: true
+
 cache:
   directories:
   - $HOME/.m2
   - $HOME/.sonar/cache
+  
 script:
-- git fetch --unshallow
-- ./mvnw clean verify $MAVEN_ARGS
+  - git fetch --unshallow
+  - ./mvnw clean verify $MAVEN_ARGS
