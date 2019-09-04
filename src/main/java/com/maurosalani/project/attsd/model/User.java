@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +38,7 @@ public class User implements Serializable {
 	@Basic(optional = false)
 	private String password;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
 	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followedUsers;
@@ -48,7 +47,7 @@ public class User implements Serializable {
 	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followerUsers;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(name = "user_game_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "game_id"))
 	@JsonIgnoreProperties("users")
 	private List<Game> games;

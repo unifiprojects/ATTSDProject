@@ -41,7 +41,9 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.exception.GameNotFoundException;
 import com.maurosalani.project.attsd.exception.LoginFailedException;
+import com.maurosalani.project.attsd.exception.PasswordRequiredException;
 import com.maurosalani.project.attsd.exception.UserNotFoundException;
+import com.maurosalani.project.attsd.exception.UsernameAlreadyExistingException;
 import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
@@ -137,6 +139,8 @@ public class WebViewTest {
 	@Test
 	public void testHomePage_UserLoginWithSuccess() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		HtmlPage page = webClient.getPage(requestToLogin);
 
@@ -150,6 +154,8 @@ public class WebViewTest {
 	@Test
 	public void testHomePage_LogoutSuccess() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -202,6 +208,8 @@ public class WebViewTest {
 	@Test
 	public void testLoginPage_WhenUserAlreadyLogged_ShouldShowMessageAndInputsShouldBeDisabled() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -321,6 +329,8 @@ public class WebViewTest {
 	@Test
 	public void testRegistration_UserAlreadyLogged() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -447,6 +457,8 @@ public class WebViewTest {
 	@Test
 	public void testProfile_WhenLoggedUserAccessAnotherProfile_ShouldShowAddToFollowedButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("userLogged", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -472,6 +484,8 @@ public class WebViewTest {
 		User userFollowed = new User(2L, "usernameFollowed", "pwdFollowed");
 		userLogged.addFollowedUser(userFollowed);
 
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		when(userService.verifyLogin(credentials)).thenReturn(userLogged);
 		webClient.getPage(requestToLogin);
@@ -491,6 +505,8 @@ public class WebViewTest {
 	public void testProfile_WhenLoggedUserAccessHisPersonalProfile_ShouldShowChangePasswordButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwdLogged");
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -513,6 +529,8 @@ public class WebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressAddFollowed_ShouldRedirectToFollowedProfile() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwdLogged");
+		when(userService.getUserByUsername(credentials.getUsername()))
+		.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
@@ -536,6 +554,8 @@ public class WebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressChangePassword_NewPasswordIsEmpty() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
@@ -557,6 +577,8 @@ public class WebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressChangePassword_OldPasswordNotMatch() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwdLogged");
+		when(userService.getUserByUsername(credentials.getUsername()))
+		.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
@@ -593,6 +615,8 @@ public class WebViewTest {
 	@Test
 	public void testProfile_UserLoggedAndPressChangePassword_Success() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("usernameLogged", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		User userLogged = new User(1L, credentials.getUsername(), credentials.getPassword());
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
@@ -640,6 +664,8 @@ public class WebViewTest {
 	@Test
 	public void testProfileGame_LoggedUserShouldSeeLikeButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+		.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
@@ -654,11 +680,12 @@ public class WebViewTest {
 	@Test
 	public void testProfileGame_LoggedUserAlreadyLikeThisGame_ShouldNotSeeButton() throws Exception {
 		CredentialsDTO credentials = new CredentialsDTO("username", "pwd");
+		when(userService.getUserByUsername(credentials.getUsername()))
+				.thenReturn(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		WebRequest requestToLogin = createWebRequestToLogin(credentials, true);
 		webClient.getPage(requestToLogin);
 
 		Game game = new Game(1L, "game_nameTest", "description", new Date(1));
-		game.addUser(new User(1L, credentials.getUsername(), credentials.getPassword()));
 		when(gameService.getGameByName("game_nameTest")).thenReturn(game);
 
 		HtmlPage page = webClient.getPage("/game/game_nameTest");
@@ -694,7 +721,8 @@ public class WebViewTest {
 	}
 
 	private WebRequest createWebRequestToLogin(CredentialsDTO credentials, boolean loginShouldSuccess)
-			throws LoginFailedException, FailingHttpStatusCodeException, IOException {
+			throws LoginFailedException, FailingHttpStatusCodeException, IOException, UsernameAlreadyExistingException,
+			PasswordRequiredException {
 		if (loginShouldSuccess)
 			when(userService.verifyLogin(credentials))
 					.thenReturn(new User(null, credentials.getUsername(), credentials.getPassword()));

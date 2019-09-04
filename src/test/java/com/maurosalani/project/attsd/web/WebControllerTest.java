@@ -93,6 +93,8 @@ public class WebControllerTest {
 	@Test
 	public void testAccessIndex_UserLoggedIn() throws Exception {
 		User user = new User(1L, "usernameTest", "pwdTest");
+		when(userService.getUserByUsername(user.getUsername()))
+			.thenReturn(user);
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/");
 
 		mvc.perform(requestToPerform)
@@ -605,7 +607,6 @@ public class WebControllerTest {
 	      .andExpect(model().attribute(MESSAGE, "Old password do not match."))
 	      .andExpect(view().name("passwordError"));
 	    
-	    assertThat(session.getAttribute("user")).isEqualTo(user);
 	}
 	
 	@Test

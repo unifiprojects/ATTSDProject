@@ -60,9 +60,9 @@ public class WebController {
 	private GameService gameService;
 
 	@GetMapping("/")
-	public String index(Model model, HttpSession session) {
+	public String index(Model model, HttpSession session) throws UserNotFoundException {
 		if (isAlreadyLogged(session)) {
-			User user = (User) session.getAttribute("user");
+			User user = getLoggedUser(session);
 			model.addAttribute("username", user.getUsername());
 		}
 		model.addAttribute("latestReleases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
@@ -150,7 +150,7 @@ public class WebController {
 			model.addAttribute(IS_MY_PROFILE_FLAG, false);
 			model.addAttribute(IS_ALREADY_FOLLOWED_FLAG, false);
 		} else {
-			User loggedUser = (User) session.getAttribute("user");
+			User loggedUser = getLoggedUser(session);
 			boolean isMyProfile = loggedUser.getUsername().equals(user.getUsername());
 			boolean isAlreadyFollowed = false;
 			if (loggedUser.getFollowedUsers() != null)
@@ -165,14 +165,15 @@ public class WebController {
 	}
 
 	@GetMapping("/game/{name}")
-	public String game(@PathVariable String name, HttpSession session, Model model) throws GameNotFoundException {
+	public String game(@PathVariable String name, HttpSession session, Model model)
+			throws GameNotFoundException, UserNotFoundException {
 		Game game = gameService.getGameByName(name);
 		model.addAttribute("game", game);
 		if (!isAlreadyLogged(session)) {
 			model.addAttribute(IS_LOGGED_FLAG, false);
 			model.addAttribute(IS_ALREADY_LIKED_FLAG, false);
 		} else {
-			User loggedUser = (User) session.getAttribute("user");
+			User loggedUser = getLoggedUser(session);
 			boolean isAlreadyLiked = false;
 			if (game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
@@ -188,9 +189,9 @@ public class WebController {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
-		User user = (User) session.getAttribute("user");
+		User loggedUser = getLoggedUser(session);
 		User followed = userService.getUserByUsername(followedToAdd);
-		User result = userService.addFollowedUser(user, followed);
+		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute("user", result);
 		return "redirect:/profile/" + followed.getUsername();
 	}
@@ -201,9 +202,9 @@ public class WebController {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
-		User user = (User) session.getAttribute("user");
+		User loggedUser = getLoggedUser(session);
 		Game toAdd = gameService.getGameByName(gameToAdd);
-		User result = userService.addGame(user, toAdd);
+		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute("user", result);
 		return "redirect:/game/" + toAdd.getName();
 	}
@@ -215,14 +216,14 @@ public class WebController {
 		if (!isAlreadyLogged(session)) {
 			throw new UnauthorizedOperationException();
 		}
-		User user = (User) session.getAttribute("user");
-		if (!user.getPassword().equals(form.getOldPassword())) {
+		User loggedUser = getLoggedUser(session);
+		if (!loggedUser.getPassword().equals(form.getOldPassword())) {
 			throw new OldPasswordErrorException();
 		}
 		if (StringUtils.isWhitespace(form.getNewPassword())) {
 			throw new NewPasswordRequiredException();
 		}
-		User result = userService.changePassword(user, form.getNewPassword());
+		User result = userService.changePassword(loggedUser, form.getNewPassword());
 		session.setAttribute("user", result);
 		return "passwordChanged";
 	}
@@ -230,6 +231,11 @@ public class WebController {
 	private boolean isAlreadyLogged(HttpSession session) {
 		Optional<User> opt = Optional.ofNullable((User) session.getAttribute("user"));
 		return opt.isPresent();
+	}
+
+	private User getLoggedUser(HttpSession session) throws UserNotFoundException {
+		User loggedUser = (User) session.getAttribute("user");
+		return userService.getUserByUsername(loggedUser.getUsername());
 	}
 
 }
