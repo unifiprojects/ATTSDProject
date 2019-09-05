@@ -383,6 +383,7 @@ public class WebControllerTest {
 		User anotherUser = new User(2L, "anotherUsername", "anotherPassword");
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/profile/anotherUsername");
 		when(userService.getUserByUsername("anotherUsername")).thenReturn(anotherUser);
+		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
 		mvc.perform(requestToPerform)
 			.andExpect(model().attribute("user", anotherUser))
@@ -399,6 +400,7 @@ public class WebControllerTest {
 		user.addFollowedUser(anotherUser);
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/profile/anotherUsername");
 		when(userService.getUserByUsername("anotherUsername")).thenReturn(anotherUser);
+		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
 		mvc.perform(requestToPerform)
 			.andExpect(model().attribute("user", anotherUser))
@@ -462,6 +464,7 @@ public class WebControllerTest {
 		game.addUser(user);
 		MockHttpServletRequestBuilder requestToPerform = addUserToSessionAndReturnGetRequest(user, "/game/gamenameTest");
 		when(gameService.getGameByName("gamenameTest")).thenReturn(game);
+		when(userService.getUserByUsername("usernameTest")).thenReturn(user);
 
 		mvc.perform(requestToPerform)
 			.andExpect(model().attribute("game", game))
@@ -479,6 +482,7 @@ public class WebControllerTest {
 		followedToAdd.addFollowerUser(userResult);
 		
 		when(userService.getUserByUsername("followedToAdd")).thenReturn(followedToAdd);
+		when(userService.getUserByUsername("username")).thenReturn(userResult);
 		when(userService.addFollowedUser(user, followedToAdd)).thenReturn(userResult);
 		
 		MockHttpSession session = new MockHttpSession();
@@ -525,7 +529,8 @@ public class WebControllerTest {
   
 		when(gameService.getGameByName("nameToAdd")).thenReturn(toAdd);
 		when(userService.addGame(user, toAdd)).thenReturn(userResult);
-  
+		when(userService.getUserByUsername("username")).thenReturn(userResult);
+		
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("user", user);
 		MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/addGame").session(session);
@@ -575,6 +580,8 @@ public class WebControllerTest {
 	    User userResult = new User(1L,"username", "newPassword");
 	    
 	    when(userService.changePassword(user, "newPassword")).thenReturn(userResult);
+	    when(userService.getUserByUsername("username")).thenReturn(user);
+
 	    
 	    MockHttpSession session = new MockHttpSession();
 	    session.setAttribute("user", user);
@@ -595,6 +602,7 @@ public class WebControllerTest {
 	    User userResult = new User(1L,"username", "newPassword");
 	    
 	    when(userService.changePassword(user, "newPassword")).thenReturn(userResult);
+	    when(userService.getUserByUsername("username")).thenReturn(user);
 	    
 	    MockHttpSession session = new MockHttpSession();
 	    session.setAttribute("user", user);
@@ -616,6 +624,7 @@ public class WebControllerTest {
 	    MockHttpSession session = new MockHttpSession();
 	    session.setAttribute("user", user);
 	    MockHttpServletRequestBuilder requestToPerform = MockMvcRequestBuilders.post("/changePassword").session(session);
+	    when(userService.getUserByUsername("username")).thenReturn(user);
 	    
 	    mvc.perform(requestToPerform
 		      .param("oldPassword", "oldPassword")
@@ -625,7 +634,6 @@ public class WebControllerTest {
 	      .andExpect(view().name("passwordError"));
 	    
 	    assertThat(session.getAttribute("user")).isEqualTo(user);
-	    verifyNoMoreInteractions(userService);
 	}
 	
 	private MockHttpServletRequestBuilder addUserToSessionAndReturnPostRequest(User user, String url) {
