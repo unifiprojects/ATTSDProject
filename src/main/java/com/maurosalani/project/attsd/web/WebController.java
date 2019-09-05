@@ -86,7 +86,7 @@ public class WebController {
 	public String verifyLoginUser(Model model, CredentialsDTO credentials, HttpSession session)
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
-		session.setAttribute("user", result);
+		session.setAttribute("username", result.getUsername());
 		return "redirect:/";
 	}
 
@@ -192,7 +192,7 @@ public class WebController {
 		User loggedUser = getLoggedUser(session);
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
-		session.setAttribute("user", result);
+		session.setAttribute("username", result.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -205,7 +205,7 @@ public class WebController {
 		User loggedUser = getLoggedUser(session);
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
-		session.setAttribute("user", result);
+		session.setAttribute("username", result.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
 
@@ -224,18 +224,18 @@ public class WebController {
 			throw new NewPasswordRequiredException();
 		}
 		User result = userService.changePassword(loggedUser, form.getNewPassword());
-		session.setAttribute("user", result);
+		session.setAttribute("username", result.getUsername());
 		return "passwordChanged";
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
-		Optional<User> opt = Optional.ofNullable((User) session.getAttribute("user"));
+		Optional<String> opt = Optional.ofNullable((String) session.getAttribute("username"));
 		return opt.isPresent();
 	}
 
 	private User getLoggedUser(HttpSession session) throws UserNotFoundException {
-		User loggedUser = (User) session.getAttribute("user");
-		return userService.getUserByUsername(loggedUser.getUsername());
+		String loggedUser = (String) session.getAttribute("username");
+		return userService.getUserByUsername(loggedUser);
 	}
 
 }
