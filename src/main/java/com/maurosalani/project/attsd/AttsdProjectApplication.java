@@ -53,8 +53,7 @@ public class AttsdProjectApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Stream<String> stream = Arrays.stream(applicationContext.getBeanDefinitionNames());
 		System.out.println("-------------------------------------------------------");
-//		stream.filter(name -> name.contains("WebSocketServer")).forEach(name -> System.out.println(name));
-		stream.forEach(name -> System.out.println(name));
+//		stream.forEach(name -> System.out.println(name));
 		System.out.println("-------------------------------------------------------");
 	}
 }
