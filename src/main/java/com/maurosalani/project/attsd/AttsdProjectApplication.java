@@ -19,7 +19,6 @@ import com.matteomauro.notification_server.repository.RedisRepository;
 
 @SpringBootApplication
 @EnableWebSocket
-@ComponentScan("com.matteomauro.notification_server")
 public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Autowired
@@ -33,12 +32,12 @@ public class AttsdProjectApplication implements CommandLineRunner {
 	public WebSocketServer webSocketServer() {
 		return new WebSocketServer();
 	}
-	
+
 	@Bean
 	public UserSessionHandler userSessionHandler() {
 		return new UserSessionHandler();
 	}
-	
+
 	@Bean
 	public RedisRepository redisRepository() {
 		return new RedisRepository();
@@ -53,7 +52,7 @@ public class AttsdProjectApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Stream<String> stream = Arrays.stream(applicationContext.getBeanDefinitionNames());
 		System.out.println("-------------------------------------------------------");
-//		stream.forEach(name -> System.out.println(name));
+		stream.filter(name -> !name.contains("org")).forEach(name -> System.out.println(name));
 		System.out.println("-------------------------------------------------------");
 	}
 }
