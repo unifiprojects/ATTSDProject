@@ -512,7 +512,6 @@
                   <goal>start</goal>
                 </goals>
                 <configuration>
-                  <wait>100000</wait>
                   <arguments>
                     <argument>--server.port=${tomcat.http.port}</argument>
                   </arguments>
