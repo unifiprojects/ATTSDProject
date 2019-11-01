@@ -11,4 +11,6 @@
   <!-- Enable debugging for our classes -->
   <logger name="com.examples" level="debug" />
 
+  <!-- disable c.g.htmlunit.DefaultCssErrorHandler -->
+  <logger name="com.gargoylesoftware.htmlunit" level="error" />
 </configuration>

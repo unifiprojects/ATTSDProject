@@ -94,16 +94,22 @@ public class GameRepositoryTest {
 	}
 
 	@Test
-	public void testUsersListIsPersistedWhenGameIsSaved() {
-		List<User> users = new LinkedList<User>();
-		users.add(new User(null, "one", "pwd"));
-		users.add(new User(null, "two", "pwd"));
+	public void testUsersListIsRetrievableWhenGameIsSaved() {
+		User user1 = new User(null, "one", "pwd");
+		User user2 = new User(null, "two", "pwd");		
 		Game game = new Game(null, "game name", "game description", new Date(1000));
-		game.setUsers(users);
 
-		Game saved = repository.save(game);
+		Game saved = entityManager.persistFlushFind(game);
+		user1.addGame(saved);
+		user2.addGame(saved);
+		User user1Persisted = entityManager.persistFlushFind(user1);
+		User user2Persisted = entityManager.persistFlushFind(user2);
 
-		assertThat(users).isEqualTo(saved.getUsers());
+		saved = entityManager.find(Game.class, saved.getId());
+		assertThat(saved.getUsers().get(0)).isIn(user1Persisted, user2Persisted);
+		assertThat(saved.getUsers().get(1)).isIn(user1Persisted, user2Persisted);
+		assertThat(user1Persisted.getGames().get(0)).isEqualTo(saved);
+		assertThat(user2Persisted.getGames().get(0)).isEqualTo(saved);
 	}
 
 	@Test

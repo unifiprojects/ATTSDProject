@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,10 +34,10 @@ public class Game implements Serializable {
 	private String name;
 
 	private String description;
-	
+
 	private Date releaseDate;
 
-	@ManyToMany(mappedBy = "games")
+	@ManyToMany(mappedBy = "games", fetch = FetchType.LAZY)
 	private List<User> users;
 
 	public Game() {
@@ -120,25 +121,25 @@ public class Game implements Serializable {
 		if (description == null) {
 			if (other.description != null)
 				return false;
-		}
+		} 
 		else if (!description.equals(other.description))
 			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		}
+		} 
 		else if (!id.equals(other.id))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
-		}
+		} 
 		else if (!name.equals(other.name))
 			return false;
 		if (releaseDate == null) {
 			if (other.releaseDate != null)
 				return false;
-		}
+		} 
 		else if (!releaseDate.equals(other.releaseDate))
 			return false;
 		return true;

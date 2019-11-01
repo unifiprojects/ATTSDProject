@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static java.util.Arrays.asList;
 
 import java.sql.Date;
 import java.util.LinkedList;
@@ -39,7 +40,7 @@ public class UserRepositoryTest {
 		repository.deleteAll();
 		repository.flush();
 	}
-	
+
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<User> users = repository.findAll();
@@ -100,44 +101,56 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void testFollowedListIsPersistedWhenUserIsSaved() {
-		List<User> followed = new LinkedList<User>();
-		followed.add(new User(null, "one", "pwd"));
-		followed.add(new User(null, "two", "pwd"));
+	public void testFollowedListIsRetrievableWhenUserIsSaved() {
+		User followed1 = new User(null, "one", "pwd");
+		User followed2 = new User(null, "two", "pwd");
 		User user = new User(null, "test", "pwd");
-		user.addFollowedUser(followed.get(0));
-		user.addFollowedUser(followed.get(1));
 
-		User saved = repository.save(user);
+		User followed1Persisted = entityManager.persistFlushFind(followed1);
+		User followed2Persisted = entityManager.persistFlushFind(followed2);
+		user.addFollowedUser(followed1Persisted);
+		user.addFollowedUser(followed2Persisted);
+		User saved = entityManager.persistFlushFind(user);
 
-		assertThat(followed).isEqualTo(saved.getFollowedUsers());
+		assertThat(asList(followed1Persisted, followed2Persisted)).isEqualTo(saved.getFollowedUsers());
+		assertThat(followed1Persisted.getFollowerUsers().get(0)).isEqualTo(saved);
+		assertThat(followed2Persisted.getFollowerUsers().get(0)).isEqualTo(saved);
 	}
 
 	@Test
-	public void testFollowerListIsPersistedWhenUserIsSaved() {
-		List<User> follower = new LinkedList<User>();
-		follower.add(new User(null, "one", "pwd"));
-		follower.add(new User(null, "two", "pwd"));
+	public void testFollowerListIsRetrievableWhenUserIsSaved() {
+		User follower1 = new User(null, "one", "pwd");
+		User follower2 = new User(null, "two", "pwd");
 		User user = new User(null, "test", "pwd");
-		user.addFollowerUser(follower.get(0));
-		user.addFollowerUser(follower.get(1));
-
-		User saved = repository.save(user);
-
-		assertThat(follower).isEqualTo(saved.getFollowerUsers());
+		
+		User saved = entityManager.persistFlushFind(user);
+		follower1.addFollowedUser(saved);
+		follower2.addFollowedUser(saved);
+		User follower1Persisted = entityManager.persistFlushFind(follower1);
+		User follower2Persisted = entityManager.persistFlushFind(follower2);
+		
+		saved = entityManager.find(User.class, saved.getId());
+		assertThat(saved.getFollowerUsers().get(0)).isIn(follower1Persisted, follower2Persisted);
+		assertThat(saved.getFollowerUsers().get(1)).isIn(follower1Persisted, follower2Persisted);
+		assertThat(follower1Persisted.getFollowedUsers().get(0)).isEqualTo(saved);
+		assertThat(follower2Persisted.getFollowedUsers().get(0)).isEqualTo(saved);
 	}
 
 	@Test
-	public void testGamesListIsPersistedWhenUserIsSaved() {
-		List<Game> games = new LinkedList<Game>();
-		games.add(new Game(null, "game1", "description1", new Date(0)));
-		games.add(new Game(null, "game2", "description2", new Date(0)));
+	public void testGamesListIsRetrievableWhenUserIsSaved() {
+		Game game1 = new Game(null, "game1", "description1", new Date(0));
+		Game game2 = new Game(null, "game2", "description2", new Date(0));
 		User user = new User(null, "test", "pwd");
-		user.setGames(games);
 
-		User saved = repository.save(user);
+		Game game1Persisted = entityManager.persistFlushFind(game1);
+		Game game2Persisted = entityManager.persistFlushFind(game2);
+		user.addGame(game1Persisted);
+		user.addGame(game2Persisted);
+		User saved = entityManager.persistFlushFind(user);
 
-		assertThat(games).isEqualTo(saved.getGames());
+		assertThat(asList(game1Persisted, game2Persisted)).isEqualTo(saved.getGames());
+		assertThat(game1Persisted.getUsers().get(0)).isEqualTo(saved);
+		assertThat(game2Persisted.getUsers().get(0)).isEqualTo(saved);
 	}
 
 	@Test
