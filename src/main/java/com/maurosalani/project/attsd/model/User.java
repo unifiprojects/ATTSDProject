@@ -44,7 +44,7 @@ public class User implements Serializable {
 	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followedUsers;
 
-	@ManyToMany(mappedBy = "followedUsers")
+	@ManyToMany(mappedBy = "followedUsers", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
 	private List<User> followerUsers;
 

@@ -32,7 +32,7 @@ public class GameRepositoryTest {
 
 	@Autowired
 	private GameRepository repository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -42,11 +42,11 @@ public class GameRepositoryTest {
 	@Before
 	public void clearDatabase() {
 		userRepository.deleteAll();
-		userRepository.flush();		
+		userRepository.flush();
 		repository.deleteAll();
-		repository.flush();		
+		repository.flush();
 	}
-	
+
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<Game> users = repository.findAll();
@@ -91,19 +91,6 @@ public class GameRepositoryTest {
 
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 				.isThrownBy(() -> repository.saveAndFlush(gameNoName));
-	}
-
-	@Test
-	public void testUsersListIsPersistedWhenGameIsSaved() {
-		List<User> users = new LinkedList<User>();
-		users.add(new User(null, "one", "pwd"));
-		users.add(new User(null, "two", "pwd"));
-		Game game = new Game(null, "game name", "game description", new Date(1000));
-		game.setUsers(users);
-
-		Game saved = repository.save(game);
-
-		assertThat(users).isEqualTo(saved.getUsers());
 	}
 
 	@Test
@@ -173,7 +160,7 @@ public class GameRepositoryTest {
 		List<User> retrievedUsers = repository.findUsersOfGameByName("game_name");
 		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
 	}
-	
+
 	@Test
 	public void testFindTop3LatestReleaseGames() {
 		long january2000 = 946681200000L;
@@ -191,8 +178,8 @@ public class GameRepositoryTest {
 		Game game3Saved = entityManager.persistFlushFind(game3);
 		Game game4Saved = entityManager.persistFlushFind(game4);
 		Game game5Saved = entityManager.persistFlushFind(game5);
-		
-		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0,3));
+
+		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0, 3));
 		assertThat(latest3Release.size()).isEqualTo(3);
 		assertThat(latest3Release).contains(game5Saved, game4Saved, game3Saved);
 		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);
