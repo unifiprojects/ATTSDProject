@@ -35,6 +35,8 @@ import com.maurosalani.project.attsd.service.UserService;
 @Controller
 public class WebController {
 
+	private static final String USERNAME = "username";
+
 	private static final String IS_ALREADY_LIKED_FLAG = "isAlreadyLiked";
 
 	private static final String IS_ALREADY_FOLLOWED_FLAG = "isAlreadyFollowed";
@@ -63,7 +65,7 @@ public class WebController {
 	public String index(Model model, HttpSession session) throws UserNotFoundException {
 		if (isAlreadyLogged(session)) {
 			User user = getLoggedUser(session);
-			model.addAttribute("username", user.getUsername());
+			model.addAttribute(USERNAME, user.getUsername());
 		}
 		model.addAttribute("latestReleases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
 		return "index";
@@ -86,7 +88,7 @@ public class WebController {
 	public String verifyLoginUser(Model model, CredentialsDTO credentials, HttpSession session)
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
-		session.setAttribute("username", result.getUsername());
+		session.setAttribute(USERNAME, result.getUsername());
 		return "redirect:/";
 	}
 
@@ -192,7 +194,7 @@ public class WebController {
 		User loggedUser = getLoggedUser(session);
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
-		session.setAttribute("username", result.getUsername());
+		session.setAttribute(USERNAME, result.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -205,7 +207,7 @@ public class WebController {
 		User loggedUser = getLoggedUser(session);
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
-		session.setAttribute("username", result.getUsername());
+		session.setAttribute(USERNAME, result.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
 
@@ -224,17 +226,17 @@ public class WebController {
 			throw new NewPasswordRequiredException();
 		}
 		User result = userService.changePassword(loggedUser, form.getNewPassword());
-		session.setAttribute("username", result.getUsername());
+		session.setAttribute(USERNAME, result.getUsername());
 		return "passwordChanged";
 	}
 
 	private boolean isAlreadyLogged(HttpSession session) {
-		Optional<String> opt = Optional.ofNullable((String) session.getAttribute("username"));
+		Optional<String> opt = Optional.ofNullable((String) session.getAttribute(USERNAME));
 		return opt.isPresent();
 	}
 
 	private User getLoggedUser(HttpSession session) throws UserNotFoundException {
-		String loggedUser = (String) session.getAttribute("username");
+		String loggedUser = (String) session.getAttribute(USERNAME);
 		return userService.getUserByUsername(loggedUser);
 	}
 
