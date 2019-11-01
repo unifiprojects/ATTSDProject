@@ -118,6 +118,25 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void testFollowerListIsRetrievableWhenUserIsSaved() {
+		User follower1 = new User(null, "one", "pwd");
+		User follower2 = new User(null, "two", "pwd");
+		User user = new User(null, "test", "pwd");
+		
+		User saved = entityManager.persistFlushFind(user);
+		follower1.addFollowedUser(saved);
+		follower2.addFollowedUser(saved);
+		User follower1Persisted = entityManager.persistFlushFind(follower1);
+		User follower2Persisted = entityManager.persistFlushFind(follower2);
+		
+		saved = entityManager.find(User.class, saved.getId());
+		assertThat(saved.getFollowerUsers().get(0)).isIn(follower1Persisted, follower2Persisted);
+		assertThat(saved.getFollowerUsers().get(1)).isIn(follower1Persisted, follower2Persisted);
+		assertThat(follower1Persisted.getFollowedUsers().get(0)).isEqualTo(saved);
+		assertThat(follower2Persisted.getFollowedUsers().get(0)).isEqualTo(saved);
+	}
+
+	@Test
 	public void testGamesListIsRetrievableWhenUserIsSaved() {
 		Game game1 = new Game(null, "game1", "description1", new Date(0));
 		Game game2 = new Game(null, "game2", "description2", new Date(0));

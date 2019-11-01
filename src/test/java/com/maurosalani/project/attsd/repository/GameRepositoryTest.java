@@ -32,7 +32,7 @@ public class GameRepositoryTest {
 
 	@Autowired
 	private GameRepository repository;
-
+	
 	@Autowired
 	private UserRepository userRepository;
 
@@ -42,11 +42,11 @@ public class GameRepositoryTest {
 	@Before
 	public void clearDatabase() {
 		userRepository.deleteAll();
-		userRepository.flush();
+		userRepository.flush();		
 		repository.deleteAll();
-		repository.flush();
+		repository.flush();		
 	}
-
+	
 	@Test
 	public void testFindAllWithEmptyDatabase() {
 		List<Game> users = repository.findAll();
@@ -91,6 +91,25 @@ public class GameRepositoryTest {
 
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
 				.isThrownBy(() -> repository.saveAndFlush(gameNoName));
+	}
+
+	@Test
+	public void testUsersListIsRetrievableWhenGameIsSaved() {
+		User user1 = new User(null, "one", "pwd");
+		User user2 = new User(null, "two", "pwd");		
+		Game game = new Game(null, "game name", "game description", new Date(1000));
+
+		Game saved = entityManager.persistFlushFind(game);
+		user1.addGame(saved);
+		user2.addGame(saved);
+		User user1Persisted = entityManager.persistFlushFind(user1);
+		User user2Persisted = entityManager.persistFlushFind(user2);
+
+		saved = entityManager.find(Game.class, saved.getId());
+		assertThat(saved.getUsers().get(0)).isIn(user1Persisted, user2Persisted);
+		assertThat(saved.getUsers().get(1)).isIn(user1Persisted, user2Persisted);
+		assertThat(user1Persisted.getGames().get(0)).isEqualTo(saved);
+		assertThat(user2Persisted.getGames().get(0)).isEqualTo(saved);
 	}
 
 	@Test
@@ -160,7 +179,7 @@ public class GameRepositoryTest {
 		List<User> retrievedUsers = repository.findUsersOfGameByName("game_name");
 		assertThat(retrievedUsers).isEqualTo(saved.getUsers());
 	}
-
+	
 	@Test
 	public void testFindTop3LatestReleaseGames() {
 		long january2000 = 946681200000L;
@@ -178,8 +197,8 @@ public class GameRepositoryTest {
 		Game game3Saved = entityManager.persistFlushFind(game3);
 		Game game4Saved = entityManager.persistFlushFind(game4);
 		Game game5Saved = entityManager.persistFlushFind(game5);
-
-		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0, 3));
+		
+		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0,3));
 		assertThat(latest3Release.size()).isEqualTo(3);
 		assertThat(latest3Release).contains(game5Saved, game4Saved, game3Saved);
 		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);
