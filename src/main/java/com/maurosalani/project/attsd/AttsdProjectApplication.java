@@ -34,7 +34,7 @@ public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Bean
 	public UserSessionHandler userSessionHandler() {
-		return new UserSessionHandler();
+		return UserSessionHandler.getInstance();
 	}
 
 	@Bean
