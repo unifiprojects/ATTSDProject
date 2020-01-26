@@ -55,3 +55,7 @@ function publishTopic(nameTopic, message) {
     };
     socket.send(JSON.stringify(action));
 }
+
+function testAlert() {
+    alert("Can't get permission for notification.");
+}
