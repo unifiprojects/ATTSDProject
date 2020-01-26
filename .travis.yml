@@ -5,6 +5,10 @@ addons:
     token:
       secure: $SONAR_TOKEN
       
+branches:
+  except:
+  - WebSocket
+
 matrix:
   include:
   - jdk: openjdk8
