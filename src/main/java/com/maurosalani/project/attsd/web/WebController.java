@@ -180,6 +180,7 @@ public class WebController {
 			if (game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
 			model.addAttribute(IS_LOGGED_FLAG, true);
+                        model.addAttribute("usernameLogged", loggedUser.getUsername());
 			model.addAttribute(IS_ALREADY_LIKED_FLAG, isAlreadyLiked);
 		}
 		return "game";

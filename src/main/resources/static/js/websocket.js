@@ -33,10 +33,11 @@ function formSubscribe() {
 }
 
 function formPublish() {
-    var form = document.getElementById("publishForm");
-    var nameTopic = form.elements["topic_name"].value;
-    var message = form.elements["topic_message"].value;
-    publishTopic(nameTopic, message);
+    var form = document.getElementById("like_form");
+    var topic = form.elements["topicName"].value;
+    var game = form.elements["gameToAdd"].value;
+    console.log(topic + " " + game);
+    publishTopic(topic, game);
 }
 
 function subscribeTopic(nameTopic) {
@@ -54,8 +55,4 @@ function publishTopic(nameTopic, message) {
         topic_message: message
     };
     socket.send(JSON.stringify(action));
-}
-
-function testAlert() {
-    alert("Can't get permission for notification.");
 }
