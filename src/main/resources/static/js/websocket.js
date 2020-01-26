@@ -27,8 +27,8 @@ function onDenied() {
 
 //Page
 function formSubscribe() {
-    var form = document.getElementById("subscribeForm");
-    var nameTopic = form.elements["topic_name"].value;
+    var form = document.getElementById("addToFollowed_form");
+    var nameTopic = form.elements["followedToAdd"].value;
     subscribeTopic(nameTopic);
 }
 
