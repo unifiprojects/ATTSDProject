@@ -107,6 +107,7 @@ public class WebController {
 	public String logout(HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			session.invalidate();
+			webSocketClient.close();
 			webSocketClient = null;
 		}
 		return "redirect:/";
