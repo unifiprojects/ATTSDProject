@@ -1,5 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.matteomauro.notification_server.client.WebSocketClient;
 import com.maurosalani.project.attsd.dto.ChangePasswordFormDTO;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.dto.RegistrationFormDTO;
@@ -61,6 +63,9 @@ public class WebController {
 	@Autowired
 	private GameService gameService;
 
+	private WebSocketClient webSocketClient;
+	private String URI = "ws://localhost:8080/topic";
+
 	@GetMapping("/")
 	public String index(Model model, HttpSession session) throws UserNotFoundException {
 		if (isAlreadyLogged(session)) {
@@ -89,13 +94,21 @@ public class WebController {
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
+		try {
+			webSocketClient = new WebSocketClient(new java.net.URI(URI));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		webSocketClient.sendMessage("ciao", "ciao", "ciao");
 		return "redirect:/";
 	}
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
-		if (isAlreadyLogged(session))
+		if (isAlreadyLogged(session)) {
 			session.invalidate();
+			webSocketClient = null;
+		}
 		return "redirect:/";
 	}
 
@@ -180,7 +193,7 @@ public class WebController {
 			if (game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
 			model.addAttribute(IS_LOGGED_FLAG, true);
-                        model.addAttribute("usernameLogged", loggedUser.getUsername());
+			model.addAttribute("usernameLogged", loggedUser.getUsername());
 			model.addAttribute(IS_ALREADY_LIKED_FLAG, isAlreadyLiked);
 		}
 		return "game";

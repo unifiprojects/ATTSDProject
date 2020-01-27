@@ -12,9 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
-import com.matteomauro.notification_server.UserSessionHandler;
-import com.matteomauro.notification_server.WebSocketServer;
+import com.matteomauro.notification_server.server.UserSessionHandler;
+import com.matteomauro.notification_server.server.WebSocketServer;
 import com.matteomauro.notification_server.repository.RedisRepository;
+
+
 
 @SpringBootApplication
 @EnableWebSocket
