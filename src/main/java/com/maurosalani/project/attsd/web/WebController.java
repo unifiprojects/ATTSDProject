@@ -99,7 +99,7 @@ public class WebController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		webSocketClient.sendMessage("ciao", "ciao", "ciao");
+		webSocketClient.sendMessage("publish", "ciao", "ciao");
 		return "redirect:/";
 	}
 
@@ -223,6 +223,8 @@ public class WebController {
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
+                String message = loggedUser.getUsername() + " like " + gameToAdd;
+                webSocketClient.sendMessage("publish", loggedUser.getUsername(), message);
 		return "redirect:/game/" + toAdd.getName();
 	}
 
