@@ -17,7 +17,7 @@ function onGranted(notification){
     console.log("permission granted");
     window.Push.create("topic:" + notification.topic, {
         body: "message: " + notification.message,
-        timeout: 4000,
+        timeout: 4000
     });
 }
 

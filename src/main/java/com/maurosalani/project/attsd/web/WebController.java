@@ -99,7 +99,6 @@ public class WebController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		webSocketClient.sendMessage("publish", "ciao", "ciao");
 		return "redirect:/";
 	}
 
@@ -210,6 +209,7 @@ public class WebController {
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute(USERNAME, result.getUsername());
+                webSocketClient.subscribe(followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -224,7 +224,7 @@ public class WebController {
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
                 String message = loggedUser.getUsername() + " like " + gameToAdd;
-                webSocketClient.sendMessage("publish", loggedUser.getUsername(), message);
+                webSocketClient.publish(loggedUser.getUsername(), message);
 		return "redirect:/game/" + toAdd.getName();
 	}
 
