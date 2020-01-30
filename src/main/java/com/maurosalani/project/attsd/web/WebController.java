@@ -1,7 +1,9 @@
 package com.maurosalani.project.attsd.web;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
@@ -63,7 +65,7 @@ public class WebController {
 	@Autowired
 	private GameService gameService;
 
-	private WebSocketClient webSocketClient;
+	private Map<String, WebSocketClient> webSocketClients = new HashMap<String, WebSocketClient>();
 	private String URI = "ws://localhost:8080/topic";
 
 	@GetMapping("/")
@@ -95,7 +97,7 @@ public class WebController {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
 		try {
-			webSocketClient = new WebSocketClient(new java.net.URI(URI));
+			webSocketClients.put(result.getUsername(), new WebSocketClient(new java.net.URI(URI)));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -105,9 +107,9 @@ public class WebController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		if (isAlreadyLogged(session)) {
+			webSocketClients.get(session.getAttribute(USERNAME)).close();
+			webSocketClients.remove(session.getAttribute(USERNAME));
 			session.invalidate();
-			webSocketClient.close();
-			webSocketClient = null;
 		}
 		return "redirect:/";
 	}
@@ -209,7 +211,7 @@ public class WebController {
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute(USERNAME, result.getUsername());
-                webSocketClient.subscribe(followed.getUsername());
+		webSocketClients.get(loggedUser.getUsername()).subscribe(followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -223,8 +225,8 @@ public class WebController {
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
-                String message = loggedUser.getUsername() + " like " + gameToAdd;
-                webSocketClient.publish(loggedUser.getUsername(), message);
+		String message = loggedUser.getUsername() + " like " + gameToAdd;
+		webSocketClients.get(loggedUser.getUsername()).publish(loggedUser.getUsername(), message);
 		return "redirect:/game/" + toAdd.getName();
 	}
 
