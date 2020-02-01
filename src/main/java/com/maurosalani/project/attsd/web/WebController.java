@@ -101,6 +101,8 @@ public class WebController {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+                result.getFollowedUsers().stream()
+                    .forEach(followed -> webSocketClients.get(result.getUsername()).subscribe(followed.getUsername()));
 		return "redirect:/";
 	}
 
