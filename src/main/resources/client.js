@@ -83,10 +83,13 @@ async function subscribe() {
   });
 
   console.info(`Subscribed to Push Service: ${subscription.endpoint}`);
-
+  
+  const username = document.getElementById("username");
+  obj.username = username;
+  obj.subscription = subscription;
   await fetch("/subscribe", {
     method: 'POST',
-    body: JSON.stringify(subscription),
+    body: JSON.stringify(obj),
     headers: {
       "content-type": "application/json"
     }
