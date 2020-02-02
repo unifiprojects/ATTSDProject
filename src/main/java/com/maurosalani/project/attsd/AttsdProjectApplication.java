@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -22,6 +23,8 @@ import com.matteomauro.notification_server.server.WebSocketServer;
 @SpringBootApplication
 @EnableWebSocket
 @EnableScheduling
+//necessary to load all beans from the dependency and from this app
+@ComponentScan(basePackages = {"com.maurosalani.push_notification", "com.maurosalani.project.attsd"})
 public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Autowired
@@ -38,6 +41,7 @@ public class AttsdProjectApplication implements CommandLineRunner {
 		return scheduler;
 	}
 
+	// >>>>>> necessary to load beans from JavaEE dependency
 	@Bean
 	public WebSocketServer webSocketServer() {
 		return new WebSocketServer();
@@ -57,7 +61,8 @@ public class AttsdProjectApplication implements CommandLineRunner {
 	public ServerEndpointExporter serverEndpointExporter() {
 		return new ServerEndpointExporter();
 	}
-
+	// <<<<<< necessary to load beans from JavaEE dependency
+	
 	@Override
 	public void run(String... args) throws Exception {
 		Stream<String> stream = Arrays.stream(applicationContext.getBeanDefinitionNames());

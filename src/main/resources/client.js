@@ -1,6 +1,3 @@
-const factOutput = document.getElementById('fact');
-const jokeOutput = document.getElementById('joke');
-
 if ("serviceWorker" in navigator) {
   try {
     init();
