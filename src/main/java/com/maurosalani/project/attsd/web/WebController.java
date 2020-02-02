@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -35,6 +36,8 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
+import com.maurosalani.push_notification.PushController;
+import com.maurosalani.push_notification.SubscriptionsHandler;
 
 @Controller
 public class WebController {
@@ -59,6 +62,8 @@ public class WebController {
 
 	private static final int COUNT_LATEST_RELEASES = 4;
 
+	private final SubscriptionsHandler subscriptionsHandler = SubscriptionsHandler.getInstance();
+
 	@Autowired
 	private UserService userService;
 
@@ -73,6 +78,9 @@ public class WebController {
 		if (isAlreadyLogged(session)) {
 			User user = getLoggedUser(session);
 			model.addAttribute(USERNAME, user.getUsername());
+			model.addAttribute(IS_LOGGED_FLAG, true);
+		} else {
+			model.addAttribute(IS_LOGGED_FLAG, false);
 		}
 		model.addAttribute("latestReleases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
 		return "index";
@@ -96,19 +104,14 @@ public class WebController {
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
-		try {
-			webSocketClients.put(result.getUsername(), new WebSocketClient(new java.net.URI(URI)));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-                result.getFollowedUsers().stream()
-                    .forEach(followed -> webSocketClients.get(result.getUsername()).subscribe(followed.getUsername()));
+		model.addAttribute(IS_LOGGED_FLAG, true);
 		return "redirect:/";
 	}
 
 	@GetMapping("/logout")
-	public String logout(HttpSession session) {
+	public String logout(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
+			model.addAttribute(IS_LOGGED_FLAG, false);
 			webSocketClients.get(session.getAttribute(USERNAME)).close();
 			webSocketClients.remove(session.getAttribute(USERNAME));
 			session.invalidate();
@@ -213,7 +216,9 @@ public class WebController {
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute(USERNAME, result.getUsername());
-		webSocketClients.get(loggedUser.getUsername()).subscribe(followed.getUsername());
+		Logger.getLogger(WebController.class.getName())
+				.info("Username: " + loggedUser.getUsername() + "subscribed to topic: " + followed.getUsername());
+		subscriptionsHandler.subscribeToTopic(loggedUser.getUsername(), followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -227,8 +232,10 @@ public class WebController {
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
-		String message = loggedUser.getUsername() + " like " + gameToAdd;
-		webSocketClients.get(loggedUser.getUsername()).publish(loggedUser.getUsername(), message);
+		String message = loggedUser.getUsername() + " likes " + gameToAdd;
+		Logger.getLogger(WebController.class.getName())
+				.info("Username: " + loggedUser.getUsername() + "published message: " + message);
+		subscriptionsHandler.publishMessageForTopic(message, loggedUser.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
 
