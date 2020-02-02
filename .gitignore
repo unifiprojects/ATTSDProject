@@ -41,3 +41,5 @@ build/
 ### VS Code ###
 .vscode/
 
+/key.private
+/key.public
