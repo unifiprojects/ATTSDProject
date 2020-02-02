@@ -51,8 +51,6 @@ public class PushController {
 
 	private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
 
-	private String lastNumbersAPIFact = "";
-
 	private final HttpClient httpClient;
 
 	private final Algorithm jwtAlgorithm;
@@ -81,11 +79,13 @@ public class PushController {
 	@PostMapping("/subscribe")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void subscribe(@RequestBody Subscription subscription) {
+		Logger.getLogger(PushController.class.getName()).info("New Subscription: " + subscription.getEndpoint());
 		this.subscriptions.put(subscription.getEndpoint(), subscription);
 	}
 
 	@PostMapping("/unsubscribe")
 	public void unsubscribe(@RequestBody SubscriptionEndpoint subscription) {
+		Logger.getLogger(PushController.class.getName()).info("Unsubscription: " + subscription.getEndpoint());
 		this.subscriptions.remove(subscription.getEndpoint());
 	}
 
@@ -94,38 +94,15 @@ public class PushController {
 		return this.subscriptions.containsKey(subscription.getEndpoint());
 	}
 
-	@GetMapping(path = "/lastNumbersAPIFact")
-	public String lastNumbersAPIFact() {
-		return this.lastNumbersAPIFact;
-	}
-
-	@Scheduled(fixedDelay = 20_000)
-	public void numberFact() {
-		if (this.subscriptions.isEmpty()) {
-			return;
-		}
-
-		try {
-			HttpResponse<String> response = this.httpClient.send(
-					HttpRequest.newBuilder(URI.create("http://numbersapi.com/random/date")).build(),
-					BodyHandlers.ofString());
-
-			if (response.statusCode() == 200) {
-				this.lastNumbersAPIFact = response.body();
-				sendPushMessageToAllSubscribersWithoutPayload();
-			}
-		} catch (IOException | InterruptedException e) {
-			Logger.getLogger(PushController.class.getName()).info("fetch number fact" + e);
-		}
-	}
-
-	@Scheduled(fixedDelay = 30_000)
+	@Scheduled(fixedDelay = 3000)
 	public void chuckNorrisJoke() {
+		Logger.getLogger(PushController.class.getName()).info("SENDINGb");
 		if (this.subscriptions.isEmpty()) {
 			return;
 		}
 
 		try {
+			Logger.getLogger(PushController.class.getName()).info("SENDINGB");
 			HttpResponse<String> response = this.httpClient.send(
 					HttpRequest.newBuilder(URI.create("https://api.icndb.com/jokes/random")).build(),
 					BodyHandlers.ofString());
@@ -149,17 +126,6 @@ public class PushController {
 		} catch (IOException | InterruptedException e) {
 			Logger.getLogger(PushController.class.getName()).info("fetch chuck norris" + e);
 		}
-	}
-
-	private void sendPushMessageToAllSubscribersWithoutPayload() {
-		Set<String> failedSubscriptions = new HashSet<>();
-		for (Subscription subscription : this.subscriptions.values()) {
-			boolean remove = sendPushMessage(subscription, null);
-			if (remove) {
-				failedSubscriptions.add(subscription.getEndpoint());
-			}
-		}
-		failedSubscriptions.forEach(this.subscriptions::remove);
 	}
 
 	private void sendPushMessageToAllSubscribers(Map<String, Subscription> subs, Object message)
@@ -209,17 +175,14 @@ public class PushController {
 
 		Builder httpRequestBuilder = HttpRequest.newBuilder();
 		if (body != null) {
-			httpRequestBuilder.POST(BodyPublishers.ofByteArray(body))
-				.header("Content-Type", "application/octet-stream")
-				.header("Content-Encoding", "aes128gcm");
+			httpRequestBuilder.POST(BodyPublishers.ofByteArray(body)).header("Content-Type", "application/octet-stream")
+					.header("Content-Encoding", "aes128gcm");
 		} else {
 			httpRequestBuilder.POST(BodyPublishers.noBody());
 		}
 
-		HttpRequest request = httpRequestBuilder.uri(endpointURI)
-				.header("TTL", "180")
-				.header("Authorization", "vapid t=" + token + ", k=" + this.serverKeys.getPublicKeyBase64())
-				.build();
+		HttpRequest request = httpRequestBuilder.uri(endpointURI).header("TTL", "180")
+				.header("Authorization", "vapid t=" + token + ", k=" + this.serverKeys.getPublicKeyBase64()).build();
 		try {
 			HttpResponse<Void> response = this.httpClient.send(request, BodyHandlers.discarding());
 

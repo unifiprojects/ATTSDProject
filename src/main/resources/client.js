@@ -3,8 +3,15 @@ const jokeOutput = document.getElementById('joke');
 
 if ("serviceWorker" in navigator) {
   try {
-	checkSubscription();
     init();
+    checkSubscription().then(
+    		subscribe().catch(e => {
+    			if (Notification.permission === 'denied') {
+		          console.warn('Permission for notifications was denied');
+    			} else {
+		    	  console.error('error subscribe(): ' + e);
+		        }   
+    		}));
   } catch (e) {
     console.error('error init(): ' + e);
   }
@@ -24,10 +31,9 @@ async function checkSubscription() {
       }
     });
     const subscribed = await response.json();
-
     return subscribed;
+    
   }
-
   return false;
 }
 

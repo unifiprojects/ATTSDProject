@@ -75,9 +75,7 @@ async function handleNotificationClick(event) {
 async function needToShowNotification() {
   const allClients = await clients.matchAll({ includeUncontrolled: true });
   for (const client of allClients) {
-    if (client.visibilityState === 'visible') {
-      return false;
-    }
+	  return true;
   }
-  return true;
+  
 }

@@ -9,6 +9,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
@@ -18,6 +21,7 @@ import com.matteomauro.notification_server.server.WebSocketServer;
 
 @SpringBootApplication
 @EnableWebSocket
+@EnableScheduling
 public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Autowired
@@ -25,6 +29,13 @@ public class AttsdProjectApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AttsdProjectApplication.class, args);
+	}
+
+	@Bean
+	public TaskScheduler taskScheduler() {
+		TaskScheduler scheduler = new ThreadPoolTaskScheduler();
+
+		return scheduler;
 	}
 
 	@Bean
