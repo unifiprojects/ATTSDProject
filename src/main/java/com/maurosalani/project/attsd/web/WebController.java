@@ -1,9 +1,6 @@
 package com.maurosalani.project.attsd.web;
 
-import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.matteomauro.notification_server.client.WebSocketClient;
 import com.maurosalani.project.attsd.dto.ChangePasswordFormDTO;
 import com.maurosalani.project.attsd.dto.CredentialsDTO;
 import com.maurosalani.project.attsd.dto.RegistrationFormDTO;
@@ -36,7 +32,6 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
-import com.maurosalani.push_notification.PushController;
 import com.maurosalani.push_notification.SubscriptionsHandler;
 
 @Controller
@@ -69,9 +64,6 @@ public class WebController {
 
 	@Autowired
 	private GameService gameService;
-
-	private Map<String, WebSocketClient> webSocketClients = new HashMap<String, WebSocketClient>();
-	private String URI = "ws://localhost:8080/topic";
 
 	@GetMapping("/")
 	public String index(Model model, HttpSession session) throws UserNotFoundException {
@@ -112,8 +104,7 @@ public class WebController {
 	public String logout(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(IS_LOGGED_FLAG, false);
-			webSocketClients.get(session.getAttribute(USERNAME)).close();
-			webSocketClients.remove(session.getAttribute(USERNAME));
+			subscriptionsHandler.unsubscribeUser((String) session.getAttribute(USERNAME));
 			session.invalidate();
 		}
 		return "redirect:/";
