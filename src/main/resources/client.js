@@ -77,18 +77,20 @@ async function unsubscribe() {
 
 async function subscribe() {
   const registration = await navigator.serviceWorker.ready;
-  const subscription = await registration.pushManager.subscribe({
+  var subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: this.publicSigningKey
   });
 
   console.info(`Subscribed to Push Service: ${subscription.endpoint}`);
   
-  const username = document.getElementById("username");
-  console.info(JSON.stringify({subscription, 'username': username}));
+  const username = document.getElementById("username").value;
+  var jsonSub = JSON.stringify(subscription);
+  var sub = JSON.parse(jsonSub);
+  sub.username = username;
   await fetch("/subscribe", {
     method: 'POST',
-    body: JSON.stringify({subscription, 'username': username}),
+    body: JSON.stringify(sub),
     headers: {
       "content-type": "application/json"
     }

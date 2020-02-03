@@ -104,6 +104,8 @@ public class WebController {
 	public String logout(Model model, HttpSession session) {
 		if (isAlreadyLogged(session)) {
 			model.addAttribute(IS_LOGGED_FLAG, false);
+			Logger.getLogger(WebController.class.getName())
+					.info("Username: " + (String) session.getAttribute(USERNAME) + " unregister");
 			subscriptionsHandler.unsubscribeUser((String) session.getAttribute(USERNAME));
 			session.invalidate();
 		}
@@ -208,7 +210,7 @@ public class WebController {
 		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute(USERNAME, result.getUsername());
 		Logger.getLogger(WebController.class.getName())
-				.info("Username: " + loggedUser.getUsername() + "subscribed to topic: " + followed.getUsername());
+				.info("Username: " + loggedUser.getUsername() + " subscribed to topic: " + followed.getUsername());
 		subscriptionsHandler.subscribeToTopic(loggedUser.getUsername(), followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
@@ -225,7 +227,7 @@ public class WebController {
 		session.setAttribute(USERNAME, result.getUsername());
 		String message = loggedUser.getUsername() + " likes " + gameToAdd;
 		Logger.getLogger(WebController.class.getName())
-				.info("Username: " + loggedUser.getUsername() + "published message: " + message);
+				.info("Username: " + loggedUser.getUsername() + " published message: " + message);
 		subscriptionsHandler.publishMessageForTopic(message, loggedUser.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
