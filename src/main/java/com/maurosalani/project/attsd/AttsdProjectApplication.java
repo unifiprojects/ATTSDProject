@@ -8,23 +8,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
-
-import com.matteomauro.notification_server.repository.RedisRepository;
-import com.matteomauro.notification_server.server.UserSessionHandler;
-import com.matteomauro.notification_server.server.WebSocketServer;
 
 @SpringBootApplication
 @EnableWebSocket
-@EnableScheduling
+
 //necessary to load all beans from the dependency and from this app
-@ComponentScan(basePackages = {"com.maurosalani.push_notification", "com.maurosalani.project.attsd"})
+@ComponentScan(basePackages = { "com.maurosalani.push_notification", "com.maurosalani.project.attsd" })
 public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Autowired
@@ -34,35 +25,6 @@ public class AttsdProjectApplication implements CommandLineRunner {
 		SpringApplication.run(AttsdProjectApplication.class, args);
 	}
 
-	@Bean
-	public TaskScheduler taskScheduler() {
-		TaskScheduler scheduler = new ThreadPoolTaskScheduler();
-
-		return scheduler;
-	}
-
-	// >>>>>> necessary to load beans from JavaEE dependency
-	@Bean
-	public WebSocketServer webSocketServer() {
-		return new WebSocketServer();
-	}
-
-	@Bean
-	public UserSessionHandler userSessionHandler() {
-		return UserSessionHandler.getInstance();
-	}
-
-	@Bean
-	public RedisRepository redisRepository() {
-		return new RedisRepository();
-	}
-
-	@Bean
-	public ServerEndpointExporter serverEndpointExporter() {
-		return new ServerEndpointExporter();
-	}
-	// <<<<<< necessary to load beans from JavaEE dependency
-	
 	@Override
 	public void run(String... args) throws Exception {
 		Stream<String> stream = Arrays.stream(applicationContext.getBeanDefinitionNames());

@@ -57,7 +57,7 @@ public class WebController {
 
 	private static final int COUNT_LATEST_RELEASES = 4;
 
-	private final SubscriptionsHandler subscriptionsHandler = SubscriptionsHandler.getInstance();
+	private final SubscriptionsHandler subscriptionsHandler = SubscriptionsHandler.getInstance(null);
 
 	@Autowired
 	private UserService userService;
