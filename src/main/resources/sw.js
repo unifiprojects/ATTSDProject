@@ -22,7 +22,7 @@ async function handlePushEvent(event) {
         urlToOpenProfile = new URL('/profile/' + msg.title, self.location.origin).href;
 
         if (needToShow) {
-            self.registration.showNotification({
+            self.registration.showNotification(msg.title, {
                 body: msg.body
             });
         }
