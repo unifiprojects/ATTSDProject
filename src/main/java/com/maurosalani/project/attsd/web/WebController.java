@@ -225,7 +225,7 @@ public class WebController {
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
-		String message = loggedUser.getUsername() + " likes " + gameToAdd;
+		String message = "Your friend " + loggedUser.getUsername() + " likes " + gameToAdd;
 		Logger.getLogger(WebController.class.getName())
 				.info("Username: " + loggedUser.getUsername() + " published message: " + message);
 		subscriptionsHandler.publishMessageForTopic(message, loggedUser.getUsername());
