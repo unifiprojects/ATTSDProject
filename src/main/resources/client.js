@@ -76,13 +76,15 @@ async function unsubscribe() {
 
 async function subscribe() {
   const registration = await navigator.serviceWorker.ready;
-  var subscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: this.publicSigningKey
-  });
+  var subscription = await registration.pushManager.getSubscription();
+  if(subscription == null){
+	  subscription = await registration.pushManager.subscribe({
+	    userVisibleOnly: true,
+	    applicationServerKey: this.publicSigningKey
+	});
+  }
 
   console.info(`Subscribed to Push Service: ${subscription.endpoint}`);
-  
   const username = document.getElementById("username").value;
   var jsonSub = JSON.stringify(subscription);
   var sub = JSON.parse(jsonSub);
