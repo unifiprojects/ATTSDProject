@@ -12,41 +12,23 @@ async function handlePushEvent(event) {
   const needToShow = await needToShowNotification();
   const dataCache = await caches.open('data');
 
-  if (!event.data) {
-    console.info('number fact received');
-
-    if (needToShow) {
-      self.registration.showNotification('Numbers API', {
-        body: 'A new fact has arrived',
-        tag: 'numberfact',
-        icon: 'numbers.png'
-      });
-    }
-
-    const response = await fetch('lastNumbersAPIFact');
-    const fact = await response.text();
-
-    await dataCache.put('fact', new Response(fact));
-  }
-  else {
-	  console.info('chuck joke received');
+  if (event.data) {
+    console.info('notification received');
 
     const msg = event.data.json();
 
     if (needToShow) {
       self.registration.showNotification(msg.title, {
-        body: msg.body,
-        icon: 'chuck.png'
+        body: msg.body
       });
     }
+    await dataCache.put('message', new Response(msg.body));
+    }
 
-    await dataCache.put('joke', new Response(msg.body));
-  }
-
-  const allClients = await clients.matchAll({ includeUncontrolled: true });
-  for (const client of allClients) {
-    client.postMessage('data-updated');
-  }
+    const allClients = await clients.matchAll({ includeUncontrolled: true });
+    for (const client of allClients) {
+        client.postMessage('data-updated');
+    }
 }
 
 const urlToOpen1 = new URL('/templates/index.html', self.location.origin).href;
