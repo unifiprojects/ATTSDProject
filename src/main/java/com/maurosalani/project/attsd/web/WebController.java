@@ -97,6 +97,10 @@ public class WebController {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
 		model.addAttribute(IS_LOGGED_FLAG, true);
+                
+                result.getFollowedUsers().stream()
+                    .forEach(followed -> subscriptionsHandler.subscribeToTopic(result.getUsername(), followed.getUsername()));
+                                
 		return "redirect:/";
 	}
 
