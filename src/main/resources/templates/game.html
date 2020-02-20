@@ -4,63 +4,67 @@
 <meta charset="UTF-8">
 <title th:text=${game.name}></title>
 <link rel="stylesheet"
-  href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
 <link rel="stylesheet" th:href="@{/css/card.css}">
 <link rel="stylesheet" th:href="@{/css/font.css}">
 <link href="https://fonts.googleapis.com/css?family=Lato&display=swap"
-  rel="stylesheet">
+	rel="stylesheet">
 <meta name="viewport"
-  content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <div class="container">
-    <h2 class="font-weight-bold my-5" id="nameOfGame"
-      th:text="${game.name}"></h2>
-    <div class="card">
-      <div>
-        <h3>Description:</h3>
-        <h5 class="ml-4 mt-3" id="description"
-          th:text="${game.description}"></h5>
-      </div>
-      <div class="mt-4">
-        <h3>Release Date:</h3>
-        <h5 class="ml-4 mt-3" id="releaseDate"
-          th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></h5>
-      </div>
-      <div class="mt-4">
-        <div th:if="${game.users == null or game.users.empty}">
-          <h3>No users like this game yet...</h3>
-        </div>
-        <div th:unless="${game.users == null or game.users.empty}">
-          <h3>Users who liked this game:</h3>
-          <div id="usersFans">
-            <h5 class="ml-4 mt-3" th:each="user : ${game.users}">
-              <a th:href="@{'/profile/' + ${user.username}}"> <span
-                th:text="${user.username}"></span>
-              </a>
-            </h5>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col col-6 text-left">
-        <a class="btn btn-primary mt-4 ml-3" th:href="@{/}">Go back
-          to homepage</a>
-      </div>
-      <div class="col col-6 text-right">
-        <div th:if="${isLogged}">
-          <div th:if="${!isAlreadyLiked}">
-            <form name="like_form" th:action="@{/addGame}" method="post">
-              <input type="hidden" th:value="${game.name}"
-                name="gameToAdd" />
-              <button class="btn btn-primary mt-4 mr-3" type="submit"
-                name="btn_like">Like</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="container">
+		<h2 class="font-weight-bold my-5" id="nameOfGame"
+			th:text="${game.name}"></h2>
+		<div class="card">
+			<div>
+				<h3>Description:</h3>
+				<h5 class="ml-4 mt-3" id="description" th:text="${game.description}"></h5>
+			</div>
+			<div class="mt-4">
+				<h3>Release Date:</h3>
+				<h5 class="ml-4 mt-3" id="releaseDate"
+					th:text="${#dates.format(game.releaseDate, 'dd-mm-yyyy')}"></h5>
+			</div>
+			<div class="mt-4">
+				<div th:if="${game.users == null or game.users.empty}">
+					<h3>No users like this game yet...</h3>
+				</div>
+				<div th:unless="${game.users == null or game.users.empty}">
+					<h3>Users who liked this game:</h3>
+					<div id="usersFans">
+						<h5 class="ml-4 mt-3" th:each="user : ${game.users}">
+							<a th:href="@{'/profile/' + ${user.username}}"> <span
+								th:text="${user.username}"></span>
+							</a>
+						</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col col-6 text-left">
+				<a class="btn btn-primary mt-4 ml-3" th:href="@{/}">Go back to
+					homepage</a>
+			</div>
+			<div class="col col-6 text-right">
+				<div th:if="${isLogged}">
+					<div th:if="${!isAlreadyLiked}">
+						<form name="like_form" id="like_form" th:action="@{/addGame}"
+							method="post">
+
+							<input type="hidden" th:value="${usernameLogged}" id="topicName">
+
+							<input type="hidden" th:value="${game.name}" name="gameToAdd"
+								id="gameToAdd" />
+
+							<button class="btn btn-primary mt-4 mr-3" type="submit"
+								name="btn_like" >Like</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

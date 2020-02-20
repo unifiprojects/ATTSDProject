@@ -13,6 +13,7 @@ HELP.md
 target/
 .attach_pid*
 *.launch
+.DS_Store
 
 ### STS ###
 .apt_generated
@@ -40,3 +41,5 @@ build/
 ### VS Code ###
 .vscode/
 
+/key.private
+/key.public

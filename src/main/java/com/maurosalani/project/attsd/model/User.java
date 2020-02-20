@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreRemove;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -41,11 +42,11 @@ public class User implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "followers_relation", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "followed_id"))
-	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
+	@JsonIgnoreProperties({ "followedUsers", "followerUsers" })
 	private List<User> followedUsers;
 
 	@ManyToMany(mappedBy = "followedUsers", fetch = FetchType.LAZY)
-	@JsonIgnoreProperties({"followedUsers", "followerUsers"})
+	@JsonIgnoreProperties({ "followedUsers", "followerUsers" })
 	private List<User> followerUsers;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -62,6 +63,21 @@ public class User implements Serializable {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+	}
+
+	@PreRemove
+	private void removeGamesForeignKeys() {
+		for (User user : this.followedUsers) {
+			user.getFollowedUsers().remove(this);
+			user.getFollowerUsers().remove(this);
+		}
+		for (User user : this.followerUsers) {
+			user.getFollowedUsers().remove(this);
+			user.getFollowerUsers().remove(this);
+		}
+		for (Game game : this.games) {
+			game.getUsers().remove(this);
+		}
 	}
 
 	public User(Long id, String username, String password, List<User> followedUsers, List<User> followerUsers,
@@ -169,20 +185,17 @@ public class User implements Serializable {
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} 
-		else if (!id.equals(other.id))
+		} else if (!id.equals(other.id))
 			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} 
-		else if (!password.equals(other.password))
+		} else if (!password.equals(other.password))
 			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;
-		} 
-		else if (!username.equals(other.username))
+		} else if (!username.equals(other.username))
 			return false;
 		return true;
 	}

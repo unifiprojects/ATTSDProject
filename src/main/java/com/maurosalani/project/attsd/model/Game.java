@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreRemove;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -48,6 +49,13 @@ public class Game implements Serializable {
 		this.name = name;
 		this.description = description;
 		this.releaseDate = releaseDate;
+	}
+	
+	@PreRemove
+	private void removeUsersForeignKeys() {
+		for (User user: this.users) {
+			user.getGames().remove(this);
+		}
 	}
 
 	public Long getId() {

@@ -2,6 +2,7 @@ package com.maurosalani.project.attsd.web;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -31,6 +32,7 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
+import com.maurosalani.push_notification.SubscriptionsHandler;
 
 @Controller
 public class WebController {
@@ -55,6 +57,8 @@ public class WebController {
 
 	private static final int COUNT_LATEST_RELEASES = 4;
 
+	private final SubscriptionsHandler subscriptionsHandler = SubscriptionsHandler.getInstance(null);
+
 	@Autowired
 	private UserService userService;
 
@@ -66,6 +70,9 @@ public class WebController {
 		if (isAlreadyLogged(session)) {
 			User user = getLoggedUser(session);
 			model.addAttribute(USERNAME, user.getUsername());
+			model.addAttribute(IS_LOGGED_FLAG, true);
+		} else {
+			model.addAttribute(IS_LOGGED_FLAG, false);
 		}
 		model.addAttribute("latestReleases", gameService.getLatestReleasesGames(COUNT_LATEST_RELEASES));
 		return "index";
@@ -89,13 +96,23 @@ public class WebController {
 			throws LoginFailedException {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
+		model.addAttribute(IS_LOGGED_FLAG, true);
+                
+                result.getFollowedUsers().stream()
+                    .forEach(followed -> subscriptionsHandler.subscribeToTopic(result.getUsername(), followed.getUsername()));
+                                
 		return "redirect:/";
 	}
 
 	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		if (isAlreadyLogged(session))
+	public String logout(Model model, HttpSession session) {
+		if (isAlreadyLogged(session)) {
+			model.addAttribute(IS_LOGGED_FLAG, false);
+			Logger.getLogger(WebController.class.getName())
+					.info("Username: " + (String) session.getAttribute(USERNAME) + " unregister");
+			subscriptionsHandler.unsubscribeUser((String) session.getAttribute(USERNAME));
 			session.invalidate();
+		}
 		return "redirect:/";
 	}
 
@@ -180,6 +197,7 @@ public class WebController {
 			if (game.getUsers() != null)
 				isAlreadyLiked = game.getUsers().contains(loggedUser);
 			model.addAttribute(IS_LOGGED_FLAG, true);
+			model.addAttribute("usernameLogged", loggedUser.getUsername());
 			model.addAttribute(IS_ALREADY_LIKED_FLAG, isAlreadyLiked);
 		}
 		return "game";
@@ -195,6 +213,9 @@ public class WebController {
 		User followed = userService.getUserByUsername(followedToAdd);
 		User result = userService.addFollowedUser(loggedUser, followed);
 		session.setAttribute(USERNAME, result.getUsername());
+		Logger.getLogger(WebController.class.getName())
+				.info("Username: " + loggedUser.getUsername() + " subscribed to topic: " + followed.getUsername());
+		subscriptionsHandler.subscribeToTopic(loggedUser.getUsername(), followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -208,6 +229,10 @@ public class WebController {
 		Game toAdd = gameService.getGameByName(gameToAdd);
 		User result = userService.addGame(loggedUser, toAdd);
 		session.setAttribute(USERNAME, result.getUsername());
+		String message = "Your friend " + loggedUser.getUsername() + " likes " + gameToAdd;
+		Logger.getLogger(WebController.class.getName())
+				.info("Username: " + loggedUser.getUsername() + " published message: " + message);
+		subscriptionsHandler.publishMessageForTopic(message, loggedUser.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
 
