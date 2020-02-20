@@ -4,6 +4,10 @@ addons:
     organization: unifiprojects
     token:
       secure: $SONAR_TOKEN
+      
+branches:
+  except:
+    - PushNotification
 
 matrix:
   include:
