@@ -57,7 +57,7 @@ async function unsubscribe() {
     if (successful) {
       console.info('Unsubscription successful');
 
-      await fetch("/unsubscribe", {
+      await fetch("/unsubscribeByEndpoint", {
         method: 'POST',
         body: JSON.stringify({endpoint: subscription.endpoint}),
         headers: {
