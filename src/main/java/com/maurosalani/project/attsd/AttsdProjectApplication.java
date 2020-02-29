@@ -15,7 +15,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 @EnableWebSocket
 
 //necessary to load all beans from the dependency and from this app
-@ComponentScan(basePackages = { "com.maurosalani.push_notification", "com.maurosalani.project.attsd" })
+@ComponentScan(basePackages = { "com.maurosalani.push_notifier.SubscriptionsService", "com.maurosalani.project.attsd" })
 public class AttsdProjectApplication implements CommandLineRunner {
 
 	@Autowired
