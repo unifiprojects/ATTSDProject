@@ -32,7 +32,7 @@ import com.maurosalani.project.attsd.model.Game;
 import com.maurosalani.project.attsd.model.User;
 import com.maurosalani.project.attsd.service.GameService;
 import com.maurosalani.project.attsd.service.UserService;
-import com.maurosalani.push_notification.SubscriptionsHandler;
+import com.maurosalani.push_notifier.SubscriptionsService;
 
 @Controller
 public class WebController {
@@ -57,7 +57,7 @@ public class WebController {
 
 	private static final int COUNT_LATEST_RELEASES = 4;
 
-	private final SubscriptionsHandler subscriptionsHandler = SubscriptionsHandler.getInstance(null);
+	private final SubscriptionsService subscriptionsService = new SubscriptionsService();
 
 	@Autowired
 	private UserService userService;
@@ -97,10 +97,10 @@ public class WebController {
 		User result = userService.verifyLogin(credentials);
 		session.setAttribute(USERNAME, result.getUsername());
 		model.addAttribute(IS_LOGGED_FLAG, true);
-                
-                result.getFollowedUsers().stream()
-                    .forEach(followed -> subscriptionsHandler.subscribeToTopic(result.getUsername(), followed.getUsername()));
-                                
+
+		result.getFollowedUsers().stream().forEach(
+				followed -> subscriptionsService.subscribeToTopic(result.getUsername(), followed.getUsername()));
+
 		return "redirect:/";
 	}
 
@@ -110,7 +110,7 @@ public class WebController {
 			model.addAttribute(IS_LOGGED_FLAG, false);
 			Logger.getLogger(WebController.class.getName())
 					.info("Username: " + (String) session.getAttribute(USERNAME) + " unregister");
-			subscriptionsHandler.unsubscribeUser((String) session.getAttribute(USERNAME));
+			subscriptionsService.unsubscribeUser((String) session.getAttribute(USERNAME));
 			session.invalidate();
 		}
 		return "redirect:/";
@@ -215,7 +215,7 @@ public class WebController {
 		session.setAttribute(USERNAME, result.getUsername());
 		Logger.getLogger(WebController.class.getName())
 				.info("Username: " + loggedUser.getUsername() + " subscribed to topic: " + followed.getUsername());
-		subscriptionsHandler.subscribeToTopic(loggedUser.getUsername(), followed.getUsername());
+		subscriptionsService.subscribeToTopic(loggedUser.getUsername(), followed.getUsername());
 		return "redirect:/profile/" + followed.getUsername();
 	}
 
@@ -232,7 +232,7 @@ public class WebController {
 		String message = "Your friend " + loggedUser.getUsername() + " likes " + gameToAdd;
 		Logger.getLogger(WebController.class.getName())
 				.info("Username: " + loggedUser.getUsername() + " published message: " + message);
-		subscriptionsHandler.publishMessageForTopic(message, loggedUser.getUsername());
+		subscriptionsService.publishMessageForTopic(message, loggedUser.getUsername());
 		return "redirect:/game/" + toAdd.getName();
 	}
 
