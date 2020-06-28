@@ -19,7 +19,8 @@ async function checkSubscription() {
   const subscription = await registration.pushManager.getSubscription();
   if (subscription) {
 
-    const response = await fetch("/isSubscribed", {
+    const response = await fetch("http://localhost:8081/PushNotifier/api/isSubscribed", {
+      mode: 'no-cors',
       method: 'POST',
       body: JSON.stringify({endpoint: subscription.endpoint}),
       headers: {
@@ -34,7 +35,7 @@ async function checkSubscription() {
 }
 
 async function init() {
-  fetch('/publicSigningKey')
+  fetch('http://localhost:8081/PushNotifier/api/publicSigningKey', {mode: 'no-cors'})
      .then(response => response.arrayBuffer())
      .then(key => this.publicSigningKey = key)
      .finally(() => console.info('Application Server Public Key fetched from the server'));
@@ -58,6 +59,7 @@ async function unsubscribe() {
       console.info('Unsubscription successful');
 
       await fetch("/unsubscribeByEndpoint", {
+    	mode: 'no-cors',
         method: 'POST',
         body: JSON.stringify({endpoint: subscription.endpoint}),
         headers: {
@@ -89,8 +91,9 @@ async function subscribe() {
   var jsonSub = JSON.stringify(subscription);
   var sub = JSON.parse(jsonSub);
   sub.username = username;
-  await fetch("/subscribe", {
-    method: 'POST',
+  await fetch("http://localhost:8081/PushNotifier/api/subscribe", {
+	mode: 'no-cors',
+	method: 'POST',
     body: JSON.stringify(sub),
     headers: {
       "content-type": "application/json"
