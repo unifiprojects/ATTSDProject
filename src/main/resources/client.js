@@ -90,13 +90,17 @@ async function subscribe() {
   const username = document.getElementById("username").value;
   var jsonSub = JSON.stringify(subscription);
   var sub = JSON.parse(jsonSub);
-  sub.username = username;
+ 
+  var body = "username=" + username + "&endpoint=" + sub.endpoint +
+                "&p256dh=" + sub.keys.p256dh + "&auth=" + sub.keys.auth;
+  console.info(body);
+  
   await fetch("http://localhost:8081/PushNotifier/api/subscribe", {
 	mode: 'no-cors',
 	method: 'POST',
-    body: JSON.stringify(sub),
+    body: body,
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/x-www-form-urlencoded"
     }
   });
 
