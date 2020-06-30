@@ -58,7 +58,7 @@ async function unsubscribe() {
     if (successful) {
       console.info('Unsubscription successful');
 
-      await fetch("/unsubscribeByEndpoint", {
+      await fetch("http://localhost:8081/PushNotifier/api/unsubscribeByEndpoint", {
     	mode: 'no-cors',
         method: 'POST',
         body: JSON.stringify({endpoint: subscription.endpoint}),
