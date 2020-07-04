@@ -1,18 +1,16 @@
 if ("serviceWorker" in navigator) {
   try {
-    init();
-    
-	subscribe().catch(e => {
-		if (Notification.permission === 'denied') {
-          console.warn('Permission for notifications was denied');
-		} else {
-    	  console.error('error subscribe(): ' + e);
-        }});
+      init()
+        .then(x => subscribe(x).catch(e => {
+            if (Notification.permission === 'denied') {
+                console.warn('Permission for notifications was denied');
+            } else {
+                console.error('error subscribe(): ' + e);
+            }}));
   } catch (e) {
     console.error('error init(): ' + e);
   }
 }
-
 
 async function checkSubscription() {
   const registration = await navigator.serviceWorker.ready;
@@ -20,7 +18,6 @@ async function checkSubscription() {
   if (subscription) {
 
     const response = await fetch("http://localhost:8081/PushNotifier/api/isSubscribed", {
-      mode: 'no-cors',
       method: 'POST',
       body: JSON.stringify({endpoint: subscription.endpoint}),
       headers: {
@@ -35,11 +32,12 @@ async function checkSubscription() {
 }
 
 async function init() {
-  fetch('http://localhost:8081/PushNotifier/api/publicSigningKey', {mode: 'no-cors'})
+  var publicKey;
+  await fetch('http://localhost:8081/PushNotifier/api/publicSigningKey')
      .then(response => response.arrayBuffer())
-     .then(key => this.publicSigningKey = key)
+     .then(key => publicKey = key)
      .finally(() => console.info('Application Server Public Key fetched from the server'));
-
+     
   await navigator.serviceWorker.register("/sw.js", {
     scope: "/"
   }).then(function(registration) {
@@ -48,6 +46,7 @@ async function init() {
   
   await navigator.serviceWorker.ready;
   console.info('Service Worker has been installed and is ready');
+  return publicKey;
 }
 
 async function unsubscribe() {
@@ -59,8 +58,7 @@ async function unsubscribe() {
       console.info('Unsubscription successful');
 
       await fetch("http://localhost:8081/PushNotifier/api/unsubscribeByEndpoint", {
-    	mode: 'no-cors',
-        method: 'POST',
+    	method: 'POST',
         body: JSON.stringify({endpoint: subscription.endpoint}),
         headers: {
           "content-type": "application/json"
@@ -76,27 +74,25 @@ async function unsubscribe() {
   }
 }
 
-async function subscribe() {
+async function subscribe(publicKey) {
   const registration = await navigator.serviceWorker.ready;
   var subscription = await registration.pushManager.getSubscription();
+  
   if(subscription == null){
 	  subscription = await registration.pushManager.subscribe({
 	    userVisibleOnly: true,
-	    applicationServerKey: this.publicSigningKey
+	    applicationServerKey: publicKey
 	});
   }
 
-  console.info(`Subscribed to Push Service: ${subscription.endpoint}`);
   const username = document.getElementById("username").value;
   var jsonSub = JSON.stringify(subscription);
   var sub = JSON.parse(jsonSub);
  
   var body = "username=" + username + "&endpoint=" + sub.endpoint +
                 "&p256dh=" + sub.keys.p256dh + "&auth=" + sub.keys.auth;
-  console.info(body);
   
   await fetch("http://localhost:8081/PushNotifier/api/subscribe", {
-	mode: 'no-cors',
 	method: 'POST',
     body: body,
     headers: {
