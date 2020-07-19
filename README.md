@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/unifiprojects/ATTSDProject.svg?branch=master)](https://travis-ci.org/unifiprojects/ATTSDProject)
-[![Coverage Status](https://coveralls.io/repos/github/unifiprojects/ATTSDProject/badge.svg?branch=master)](https://coveralls.io/github/unifiprojects/ATTSDProject?branch=master)
+[![Build Status](https://travis-ci.org/unifiprojects/SocialGames.svg?branch=master)](https://travis-ci.org/unifiprojects/SocialGames)
+[![Coverage Status](https://coveralls.io/repos/github/unifiprojects/SocialGames/badge.svg?branch=master)](https://coveralls.io/github/unifiprojects/SocialGames?branch=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.maurosalani.project.attsd%3AATTSDProject&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.maurosalani.project.attsd%3AATTSDProject)
 
 # Social Network for Videogames
