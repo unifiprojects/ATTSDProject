@@ -2,8 +2,7 @@ language: java
 addons:
   sonarcloud:
     organization: unifiprojects
-    token:
-      secure: ${SONAR_TOKEN}
+    token: $SONAR_TOKEN
       
 matrix:
   include:
