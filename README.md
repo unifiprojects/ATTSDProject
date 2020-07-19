@@ -21,3 +21,4 @@ docker run -d -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DAT
 * [Sonar Cloud](https://sonarcloud.io/dashboard?id=com.maurosalani.project.attsd%3AATTSDProject) - Code Quality
 * [GitKraken](https://www.gitkraken.com/) - Git Client
 * [MySQL 8.0.16](https://www.mysql.com/it/) - Database
+
