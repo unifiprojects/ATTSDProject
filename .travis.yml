@@ -3,7 +3,7 @@ addons:
   sonarcloud:
     organization: unifiprojects
     token:
-      secure: $SONAR_TOKEN
+      secure: ${SONAR_TOKEN}
       
 matrix:
   include:
