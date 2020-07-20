@@ -200,8 +200,8 @@ public class GameRepositoryTest {
 		
 		List<Game> latest3Release = repository.findFirstNOrderByReleaseDate(PageRequest.of(0,3));
 		assertThat(latest3Release.size()).isEqualTo(3);
-		assertThat(latest3Release).contains(game5Saved, game4Saved, game3Saved);
-		assertThat(latest3Release).doesNotContain(game1Saved, game2Saved);
+		assertThat(latest3Release).contains(game5Saved, game4Saved, game3Saved)
+                    .doesNotContain(game1Saved, game2Saved);
 	}
 
 }
