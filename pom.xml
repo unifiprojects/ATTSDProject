@@ -46,12 +46,12 @@
       **/dto/*,
       **/exception/*
     </sonar.coverage.exclusions>
-    <sonar.issue.ignore.multicriteria>e1,e2,e3,e4</sonar.issue.ignore.multicriteria>
+    <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6</sonar.issue.ignore.multicriteria>
     <!-- "Tests should include assertions" disabled on some classes like 
       *ApplicationTests which just checks that the Spring application can start, 
       without any assertion -->
     <sonar.issue.ignore.multicriteria.e1.ruleKey>
-      squid:S2699
+      java:S2699
     </sonar.issue.ignore.multicriteria.e1.ruleKey>
     <sonar.issue.ignore.multicriteria.e1.resourceKey>
       **/*ApplicationTests.java
@@ -59,7 +59,7 @@
     <!-- "Cognitive Complexity of methods should not be too high", disabled 
       on model classes that contains eclipse auto generated equals method -->
     <sonar.issue.ignore.multicriteria.e2.ruleKey>
-      squid:S3776
+      java:S3776
     </sonar.issue.ignore.multicriteria.e2.ruleKey>
     <sonar.issue.ignore.multicriteria.e2.resourceKey>
       **/model/*.java
@@ -68,20 +68,32 @@
       ignored", disabled on UserService class in methods that throw an Exception 
       that is caught by Spring -->
     <sonar.issue.ignore.multicriteria.e3.ruleKey>
-      squid:S2201
+      java:S2201
     </sonar.issue.ignore.multicriteria.e3.ruleKey>
     <sonar.issue.ignore.multicriteria.e3.resourceKey>
       **/UserService.java
     </sonar.issue.ignore.multicriteria.e3.resourceKey>
-    <!-- "Using command line arguments is security-sensitive", disabled on 
-      AttsdProjectApplication class because we do not use any options (just the 
-      profile e2e uses 'spring.application.admin.enabled' and 'server.port' ) -->
+    <!-- "<html>" element should have a language attribute -->
     <sonar.issue.ignore.multicriteria.e4.ruleKey>
-      squid:S4823
+      Web:S5254
     </sonar.issue.ignore.multicriteria.e4.ruleKey>
     <sonar.issue.ignore.multicriteria.e4.resourceKey>
-      **/AttsdProjectApplication.java
+      **/*.html
     </sonar.issue.ignore.multicriteria.e4.resourceKey>
+    <!-- Chained AssertJ assertions should be simplified to the corresponding dedicated assertion -->
+    <sonar.issue.ignore.multicriteria.e5.ruleKey>
+      java:S5838
+    </sonar.issue.ignore.multicriteria.e5.ruleKey>
+    <sonar.issue.ignore.multicriteria.e5.resourceKey>
+      **/*Test.java
+    </sonar.issue.ignore.multicriteria.e5.resourceKey>
+    <sonar.issue.ignore.multicriteria.e6.ruleKey>
+      java:S5838
+    </sonar.issue.ignore.multicriteria.e6.ruleKey>
+    <sonar.issue.ignore.multicriteria.e6.resourceKey>
+      **/*IT.java
+    </sonar.issue.ignore.multicriteria.e6.resourceKey>
+    
   </properties>
 
   <dependencies>
