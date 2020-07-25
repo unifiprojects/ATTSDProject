@@ -352,6 +352,7 @@
           <version>0.30.0</version>
           <extensions>true</extensions>
           <configuration>
+            <dockerHost>unix:///var/run/docker.sock</dockerHost>
             <images>
               <image>
                 <alias>database</alias>

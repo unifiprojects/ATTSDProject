@@ -82,15 +82,15 @@ public class WebViewTest {
 	@Test
 	public void testHomePageTitle() throws Exception {
 		HtmlPage page = webClient.getPage("/");
-		assertTitleEquals(page, "ATTSD-Project: Social Games");
+		assertTitleEquals(page, "Social Games");
 	}
 
 	@Test
 	public void testHomePageWhenUserNotLogged_ShouldContainSearchForm() throws Exception {
 		HtmlPage page = webClient.getPage("/");
 
-		assertTitleEquals(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTitleEquals(page, "Social Games");
+		assertTextPresent(page, "Social Games");
 		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
@@ -160,8 +160,8 @@ public class WebViewTest {
 		webClient.getPage(requestToLogin);
 
 		HtmlPage page = webClient.getPage("/logout");
-		assertTitleEquals(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTitleEquals(page, "Social Games");
+		assertTextPresent(page, "Social Games");
 		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
@@ -172,8 +172,8 @@ public class WebViewTest {
 	@Test
 	public void testHomePage_LogoutNoUserLogged() throws Exception {
 		HtmlPage page = webClient.getPage("/logout");
-		assertTitleEquals(page, "ATTSD-Project: Social Games");
-		assertTextPresent(page, "ATTSD-Project: Social Games");
+		assertTitleEquals(page, "Social Games");
+		assertTextPresent(page, "Social Games");
 		assertTextPresent(page, WELCOME_LOGIN);
 		assertFormPresent(page, "search_form");
 		assertInputPresent(page, "content_search");
